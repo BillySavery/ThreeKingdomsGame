@@ -341,4 +341,8 @@ setMode('daily');
 function countdown(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1),ms=t-n,h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4);const el=document.getElementById('next');if(el)el.textContent='Next puzzle in '+h+'h '+m+'m'}setInterval(countdown,30000);countdown();
 </script>
 
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzles */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
 </body></html>

@@ -104,4 +104,8 @@ cd();setInterval(cd,30000);
 })();
 </script>
 
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzles */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
 </body></html>

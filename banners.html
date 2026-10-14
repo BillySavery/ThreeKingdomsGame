@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Four Banners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Solved banners stack above a 4x4 tile grid, controls underneath */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --tile:#e9dcc2; --tileTx:#1d1611; --tileSel:#5a4636; --lacquer:#8e1f1a; --gold:#d9a441; --paper:#efe4cf; --mute:#a8987f;
+  --b1:#d9b45a; --b2:#4fae94; --b3:#c45b45; --b4:#8a76c4;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:600px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px}
+.tabs{display:flex;gap:6px}
+.tabs button,.btn{font-family:var(--ui);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:9px 14px;background:transparent;color:var(--paper);border:1px solid var(--line);cursor:pointer}
+.tabs button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.btn.primary{background:var(--lacquer);border-color:var(--gold)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:not(:disabled):hover,.tabs button:hover{border-color:var(--gold)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.intro{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.intro p{margin:0;color:var(--mute);font-size:14px}
+.intro .no{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.board{display:grid;gap:8px}
+.solved{display:grid;gap:4px;place-items:center;text-align:center;padding:12px 10px;color:#1b130a;min-height:72px}
+.solved b{font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.solved span{font-size:14px;font-weight:600}
+.solved small{font-size:12px;opacity:.85;max-width:46ch;line-height:1.35}
+.solved.l1{background:var(--b1)}.solved.l2{background:var(--b2)}.solved.l3{background:var(--b3)}.solved.l4{background:var(--b4)}
+.solved.new{animation:drop .45s ease-out}
+@keyframes drop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile{min-height:72px;padding:6px;border:0;background:var(--tile);color:var(--tileTx);font-family:var(--ui);font-weight:700;font-size:clamp(12px,3.3vw,15px);line-height:1.15;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;overflow-wrap:anywhere;transition:transform .1s,background .15s}
+.tile:active{transform:scale(.96)}
+.tile[aria-pressed="true"]{background:var(--tileSel);color:var(--paper)}
+.grid.shake .tile[aria-pressed="true"]{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.solved.new,.grid.shake .tile[aria-pressed="true"]{animation:none}}
+.lives{display:flex;justify-content:center;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--gold)}
+.dot.lost{background:var(--line)}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.feedback{min-height:22px;text-align:center;font-size:15px;font-weight:600;color:var(--paper)}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:16px 18px;display:grid;gap:10px;text-align:center}
+.endcard h2{font-family:var(--display);font-weight:400;font-size:32px;margin:0;color:var(--gold)}
+.endcard p{margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:11px;height:11px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.nextin{align-self:center;font-size:13px;letter-spacing:.06em;color:var(--mute);font-variant-numeric:tabular-nums}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <button class="logo" id="home">Four Banners<small>THREE KINGDOMS DAILY &middot; 三国</small></button>
+  </header>
+
+  <div class="intro"><p>Sort the sixteen into four banners of four.</p><span class="no" id="pno">Daily</span></div>
+
+  <div class="board">
+    <div id="solved" class="board"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="feedback" id="fb" aria-live="polite"></div>
+  <div class="lives" id="lives"></div>
+  <div class="controls" id="controls">
+    <button class="btn" id="shuffle">Shuffle</button>
+    <button class="btn" id="clear">Deselect</button>
+    <button class="btn primary" id="submit" disabled>Submit</button>
+  </div>
+
+  <div class="endcard" id="end" hidden>
+    <h2 id="endT">Banners raised</h2>
+    <p id="endP"></p>
+    <div class="controls"><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="rules">
+    <b>How to play.</b> Pick four tiles that share a link and submit. Get a group right and its banner is raised. You can make four mistakes. Watch for red herrings: some tiles look like they fit more than one group, but only one way solves the whole board. Colours run from easiest to trickiest.
+    <div class="legend"><span style="--c:var(--b1)">Straightforward</span><span style="--c:var(--b2)">Medium</span><span style="--c:var(--b3)">Tricky</span><span style="--c:var(--b4)">Devious</span></div>
+    <p style="margin:10px 0 0">Fan made. Not affiliated with Koei Tecmo.</p>
+  </div>
+</div>
+
+<script>
+(()=>{
+// Each puzzle: four groups, easiest first. Every red herring has been checked so only one full solution works.
+const PUZZLES=[
+[["Shu courtesy names",["Xuande","Yunchang","Yide","Kongming"],"The courtesy names of Liu Bei, Guan Yu, Zhang Fei and Zhuge Liang."],
+ ["Famous nicknames",["Sleeping Dragon","Fledgling Phoenix","Little Conqueror","Water Mirror"],"Zhuge Liang, Pang Tong, Sun Ce, and Sima Hui, the recluse who gave the first two their names."],
+ ["Guan Yu in the novel",["Wine Still Warm","Bone Scraping","Single Blade Meeting","Huarong Trail"],"He killed Hua Xiong before his wine cooled, had his arm scraped by Hua Tuo, met Lu Su alone, and let Cao Cao go at Huarong."],
+ ["Zhuge Liang's schemes",["Empty Fort","Borrowed Arrows","Seven Captures","East Wind"],"Kongming's most famous tricks in the Romance."]],
+[["Seven Sages of the Bamboo Grove",["Ji Kang","Ruan Ji","Shan Tao","Liu Ling"],"The drinking, poetry loving recluses of the late Wei."],
+ ["Seven Scholars of Jian'an",["Kong Rong","Chen Lin","Wang Can","Liu Zhen"],"The literary circle around the Cao family. Watch the Liu and Wang herrings."],
+ ["Plotted against Dong Zhuo",["Wang Yun","Li Su","Diaochan","Lu Bu"],"Wang Yun's chain scheme, with Diaochan as the bait and Lu Bu as the blade."],
+ ["The Zhuge clan",["Zhuge Liang","Zhuge Jin","Zhuge Ke","Zhuge Dan"],"One family serving Shu, Wu and Wei at the same time."]],
+[["Where they died",["Baidicheng","Wuzhang Plains","Maicheng","Fallen Phoenix Slope"],"Liu Bei, Zhuge Liang, Guan Yu's last stand, and Pang Tong."],
+ ["Capital cities",["Luoyang","Xuchang","Chengdu","Jianye"],"Han, Cao's court, Shu and Wu. Baidicheng is a city, but never a capital."],
+ ["Famous blades and polearms",["Green Dragon Blade","Serpent Spear","Sky Piercer","Qinggang Sword"],"Guan Yu, Zhang Fei, Lu Bu, and the sword Zhao Yun seized at Changban."],
+ ["Cao family stories",["Weighing the Elephant","Seven Step Poem","Plums Quench Thirst","Cutting Off Hair"],"Cao Chong's elephant, Cao Zhi's poem, and two of Cao Cao's own tricks."]],
+[["Family name is an English word",["Sun Ce","Man Chong","Pan Zhang","Ding Feng"],"Sun, Man, Pan and Ding."],
+ ["Given name is an English word",["Yu Fan","Zhu Ran","Jiang Wan","Zhang He"],"Fan, Ran, Wan and He. Mi Fang has a fang, but he's needed elsewhere."],
+ ["Left Guan Yu to his fate",["Mi Fang","Fu Shiren","Meng Da","Liu Feng"],"Two surrendered his cities to Wu; two refused to send help."],
+ ["Not in the official history",["Diaochan","Xingcai","Guan Suo","Bao Sanniang"],"Characters from the novel and legend, not the Records of the Three Kingdoms."]],
+[["Sun Jian's children",["Sun Ce","Sun Quan","Sun Yi","Sun Shangxiang"],"Sun Shangxiang also married a ruler, but she's needed here."],
+ ["Liu Bei's sons",["Liu Shan","Liu Feng","Liu Yong","Liu Li"],"Liu Feng was adopted."],
+ ["Married a ruler",["Zhen Ji","Lianshi","Lady Gan","Da Qiao"],"Wives of Cao Pi, Sun Quan, Liu Bei and Sun Ce."],
+ ["Had a famous older brother",["Zhuge Liang","Sima Zhao","Cao Pi","Zhang Liang"],"Zhuge Jin, Sima Shi, Cao Ang and Zhang Jiao."]],
+[["Killed by Guan Yu in the novel",["Hua Xiong","Yan Liang","Wen Chou","Cai Yang"],"Cai Yang fell after the Five Passes, chasing revenge for his nephew."],
+ ["Fell at the Five Passes",["Kong Xiu","Meng Tan","Bian Xi","Qin Qi"],"Four of the six officers Guan Yu cut down on his ride back to Liu Bei."],
+ ["Refused to surrender",["Pang De","Gao Shun","Chen Gong","Ju Shou"],"Each chose execution over serving their captor."],
+ ["Hit by an arrow",["Pang Tong","Sun Jian","Zhang He","Xiahou Dun"],"Xiahou Dun survived. The other three did not."]],
+[["Once served Liu Zhang",["Fa Zheng","Yan Yan","Zhang Ren","Huang Quan"],"Officers of Yi Province before Liu Bei arrived."],
+ ["Warlords of the west",["Ma Teng","Han Sui","Zhang Lu","Liu Zhang"],"Liu Zhang ruled Yi Province himself, so he belongs here."],
+ ["The Sima clan",["Sima Yi","Sima Shi","Sima Zhao","Sima Yan"],"Three generations who turned Wei into Jin."],
+ ["Two character family names",["Zhuge Jin","Xiahou Yuan","Taishi Ci","Gongsun Zan"],"The Simas fit too, but they're needed for their own banner."]],
+[["Died young of illness",["Guo Jia","Zhou Yu","Cao Chong","Sun Deng"],"None of them reached forty."],
+ ["Wei's Five Elite Generals",["Zhang Liao","Yue Jin","Yu Jin","Xu Huang"],"Zhang He is the missing fifth."],
+ ["Once wore the yellow turban",["Zhang Jiao","Zhou Cang","Liao Hua","Pei Yuanshao"],"The rebellion's leader and three later followers of Liu Bei and Guan Yu in the novel."],
+ ["Advisers to Yuan Shao",["Tian Feng","Shen Pei","Guo Tu","Xun Chen"],"Guo Tu, not Guo Jia, who chose Cao Cao instead."]],
+[["Women of Wu",["Da Qiao","Xiao Qiao","Lady Wu","Sun Shangxiang"],"Diaochan never went near Wu."],
+ ["Wu's Grand Commanders",["Zhou Yu","Lu Su","Lu Meng","Lu Xun"],"Each led Wu's armies in turn."],
+ ["Lu Bu and his inner circle",["Lu Bu","Lu Lingqi","Diaochan","Chen Gong"],"A different Lu altogether."],
+ ["Twelve Tigers of Jiangdong",["Gan Ning","Ling Tong","Zhou Tai","Huang Gai"],"From the Wu generals' chapter of the Records."]],
+[["Cao Cao's defeats",["Red Cliffs","Wancheng","Puyang","Hanzhong"],"Zhou Yu, Zhang Xiu, Lu Bu and Liu Bei got the better of him."],
+ ["Zhuge Liang's northern campaigns",["Jieting","Chencang","Wuzhang Plains","Mount Qi"],"The road north from Hanzhong."],
+ ["Coalition lords against Dong Zhuo",["Yuan Shu","Gongsun Zan","Kong Rong","Ma Teng"],"Four of the eighteen in the novel."],
+ ["Hidden animal",["Baima","Hulao Gate","Fallen Phoenix Slope","Red Hare"],"White Horse, Tiger Prison, a phoenix and a hare."]],
+[["Shu's Five Tigers",["Guan Yu","Zhang Fei","Zhao Yun","Huang Zhong"],"Ma Chao is the fifth, but he's needed elsewhere."],
+ ["Wei and Wu courtesy names",["Mengde","Zhongda","Bofu","Gongjin"],"Cao Cao, Sima Yi, Sun Ce and Zhou Yu."],
+ ["Family name Ma",["Ma Chao","Ma Dai","Ma Teng","Ma Liang"],"The Xiliang clan, plus Ma Liang of the white eyebrows."],
+ ["Liu Bei's earliest followers",["Jian Yong","Mi Zhu","Sun Qian","Chen Dao"],"With him long before Zhuge Liang. So were the brothers, but they're Tigers."]],
+[["Liu Bei's story",["Peach Garden Oath","Three Visits","Leaping Dilu","Heroes Over Wine"],"Heroes Over Wine stars Cao Cao too, but Liu Bei needs it."],
+ ["Zhang Fei's story",["Changban Bridge","Whipping the Inspector","Sparing Yan Yan","Losing Xuzhou"],"The roar, the temper, the mercy and the hangover."],
+ ["Cao Cao's story",["Plums Quench Thirst","Cutting Off Hair","Seven Star Sword","Burning the Letters"],"He burned his officers' letters to Yuan Shao after Guandu, unread."],
+ ["Wu's story",["Bitter Meat Ruse","Beauty Trap","White Robed Crossing","Duel with Taishi Ci"],"Huang Gai, Zhou Yu's marriage trap, Lu Meng's disguise and Sun Ce's duel."]],
+[["The Ten Attendants",["Zhang Rang","Zhao Zhong","Duan Gui","Jian Shuo"],"The eunuchs who ran Emperor Ling's court."],
+ ["Signed the girdle edict",["Dong Cheng","Liu Bei","Wang Zifu","Chong Ji"],"The secret plot to kill Cao Cao."],
+ ["The Han court",["Emperor Xian","He Jin","Wang Yun","Lu Zhi"],"Dong Cheng served the court too, but the edict needs him."],
+ ["Healers and mystics",["Hua Tuo","Zuo Ci","Yu Ji","Guan Lu"],"A surgeon, a sorcerer, a Taoist and a fortune teller."]],
+[["Nanman rulers and chieftains",["Meng Huo","Meng You","Wutugu","King Mulu"],"Zhurong is a queen of the Nanman, but she fights in the games."],
+ ["Women who fight in the games",["Zhurong","Sun Shangxiang","Wang Yi","Lu Lingqi"],"All playable officers."],
+ ["Family name Xiahou",["Xiahou Dun","Xiahou Yuan","Xiahou Ba","Xiahou Ji"],"Xiahou Ji married Zhang Fei."],
+ ["Came over to Shu",["Jiang Wei","Yan Yan","Ma Chao","Huang Zhong"],"Xiahou Ba defected to Shu too, but his family needs him."]],
+[["Wei's later generals",["Deng Ai","Zhong Hui","Guo Huai","Chen Tai"],"The men who held, then broke, Shu's northern frontier."],
+ ["Shu's last defenders",["Jiang Wei","Liao Hua","Zhang Yi","Zhuge Zhan"],"Zhuge Zhan, Kongming's son, died at Mianzhu in 263."],
+ ["Jin's conquest of Wu",["Du Yu","Wang Jun","Yang Hu","Wang Hun"],"Yang Hu planned it; the other three carried it out in 280."],
+ ["Wu's final generation",["Lu Kang","Ding Feng","Sun Hao","Zhuge Ke"],"Watch the two Zhuges and the two Wangs."]]
+];
+
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem('fb_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('fb_'+k,JSON.stringify(v))}catch(e){}}};
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+function seeded(s){return()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648}}
+const ORDER=(()=>{const r=seeded(208),idx=PUZZLES.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return idx})();
+const dailyIdx=()=>ORDER[((today()%PUZZLES.length)+PUZZLES.length)%PUZZLES.length];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+let G=null,freeQ=[];
+function start(mode,pi){
+  const p=PUZZLES[pi];
+  G={mode,pi,groups:p.map(([label,items,note],lv)=>({label,items,note,lv})),solved:[],sel:new Set(),mistakes:0,history:[],tried:new Set(),over:false};
+  G.order=shuffle(p.flatMap(g=>g[1]));
+  if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.pi===pi){G.solved=s.solved;G.mistakes=s.mistakes;G.history=s.history;G.tried=new Set(s.tried||[]);G.over=s.over}}
+  $('pno').textContent=mode==='daily'?'Daily #'+(today()+1):'Puzzle '+(pi+1)+' of '+PUZZLES.length;
+  $('fb').textContent='';
+  render();
+  if(G.over)finish(true);else{$('end').hidden=true;$('controls').hidden=false;$('lives').hidden=false}
+}
+function render(newLv){
+  const sv=$('solved');sv.innerHTML='';
+  G.solved.forEach(lv=>{const g=G.groups[lv];const d=document.createElement('div');d.className='solved l'+(lv+1)+(lv===newLv?' new':'');
+    d.innerHTML='<b></b><span></span><small></small>';d.children[0].textContent=g.label;d.children[1].textContent=g.items.join(', ');d.children[2].textContent=g.note||'';sv.appendChild(d)});
+  const solvedItems=new Set(G.solved.flatMap(lv=>G.groups[lv].items));
+  const gr=$('grid');gr.innerHTML='';
+  G.order.filter(x=>!solvedItems.has(x)).forEach(x=>{const b=document.createElement('button');b.className='tile';b.textContent=x;b.setAttribute('aria-pressed',G.sel.has(x));
+    b.onclick=()=>{if(G.over)return;if(G.sel.has(x))G.sel.delete(x);else if(G.sel.size<4)G.sel.add(x);render()};gr.appendChild(b)});
+  $('lives').innerHTML='Mistakes left '+[0,1,2,3].map(i=>`<span class="dot${i<4-G.mistakes?'':' lost'}"></span>`).join('');
+  $('submit').disabled=G.sel.size!==4;$('clear').disabled=!G.sel.size;
+  const st=store.get('stats',{played:0,won:0,perfect:0});
+  $('stats').innerHTML=`<div>Played<b>${st.played}</b></div><div>Solved<b>${st.won}</b></div><div>Perfect<b>${st.perfect}</b></div>`;
+}
+function save(){if(G.mode==='daily')store.set('day'+today(),{pi:G.pi,solved:G.solved,mistakes:G.mistakes,history:G.history,tried:[...G.tried],over:G.over})}
+function submit(){
+  if(G.sel.size!==4||G.over)return;
+  const pick=[...G.sel];const key=[...pick].sort().join('|');
+  if(G.tried.has(key)){$('fb').textContent='You already tried that four.';return}
+  G.tried.add(key);
+  const counts=G.groups.map(g=>pick.filter(x=>g.items.includes(x)).length);
+  G.history.push(pick.map(x=>G.groups.find(g=>g.items.includes(x)).lv));
+  const hit=counts.indexOf(4);
+  if(hit>=0){G.solved.push(hit);G.sel.clear();$('fb').textContent='';
+    if(G.solved.length===4){G.over=true;save();render(hit);setTimeout(()=>finish(false),400);return}
+    save();render(hit);return}
+  G.mistakes++;
+  $('fb').textContent=counts.includes(3)?'One away…':'Not a banner.';
+  const grid=$('grid');grid.classList.remove('shake');void grid.offsetWidth;grid.classList.add('shake');
+  if(G.mistakes>=4){G.over=true;save();setTimeout(()=>{G.sel.clear();finish(false)},600);return}
+  save();render();
+}
+function finish(restoring){
+  const won=G.solved.length===4;
+  // reveal remaining in difficulty order
+  [0,1,2,3].forEach(lv=>{if(!G.solved.includes(lv))G.solved.push(lv)});
+  G.sel.clear();render();
+  $('controls').hidden=true;$('lives').hidden=true;$('end').hidden=false;
+  $('endT').textContent=won?(G.mistakes===0?'Perfect':'Banners raised'):'The line broke';
+  $('endP').textContent=won?`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}.`:'Four mistakes. The full solution is shown above.';
+  if(!restoring){const st=store.get('stats',{played:0,won:0,perfect:0});st.played++;if(won)st.won++;if(won&&!G.mistakes)st.perfect++;store.set('stats',st);render()}
+  G.wonFlag=won;$('share').focus();
+}
+function nextFree(){if(!freeQ.length)freeQ=shuffle(PUZZLES.map((_,i)=>i));let pi=freeQ.shift();if(G&&pi===G.pi&&freeQ.length){freeQ.push(pi);pi=freeQ.shift()}start('free',pi)}
+$('submit').onclick=submit;
+$('shuffle').onclick=()=>{G.order=shuffle(G.order);render()};
+$('clear').onclick=()=>{G.sel.clear();render()};
+$('home').onclick=()=>start('daily',dailyIdx());
+$('share').onclick=()=>{
+  const sq=['🟨','🟩','🟥','🟪'];
+  const txt=`Four Banners ${G.mode==='daily'?'#'+(today()+1):''}\n`+G.history.map(r=>r.map(l=>sq[l]).join('')).join('\n');
+  const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
+  try{navigator.clipboard.writeText(txt).then(done,()=>{fb2(txt);done()})}catch(e){fb2(txt);done()}
+};
+function fb2(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove()}
+start('daily',dailyIdx());
+})();
+function countdown(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1),ms=t-n,h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4);const el=document.getElementById('next');if(el)el.textContent='Next puzzle in '+h+'h '+m+'m'}setInterval(countdown,30000);countdown();
+</script>
+
+</body></html>

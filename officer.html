@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Mystery Officer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Mystery card, answer box, then the guess table growing downward, newest first */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --near:#b8862a; --miss:#3a2e25;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px}
+.tabs{display:flex;gap:6px}
+.tabs button,.btn{font-family:var(--ui);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;background:transparent;color:var(--paper);border:1px solid var(--line);cursor:pointer}
+.tabs button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.btn.primary{background:var(--lacquer);border-color:var(--gold)}
+.btn:hover,.tabs button:hover{border-color:var(--gold)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.seal{width:68px;height:68px;border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:38px;color:var(--gold);background:var(--lacquer)}
+.card h1{font-family:var(--display);font-weight:400;font-size:clamp(22px,5vw,28px);margin:0;line-height:1.15}
+.card p{margin:4px 0 0;color:var(--mute);font-size:13px}
+.left{font-variant-numeric:tabular-nums;color:var(--gold2);font-weight:700}
+.entry{position:relative;display:grid;gap:8px}
+.inrow{display:flex;gap:8px}
+.inrow input{flex:1;min-width:0;font-family:var(--ui);font-size:17px;padding:12px 14px;background:#0f0c0a;color:var(--paper);border:1px solid var(--gold);border-radius:0}
+.inrow input::placeholder{color:#6f6252}
+.sugg{position:absolute;left:0;right:0;top:50px;z-index:5;background:#120e0b;border:1px solid var(--gold);border-top:0;list-style:none;margin:0;padding:0;max-height:300px;overflow:auto}
+.sugg li{padding:10px 14px;cursor:pointer}
+.sugg li[aria-selected="true"],.sugg li:hover{background:var(--lacquer)}
+.feedback{min-height:20px;font-size:14px;color:var(--mute)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:4px;min-width:520px}
+th{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);font-weight:600;text-align:center;padding:0 2px 2px}
+th:first-child{text-align:left}
+td{background:var(--miss);text-align:center;padding:10px 6px;font-size:14px;font-weight:600;height:46px;line-height:1.15}
+td:first-child{text-align:left;background:transparent;border:1px solid var(--line);font-size:15px}
+td.hit{background:var(--hit)}td.near{background:var(--near);color:#1b130a}
+td .arr{display:block;font-size:12px;opacity:.85;font-weight:700}
+tr.new td{animation:in .45s ease-out both}
+tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-delay:.16s}tr.new td:nth-child(4){animation-delay:.24s}tr.new td:nth-child(5){animation-delay:.32s}tr.new td:nth-child(6){animation-delay:.4s}
+@keyframes in{from{transform:rotateX(90deg);opacity:.2}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){tr.new td{animation:none}}
+.empty{color:var(--mute);font-size:14px;padding:12px 0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-2px;background:var(--c)}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:16px 18px;display:grid;gap:10px;text-align:center}
+.endcard h2{font-family:var(--display);font-weight:400;font-size:32px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.45}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+.nextin{align-self:center;font-size:13px;letter-spacing:.06em;color:var(--mute);font-variant-numeric:tabular-nums}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <button class="logo" id="home">Mystery Officer<small>THREE KINGDOMS DAILY &middot; 三国</small></button>
+  </header>
+
+  <section class="card">
+    <div class="seal" aria-hidden="true">?</div>
+    <div>
+      <h1 id="title">Who is today's officer?</h1>
+      <p><span class="left" id="left">8</span> guesses left · <span id="modeLbl">Daily</span></p>
+    </div>
+  </section>
+
+  <div class="entry" id="entry">
+    <div class="inrow">
+      <input id="guess" autocomplete="off" spellcheck="false" placeholder="Type an officer's name…" aria-label="Your guess" aria-controls="sugg">
+      <button class="btn primary" id="submit">Guess</button>
+    </div>
+    <ul class="sugg" id="sugg" role="listbox" hidden></ul>
+    <div class="feedback" id="fb" aria-live="polite"></div>
+  </div>
+
+  <div class="endcard" id="end" hidden>
+    <h2 id="endT">Found!</h2>
+    <p id="endP"></p>
+    <div class="actions"><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Officer</th><th>Faction</th><th>Gender</th><th>Role</th><th>Family name</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty">Your guesses will appear here, newest at the top.</div>
+  </div>
+
+  <div class="legend"><span style="--c:var(--hit)">Match</span><span style="--c:var(--miss)">No match</span></div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="rules">
+    <b>How to play.</b> Guess the mystery officer in 8 tries. Each guess shows how it compares with the answer on faction, gender, role and family name. Factions follow the Dynasty Warriors games, so the Sima clan and their allies count as Jin. Warlords, the Han court and the Yellow Turbans count as Other.
+  </div>
+</div>
+
+<script>
+(()=>{
+// Name | Faction (Wei Shu Wu Jin Other) | Gender | Role | Year of death
+const RAW=`Cao Cao|Wei|M|Ruler|220
+Cao Pi|Wei|M|Ruler|226
+Cao Rui|Wei|M|Ruler|239
+Xiahou Dun|Wei|M|General|220
+Xiahou Yuan|Wei|M|General|219
+Cao Ren|Wei|M|General|223
+Cao Hong|Wei|M|General|232
+Dian Wei|Wei|M|General|197
+Zhang Liao|Wei|M|General|222
+Xu Huang|Wei|M|General|227
+Zhang He|Wei|M|General|231
+Yu Jin|Wei|M|General|221
+Yue Jin|Wei|M|General|218
+Pang De|Wei|M|General|219
+Jia Xu|Wei|M|Strategist|223
+Guo Jia|Wei|M|Strategist|207
+Xun Yu|Wei|M|Strategist|212
+Xun You|Wei|M|Strategist|214
+Man Chong|Wei|M|General|242
+Cao Xiu|Wei|M|General|228
+Cao Zhen|Wei|M|General|231
+Cao Zhi|Wei|M|Official|232
+Cao Zhang|Wei|M|General|223
+Zhen Ji|Wei|F|Consort|221
+Cao Shuang|Wei|M|Official|249
+Yang Xiu|Wei|M|Official|219
+Sima Yi|Jin|M|Strategist|251
+Sima Shi|Jin|M|General|255
+Sima Zhao|Jin|M|General|265
+Sima Yan|Jin|M|Ruler|290
+Zhang Chunhua|Jin|F|Consort|247
+Wang Yuanji|Jin|F|Consort|268
+Deng Ai|Jin|M|General|264
+Zhong Hui|Jin|M|General|264
+Guo Huai|Jin|M|General|255
+Zhuge Dan|Jin|M|General|258
+Jia Chong|Jin|M|Strategist|282
+Wen Yang|Jin|M|General|291
+Liu Bei|Shu|M|Ruler|223
+Liu Shan|Shu|M|Ruler|271
+Guan Yu|Shu|M|General|220
+Zhang Fei|Shu|M|General|221
+Zhao Yun|Shu|M|General|229
+Ma Chao|Shu|M|General|222
+Huang Zhong|Shu|M|General|220
+Zhuge Liang|Shu|M|Strategist|234
+Pang Tong|Shu|M|Strategist|214
+Fa Zheng|Shu|M|Strategist|220
+Wei Yan|Shu|M|General|234
+Jiang Wei|Shu|M|General|264
+Guan Ping|Shu|M|General|220
+Ma Su|Shu|M|Strategist|228
+Wang Ping|Shu|M|General|248
+Mi Zhu|Shu|M|Official|221
+Ma Liang|Shu|M|Official|222
+Fei Yi|Shu|M|Official|253
+Jiang Wan|Shu|M|Official|246
+Dong Yun|Shu|M|Official|246
+Li Yan|Shu|M|Official|234
+Liao Hua|Shu|M|General|264
+Huang Quan|Shu|M|General|240
+Meng Da|Shu|M|General|228
+Sun Jian|Wu|M|Ruler|191
+Sun Ce|Wu|M|Ruler|200
+Sun Quan|Wu|M|Ruler|252
+Sun Liang|Wu|M|Ruler|260
+Sun Xiu|Wu|M|Ruler|264
+Sun Hao|Wu|M|Ruler|284
+Zhou Yu|Wu|M|General|210
+Lu Su|Wu|M|Strategist|217
+Lu Meng|Wu|M|General|220
+Lu Xun|Wu|M|General|245
+Taishi Ci|Wu|M|General|206
+Ding Feng|Wu|M|General|271
+Pan Zhang|Wu|M|General|234
+Zhu Ran|Wu|M|General|249
+Zhu Huan|Wu|M|General|238
+Zhuge Jin|Wu|M|Official|241
+Zhang Zhao|Wu|M|Official|236
+Lu Kang|Wu|M|General|274
+Zhuge Ke|Wu|M|General|253
+Lianshi|Wu|F|Consort|238
+Lu Bu|Other|M|General|199
+Chen Gong|Other|M|Strategist|199
+Gao Shun|Other|M|General|199
+Dong Zhuo|Other|M|Ruler|192
+Wang Yun|Other|M|Official|192
+Hua Xiong|Other|M|General|191
+Yuan Shao|Other|M|Ruler|202
+Yuan Shu|Other|M|Ruler|199
+Gongsun Zan|Other|M|Ruler|199
+Liu Biao|Other|M|Ruler|208
+Kong Rong|Other|M|Official|208
+Ma Teng|Other|M|Ruler|212
+Han Sui|Other|M|Ruler|215
+Zhang Lu|Other|M|Ruler|216
+Zhang Xiu|Other|M|Ruler|207
+Tao Qian|Other|M|Ruler|194
+He Jin|Other|M|General|189
+Ding Yuan|Other|M|General|189
+Zhang Jiao|Other|M|Ruler|184
+Emperor Xian|Other|M|Ruler|234
+Yan Liang|Other|M|General|200
+Wen Chou|Other|M|General|200
+Tian Feng|Other|M|Strategist|200
+Ju Shou|Other|M|Strategist|200`;
+const ALIAS={"Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Lianshi":["Bu Lianshi","Lady Bu"],"Zhuge Liang":["Kongming"],"Lu Bu":["Lv Bu"],"Emperor Xian":["Liu Xie"],"Sima Yi":["Zhongda"],"Liu Shan":["Adou"],"Taishi Ci":["Taishici"],"Wang Yuanji":["Yuanji"]};
+// Family names that take two characters
+const DOUBLE=["Xiahou","Sima","Zhuge","Taishi","Gongsun"];
+const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n.split(' ')[0]);return{n,f,g,r,d:+d,sur}});
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+OFF.forEach(o=>{o.keys=[o.n,...(ALIAS[o.n]||[])].map(norm)});
+const BY=new Map(OFF.map(o=>[o.n,o]));
+const MAX=8;
+
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem('mo_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('mo_'+k,JSON.stringify(v))}catch(e){}}};
+
+// Daily: same answer for everyone on a given day
+function seeded(s){return()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648}}
+const ORDER=(()=>{const r=seeded(220),idx=OFF.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return idx})();
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const dailyAnswer=()=>OFF[ORDER[((today()%OFF.length)+OFF.length)%OFF.length]];
+
+let G=null,sugg=[],sel=-1;
+function start(mode){
+  const ans=mode==='daily'?dailyAnswer():OFF[Math.floor(Math.random()*OFF.length)];
+  G={mode,ans,guesses:[],over:false,win:false};
+  if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.ans===ans.n){G.guesses=s.guesses.map(n=>BY.get(n)).filter(Boolean);G.over=s.over;G.win=s.win}}
+  $('modeLbl').textContent=mode==='daily'?'Daily #'+(today()+1):'';
+  $('title').textContent=mode==='daily'?"Who is today's officer?":'Who is the mystery officer?';
+  $('fb').textContent='';$('guess').value='';closeSugg();
+  render(false);
+  if(G.over)finish(true);else{$('end').hidden=true;$('entry').hidden=false;setTimeout(()=>$('guess').focus(),50)}
+}
+function compare(g,a){
+  return{f:g.f===a.f,g:g.g===a.g,r:g.r===a.r,sur:g.sur===a.sur};
+}
+function render(animateFirst){
+  const tb=$('rows');tb.innerHTML='';
+  [...G.guesses].reverse().forEach((g,i)=>{
+    const c=compare(g,G.ans);const tr=document.createElement('tr');if(i===0&&animateFirst)tr.className='new';
+    const cell=(txt,cls,extra)=>{const td=document.createElement('td');td.className=cls;td.textContent=txt;if(extra){const s=document.createElement('span');s.className='arr';s.textContent=extra;td.appendChild(s)}return td};
+    tr.appendChild(cell(g.n,''));
+    tr.appendChild(cell(g.f,c.f?'hit':''));
+    tr.appendChild(cell(g.g==='F'?'Female':'Male',c.g?'hit':''));
+    tr.appendChild(cell(g.r,c.r?'hit':''));
+    tr.appendChild(cell(g.sur,c.sur?'hit':''));
+    tb.appendChild(tr);
+  });
+  $('empty').hidden=G.guesses.length>0;
+  $('left').textContent=MAX-G.guesses.length;
+  const st=store.get('stats',{played:0,won:0,streak:0});
+  $('stats').innerHTML=`<div>Played<b>${st.played}</b></div><div>Won<b>${st.played?Math.round(st.won/st.played*100):0}%</b></div><div>Daily streak<b>${st.streak||0}</b></div>`;
+}
+function save(){if(G.mode==='daily')store.set('day'+today(),{ans:G.ans.n,guesses:G.guesses.map(g=>g.n),over:G.over,win:G.win})}
+function submit(name){
+  if(G.over)return;
+  let o=name?BY.get(name):null;
+  if(!o){if(sel>=0&&sugg[sel])o=sugg[sel];else{const k=norm($('guess').value);o=OFF.find(x=>x.keys.includes(k))}}
+  if(!o){$('fb').textContent=$('guess').value.trim()?'Not in the list. Pick an officer from the dropdown.':'';return}
+  $('guess').value='';closeSugg();
+  if(G.guesses.includes(o)){$('fb').textContent=o.n+' has already been guessed.';return}
+  G.guesses.push(o);$('fb').textContent='';
+  if(o===G.ans){G.over=true;G.win=true}else if(G.guesses.length>=MAX){G.over=true}
+  save();render(true);
+  if(G.over)setTimeout(()=>finish(false),500);
+}
+function finish(restoring){
+  $('entry').hidden=true;$('end').hidden=false;
+  const a=G.ans,n=G.guesses.length;
+  $('endT').textContent=G.win?'Found!':'Out of guesses';
+  $('endP').textContent=(G.win?`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. `:`It was ${a.n}. `)+`${a.r}, ${a.f}.`;
+  if(!restoring){const st=store.get('stats',{played:0,won:0,streak:0,lastDay:null});st.played++;if(G.win)st.won++;
+    if(G.mode==='daily'){st.streak=G.win?((st.lastDay===today()-1?st.streak:0)+1):0;st.lastDay=today()}store.set('stats',st);render(false)}
+  $('share').focus();
+}
+// autocomplete
+function showSugg(){
+  const q=norm($('guess').value);if(q.length<2){closeSugg();return}
+  const words=$('guess').value.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  const scored=[];
+  for(const o of OFF){if(G.guesses.includes(o))continue;let s=0;
+    if(o.keys.some(k=>k.startsWith(q)))s=2;else if(words.every(w=>[o.n,...(ALIAS[o.n]||[])].join(' ').toLowerCase().split(' ').some(x=>x.startsWith(w))))s=1;
+    if(s)scored.push([s,o])}
+  scored.sort((a,b)=>b[0]-a[0]||a[1].n.localeCompare(b[1].n));
+  sugg=scored.slice(0,8).map(x=>x[1]);sel=sugg.length?0:-1;
+  const box=$('sugg');if(!sugg.length){closeSugg();return}
+  box.innerHTML='';sugg.forEach((o,i)=>{const li=document.createElement('li');li.setAttribute('role','option');li.setAttribute('aria-selected',i===sel);li.textContent=o.n;li.addEventListener('mousedown',e=>{e.preventDefault();submit(o.n)});box.appendChild(li)});
+  box.hidden=false;
+}
+function closeSugg(){$('sugg').hidden=true;sugg=[];sel=-1}
+function moveSel(d){if(!sugg.length)return;sel=(sel+d+sugg.length)%sugg.length;[...$('sugg').children].forEach((li,i)=>li.setAttribute('aria-selected',i===sel))}
+$('guess').addEventListener('input',showSugg);
+$('guess').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();moveSel(1)}else if(e.key==='ArrowUp'){e.preventDefault();moveSel(-1)}else if(e.key==='Enter'){e.preventDefault();submit()}else if(e.key==='Escape')closeSugg()});
+$('guess').addEventListener('blur',()=>setTimeout(closeSugg,120));
+$('submit').onclick=()=>submit();
+$('home').onclick=()=>start('daily');
+$('share').onclick=()=>{
+  const sq=c=>c==='hit'||c===true?'🟩':c==='near'?'🟨':'⬛';
+  const lines=G.guesses.map(g=>{const c=compare(g,G.ans);return[c.f,c.g,c.r,c.sur].map(sq).join('')});
+  const txt=`Mystery Officer ${G.mode==='daily'?'#'+(today()+1):''} ${G.win?G.guesses.length:'X'}/${MAX}\n${lines.join('\n')}`;
+  const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
+  try{navigator.clipboard.writeText(txt).then(done,()=>{fb2(txt);done()})}catch(e){fb2(txt);done()}
+};
+function fb2(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove()}
+start('daily');
+})();
+function countdown(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1),ms=t-n,h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4);const el=document.getElementById('next');if(el)el.textContent='Next puzzle in '+h+'h '+m+'m'}setInterval(countdown,30000);countdown();
+</script>
+
+</body></html>

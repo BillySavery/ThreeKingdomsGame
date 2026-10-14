@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}</style>
+</head><body>
+<title>Three Kingdoms Daily</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: masthead with today's date and countdown, then three game cards in a column that becomes a row on wide screens */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f; --done:#4fae94;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -20%,rgba(142,31,26,.55),transparent 65%)}
+.wrap{max-width:980px;margin:0 auto;padding-block:28px 48px;padding-inline:16px;display:grid;gap:28px}
+.mast{display:grid;gap:10px;text-align:center;justify-items:center}
+.mast .han{font-family:var(--display);font-size:20px;letter-spacing:.6em;color:var(--gold);margin-right:-.6em}
+.mast h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,9vw,72px);line-height:.95;margin:0;color:var(--paper);text-wrap:balance}
+.mast h1 em{font-style:normal;color:var(--gold)}
+.mast p{margin:0;color:var(--mute);max-width:48ch;line-height:1.5}
+.today{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.today b{color:var(--gold2);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.game{background:var(--panel);border:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;min-width:0}
+.game .top{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.seal{width:52px;height:52px;flex:none;border:2px solid var(--gold);background:var(--lacquer);display:grid;place-items:center;font-family:var(--display);font-size:28px;color:var(--gold)}
+.status{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:5px 9px;border:1px solid var(--line);color:var(--mute);white-space:nowrap}
+.status.done{border-color:var(--done);color:var(--done)}
+.status.live{border-color:var(--gold);color:var(--gold)}
+.game .body{padding:14px 18px 18px;display:grid;gap:8px;align-content:start}
+.game h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0;line-height:1.05}
+.game .what{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
+.game .how{margin:0;font-size:13px;color:var(--paper);opacity:.85}
+.play{display:block;text-align:center;text-decoration:none;font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:14px;background:var(--lacquer);color:var(--paper);border-top:1px solid var(--gold)}
+.play:hover{background:#a8261f}
+.play:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+.game.finished .play{background:transparent;color:var(--gold);border-top-color:var(--line)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="han" aria-hidden="true">三國</div>
+    <h1>Three Kingdoms <em>Daily</em></h1>
+    <p>Three puzzles every day from the age of heroes: the history, the Romance and the games.</p>
+    <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/3</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
+  </header>
+
+  <main class="games">
+    <article class="game" id="g-tenable">
+      <div class="top"><div class="seal" aria-hidden="true">十</div><span class="status" id="s-tenable">Not played</span></div>
+      <div class="body">
+        <h2>Three Kingdoms Tenable</h2>
+        <p class="what">Ten slots, three lives. Name everything that fits today's list, from the Five Tigers to the battles after Cao Cao.</p>
+        <p class="how">About 5 minutes</p>
+      </div>
+      <a class="play" href="tenable.html">Play</a>
+    </article>
+    <article class="game" id="g-officer">
+      <div class="top"><div class="seal" aria-hidden="true">誰</div><span class="status" id="s-officer">Not played</span></div>
+      <div class="body">
+        <h2>Mystery Officer</h2>
+        <p class="what">Eight guesses to find today's hidden officer. Each guess shows how close you are on faction, gender, role and family name.</p>
+        <p class="how">About 3 minutes</p>
+      </div>
+      <a class="play" href="officer.html">Play</a>
+    </article>
+    <article class="game" id="g-banners">
+      <div class="top"><div class="seal" aria-hidden="true">旗</div><span class="status" id="s-banners">Not played</span></div>
+      <div class="body">
+        <h2>Four Banners</h2>
+        <p class="what">Sixteen names, stories and places. Sort them into four hidden groups before you make four mistakes.</p>
+        <p class="how">About 5 minutes</p>
+      </div>
+      <a class="play" href="banners.html">Play</a>
+    </article>
+  </main>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo or ITV.</span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+
+<script>
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const t=today();
+document.getElementById('dayNo').textContent=t+1;
+function set(id,text,cls){const el=document.getElementById('s-'+id);el.textContent=text;el.className='status'+(cls?' '+cls:'');
+  const card=document.getElementById('g-'+id);card.classList.toggle('finished',cls==='done');card.querySelector('.play').textContent=cls==='done'?'See result':cls==='live'?'Continue':'Play'}
+let done=0;
+const ten=get('mt_day'+t);
+if(ten){if(ten.over){set('tenable',(ten.found||[]).length+' / 10','done');done++}else set('tenable',(ten.found||[]).length+' / 10 so far','live')}
+const off=get('mo_day'+t);
+if(off){const n=(off.guesses||[]).length;if(off.over){set('officer',off.win?'Found in '+n:'Missed','done');done++}else if(n)set('officer',n+' guesses so far','live')}
+const ban=get('fb_day'+t);
+if(ban){const s=(ban.solved||[]).length;if(ban.over){set('banners',s+' / 4 banners','done');done++}else if(s||ban.mistakes)set('banners',s+' / 4 so far','live')}
+document.getElementById('doneCount').textContent=done+'/3';
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+})();
+</script>
+
+</body></html>

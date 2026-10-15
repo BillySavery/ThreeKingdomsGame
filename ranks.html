@@ -75,6 +75,7 @@ ol.tower{list-style:none;margin:0;padding:0;display:grid;gap:5px}
 .nextin{align-self:center;font-size:13px;letter-spacing:.06em;color:var(--mute);font-variant-numeric:tabular-nums}
 .wrap{grid-template-columns:minmax(0,1fr)}.wrap>*{min-width:0}.logo small{white-space:normal}.homelink{display:inline-block;padding:12px 0}
 .entry{grid-template-columns:minmax(0,1fr)}.inrow input{width:100%}
+.sugg li.more{cursor:default;color:var(--mute);font-style:italic}.sugg li.more:hover{background:none}
 </style>
 
 <div class="wrap">
@@ -243,6 +244,7 @@ function submit(name){
     if(sel>=0&&sugg[sel])ent=sugg[sel];
     else{const hits=resolve($('guess').value);if(hits&&hits.length===1)ent=hits[0];
       else if(hits&&hits.length>1){fb('More than one person has that name. Pick one from the list.','');showSugg();return}
+      else if(!$('sugg').hidden&&$('sugg').querySelector('.more')){fb('Lots of names start like that. Keep typing.','');return}
       else{fb($('guess').value.trim()?'Not in the database. Check the spelling or pick from the list.':'','');return}}
   }
   $('guess').value='';closeSugg();
@@ -286,6 +288,7 @@ function renderStats(){
 }
 
 // ---------- autocomplete ----------
+const MAXSHOW=6;
 function showSugg(){
   const q=$('guess').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
   const qn=norm(q);const box=$('sugg');
@@ -299,6 +302,8 @@ function showSugg(){
     if(s)scored.push([s,e]);
   }
   scored.sort((a,b)=>b[0]-a[0]||a[1].name.localeCompare(b[1].name));
+  // A search that still matches lots of names (just a family name like "Lu" or "Sun") would list the answers, so hold back until it's narrowed down
+  if(scored.length>MAXSHOW&&!scored.some(x=>x[0]===3)){sugg=[];sel=-1;box.innerHTML='<li class="more" aria-disabled="true">Lots of names start like that. Keep typing.</li>';box.hidden=false;return}
   sugg=scored.slice(0,8).map(x=>x[1]);sel=sugg.length?0:-1;
   if(!sugg.length){closeSugg();return}
   box.innerHTML='';

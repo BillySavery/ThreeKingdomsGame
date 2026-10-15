@@ -50,14 +50,14 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   </header>
 
   <main class="games">
-    <article class="game" id="g-tenable">
-      <div class="top"><div class="seal" aria-hidden="true">十</div><span class="status" id="s-tenable">Not played</span></div>
+    <article class="game" id="g-ranks">
+      <div class="top"><div class="seal" aria-hidden="true">十</div><span class="status" id="s-ranks">Not played</span></div>
       <div class="body">
-        <h2>Three Kingdoms Tenable</h2>
+        <h2>Full Ranks</h2>
         <p class="what">Ten slots, three lives. Name everything that fits today's list, from the Five Tigers to the battles after Cao Cao.</p>
         <p class="how">About 5 minutes</p>
       </div>
-      <a class="play" href="tenable.html">Play</a>
+      <a class="play" href="ranks.html">Play</a>
     </article>
     <article class="game" id="g-officer">
       <div class="top"><div class="seal" aria-hidden="true">誰</div><span class="status" id="s-officer">Not played</span></div>
@@ -88,7 +88,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     </article>
   </main>
 
-  <footer><span>Fan made. Not affiliated with Koei Tecmo or ITV.</span><span>Puzzles reset at midnight, your local time.</span></footer>
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
 
 <script>
@@ -102,7 +102,7 @@ function set(id,text,cls){const el=document.getElementById('s-'+id);el.textConte
   const card=document.getElementById('g-'+id);card.classList.toggle('finished',cls==='done');card.querySelector('.play').textContent=cls==='done'?'See result':cls==='live'?'Continue':'Play'}
 let done=0;
 const ten=get('mt_day'+t);
-if(ten){if(ten.over){set('tenable',(ten.found||[]).length+' / 10','done');done++}else set('tenable',(ten.found||[]).length+' / 10 so far','live')}
+if(ten){if(ten.over){set('ranks',(ten.found||[]).length+' / 10','done');done++}else set('ranks',(ten.found||[]).length+' / 10 so far','live')}
 const off=get('mo_day'+t);
 if(off){const n=(off.guesses||[]).length;if(off.over){set('officer',off.win?'Found in '+n:'Missed','done');done++}else if(n)set('officer',n+' guesses so far','live')}
 const ban=get('fb_day'+t);

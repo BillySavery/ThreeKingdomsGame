@@ -45,8 +45,8 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <header class="mast">
     <div class="han" aria-hidden="true">三國</div>
     <h1>Three Kingdoms <em>Daily</em></h1>
-    <p>Three puzzles every day from the age of heroes: the history, the Romance and the games.</p>
-    <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/3</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
+    <p>Four puzzles every day from the age of heroes: the history, the Romance and the games.</p>
+    <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/4</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
   </header>
 
   <main class="games">
@@ -77,6 +77,15 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       </div>
       <a class="play" href="banners.html">Play</a>
     </article>
+    <article class="game" id="g-map">
+      <div class="top"><div class="seal" aria-hidden="true">戰</div><span class="status" id="s-map">Not played</span></div>
+      <div class="body">
+        <h2>Battle Map</h2>
+        <p class="what">Five battles a day. Drop a pin where each was fought, then see how close you were and who held the land.</p>
+        <p class="how">About 3 minutes</p>
+      </div>
+      <a class="play" href="map.html">Play</a>
+    </article>
   </main>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo or ITV.</span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -98,7 +107,9 @@ const off=get('mo_day'+t);
 if(off){const n=(off.guesses||[]).length;if(off.over){set('officer',off.win?'Found in '+n:'Missed','done');done++}else if(n)set('officer',n+' guesses so far','live')}
 const ban=get('fb_day'+t);
 if(ban){const s=(ban.solved||[]).length;if(ban.over){set('banners',s+' / 4 banners','done');done++}else if(s||ban.mistakes)set('banners',s+' / 4 so far','live')}
-document.getElementById('doneCount').textContent=done+'/3';
+const bm=get('bm_day'+t);
+if(bm){const n=(bm.guesses||[]).length,p=(bm.guesses||[]).reduce((a,g)=>a+g.p,0);if(bm.done){set('map',p.toLocaleString('en-GB')+' points','done');done++}else if(n)set('map',n+' of 5 so far','live')}
+document.getElementById('doneCount').textContent=done+'/4';
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);
 })();

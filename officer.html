@@ -101,24 +101,24 @@ tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-del
 
   <div class="tablewrap">
     <table>
-      <thead><tr><th>Officer</th><th>Faction</th><th>Gender</th><th>Role</th><th>Family name</th></tr></thead>
+      <thead><tr><th>Officer</th><th>Faction</th><th>Gender</th><th>Born</th><th>Died</th><th>Family name</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
     <div class="empty" id="empty">Your guesses will appear here, newest at the top.</div>
   </div>
 
-  <div class="legend"><span style="--c:var(--hit)">Match</span><span style="--c:var(--miss)">No match</span></div>
+  <div class="legend"><span style="--c:var(--hit)">Match</span><span style="--c:var(--near)">Within 5 years</span><span style="--c:var(--miss)">No match</span></div>
 
   <div class="stats" id="stats"></div>
 
   <div class="rules">
-    <b>How to play.</b> Guess the mystery officer in 8 tries. Each guess shows how it compares with the answer on faction, gender, role and family name. Factions follow the Dynasty Warriors games, so the Sima clan and their allies count as Jin. Warlords, the Han court and the Yellow Turbans count as Other.
+    <b>How to play.</b> Guess the mystery officer in 8 tries. Each guess shows how it compares with the answer on faction, gender, birth year, death year and family name. Arrows on the years point towards the answer: ↑ means the answer was born or died later, ↓ earlier. Amber means within 5 years. A year marked c. is approximate, and ? means no reliable birth year is recorded; a green ? means today's officer has no recorded birth year either. Factions follow the Dynasty Warriors games, so the Sima clan and their allies count as Jin. Warlords, the Han court and the Yellow Turbans count as Other.
   </div>
 </div>
 
 <script>
 (()=>{
-// Name | Faction (Wei Shu Wu Jin Other) | Gender | Role | Year of death
+// Name | Faction (Wei Shu Wu Jin Other) | Gender | Role (no longer shown) | Year of death
 const RAW=`Cao Cao|Wei|M|Ruler|220
 Cao Pi|Wei|M|Ruler|226
 Cao Rui|Wei|M|Ruler|239
@@ -228,7 +228,13 @@ Ju Shou|Other|M|Strategist|200`;
 const ALIAS={"Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Lianshi":["Bu Lianshi","Lady Bu"],"Zhuge Liang":["Kongming"],"Lu Bu":["Lv Bu"],"Emperor Xian":["Liu Xie"],"Sima Yi":["Zhongda"],"Liu Shan":["Adou"],"Taishi Ci":["Taishici"],"Wang Yuanji":["Yuanji"]};
 // Family names that take two characters
 const DOUBLE=["Xiahou","Sima","Zhuge","Taishi","Gongsun"];
-const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n.split(' ')[0]);return{n,f,g,r,d:+d,sur}});
+// Birth years from the Records of the Three Kingdoms as summarised on Wikipedia. Negative = approximate (c.), missing = not recorded.
+const BORN={"Cao Cao":155,"Cao Pi":187,"Cao Rui":-205,"Cao Ren":168,"Zhang Liao":169,"Jia Xu":147,"Guo Jia":170,"Xun Yu":163,"Xun You":157,"Cao Zhi":192,"Cao Zhang":-189,"Zhen Ji":183,"Yang Xiu":175,
+"Sima Yi":179,"Sima Shi":208,"Sima Zhao":211,"Sima Yan":236,"Zhang Chunhua":189,"Wang Yuanji":217,"Deng Ai":-197,"Zhong Hui":225,"Jia Chong":217,"Wen Yang":238,
+"Liu Bei":161,"Liu Shan":207,"Ma Chao":176,"Zhuge Liang":181,"Pang Tong":179,"Fa Zheng":176,"Jiang Wei":202,"Ma Su":190,"Ma Liang":187,
+"Sun Jian":155,"Sun Ce":175,"Sun Quan":182,"Sun Liang":243,"Sun Xiu":235,"Sun Hao":242,"Zhou Yu":175,"Lu Su":172,"Lu Meng":178,"Lu Xun":183,"Taishi Ci":166,"Zhu Ran":182,"Zhu Huan":177,"Zhuge Jin":174,"Zhang Zhao":156,"Lu Kang":226,"Zhuge Ke":203,
+"Wang Yun":137,"Liu Biao":142,"Kong Rong":153,"Tao Qian":132,"Emperor Xian":181};
+const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n.split(' ')[0]);const by=BORN[n];return{n,f,g,r,d:+d,sur,b:by==null?null:Math.abs(by),bc:by<0}});
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 OFF.forEach(o=>{o.keys=[o.n,...(ALIAS[o.n]||[])].map(norm)});
 const BY=new Map(OFF.map(o=>[o.n,o]));
@@ -255,9 +261,12 @@ function start(mode){
   render(false);
   if(G.over)finish(true);else{$('end').hidden=true;$('entry').hidden=false;setTimeout(()=>$('guess').focus(),50)}
 }
+// Years: hit if equal, near if within 5, arrow points from the guess towards the answer
+function yr(gv,av){if(gv==null||av==null)return{c:gv==null&&av==null?'hit':'',arr:''};if(gv===av)return{c:'hit',arr:''};return{c:Math.abs(gv-av)<=5?'near':'',arr:av>gv?'↑':'↓'}}
 function compare(g,a){
-  return{f:g.f===a.f,g:g.g===a.g,r:g.r===a.r,sur:g.sur===a.sur};
+  return{f:g.f===a.f,g:g.g===a.g,b:yr(g.b,a.b),d:yr(g.d,a.d),sur:g.sur===a.sur};
 }
+const bornTxt=o=>o.b==null?'?':(o.bc?'c. ':'')+o.b;
 function render(animateFirst){
   const tb=$('rows');tb.innerHTML='';
   [...G.guesses].reverse().forEach((g,i)=>{
@@ -266,7 +275,8 @@ function render(animateFirst){
     tr.appendChild(cell(g.n,''));
     tr.appendChild(cell(g.f,c.f?'hit':''));
     tr.appendChild(cell(g.g==='F'?'Female':'Male',c.g?'hit':''));
-    tr.appendChild(cell(g.r,c.r?'hit':''));
+    tr.appendChild(cell(bornTxt(g),c.b.c,c.b.arr));
+    tr.appendChild(cell(String(g.d),c.d.c,c.d.arr));
     tr.appendChild(cell(g.sur,c.sur?'hit':''));
     tb.appendChild(tr);
   });
@@ -292,7 +302,7 @@ function finish(restoring){
   $('entry').hidden=true;$('end').hidden=false;
   const a=G.ans,n=G.guesses.length;
   $('endT').textContent=G.win?'Found!':'Out of guesses';
-  $('endP').textContent=(G.win?`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. `:`It was ${a.n}. `)+`${a.r}, ${a.f}.`;
+  $('endP').textContent=(G.win?`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. `:`It was ${a.n}. `)+`${a.f}, ${bornTxt(a)} to ${a.d}.`;
   if(!restoring){const st=store.get('stats',{played:0,won:0,streak:0,lastDay:null});st.played++;if(G.win)st.won++;
     if(G.mode==='daily'){st.streak=G.win?((st.lastDay===today()-1?st.streak:0)+1):0;st.lastDay=today()}store.set('stats',st);render(false)}
   $('share').focus();
@@ -320,7 +330,7 @@ $('submit').onclick=()=>submit();
 $('home').onclick=()=>start('daily');
 $('share').onclick=()=>{
   const sq=c=>c==='hit'||c===true?'🟩':c==='near'?'🟨':'⬛';
-  const lines=G.guesses.map(g=>{const c=compare(g,G.ans);return[c.f,c.g,c.r,c.sur].map(sq).join('')});
+  const lines=G.guesses.map(g=>{const c=compare(g,G.ans);return[c.f,c.g,c.b.c,c.d.c,c.sur].map(sq).join('')});
   const txt=`Mystery Officer ${G.mode==='daily'?'#'+(today()+1):''} ${G.win?G.guesses.length:'X'}/${MAX}\n${lines.join('\n')}`;
   const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{fb2(txt);done()})}catch(e){fb2(txt);done()}

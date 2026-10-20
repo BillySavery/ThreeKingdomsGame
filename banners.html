@@ -89,7 +89,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="endcard" id="end" hidden>
     <h2 id="endT">Banners raised</h2>
     <p id="endP"></p>
-    <div class="controls"><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
+    <div class="controls"><button class="btn primary" id="reveal" hidden>Reveal answers</button><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -342,18 +342,25 @@ function submit(){
   if(G.mistakes>=4){G.over=true;save();setTimeout(()=>{G.sel.clear();finish(false)},600);return}
   save();render();
 }
-function finish(restoring){
-  const won=G.solved.length===4;
-  // reveal remaining in difficulty order
+// On a loss the unsolved groups stay hidden until the player taps Reveal answers
+function revealRest(){
   [0,1,2,3].forEach(lv=>{if(!G.solved.includes(lv))G.solved.push(lv)});
+  render();$('endP').textContent='Four mistakes. The full solution is shown above.';$('reveal').hidden=true;
+}
+const revKey=()=>'rev'+today();const wasRevealed=()=>G.mode==='daily'&&store.get(revKey(),false);const markRevealed=()=>{if(G.mode==='daily')store.set(revKey(),true)};
+function finish(restoring){
+  const won=G.solved.length===4&&G.mistakes<4;
   G.sel.clear();render();
   $('controls').hidden=true;$('lives').hidden=true;$('end').hidden=false;
   $('endT').textContent=won?(G.mistakes===0?'Perfect':'Banners raised'):'The line broke';
-  $('endP').textContent=won?`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}.`:'Four mistakes. The full solution is shown above.';
+  if(won){$('endP').textContent=`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}.`;$('reveal').hidden=true}
+  else if(wasRevealed())revealRest();
+  else{$('endP').textContent='Four mistakes. The groups you missed stay hidden until you reveal them.';$('reveal').hidden=false}
   if(!restoring){const st=store.get('stats',{played:0,won:0,perfect:0});st.played++;if(won)st.won++;if(won&&!G.mistakes)st.perfect++;store.set('stats',st);render()}
   G.wonFlag=won;$('share').focus();
 }
 function nextFree(){if(!freeQ.length)freeQ=shuffle(PUZZLES.map((_,i)=>i));let pi=freeQ.shift();if(G&&pi===G.pi&&freeQ.length){freeQ.push(pi);pi=freeQ.shift()}start('free',pi)}
+$('reveal').onclick=()=>{markRevealed();revealRest();$('share').focus()};
 $('submit').onclick=submit;
 $('shuffle').onclick=()=>{G.order=shuffle(G.order);render()};
 $('clear').onclick=()=>{G.sel.clear();render()};

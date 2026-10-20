@@ -111,6 +111,7 @@ ol.tower{list-style:none;margin:0;padding:0;display:grid;gap:5px}
     <p id="endP"></p>
     <div class="also" id="also"></div>
     <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="reveal" hidden>Reveal answers</button>
       <button class="btn" id="share">Copy result</button>
       <span class="nextin" id="next" aria-live="polite"></span>
     </div>
@@ -261,18 +262,27 @@ function submit(name){
 }
 function fb(t,c){$('fb').textContent=t;$('fb').className='feedback'+(c?' '+c:'')}
 
-function finish(restoring){
-  const b=G.b,got=G.found.size;
-  // reveal the rest
-  const missing=b.a.filter(x=>!G.found.has(x.n));
+// On a loss the missed answers stay hidden until the player taps Reveal answers
+function revealMissed(){
+  const b=G.b,got=G.found.size,missing=b.a.filter(x=>!G.found.has(x.n));
   if(b.ranked){G.slots=G.slots.map((s,i)=>s||{n:b.a[i].n,note:b.a[i].note,miss:true})}
   else{let k=0;G.slots=G.slots.map(s=>s||(missing[k]?{n:missing[k].n,note:missing[k++].note,miss:true}:null))}
   render();
-  $('entry').hidden=true;$('end').hidden=false;
-  $('endT').textContent=got>=10?'Full ranks!':got>=7?'So close':got>=4?'Well fought':'Routed';
-  $('endP').textContent=got>=10?`All ten found with ${G.lives} ${G.lives===1?'life':'lives'} to spare.`:`You found ${got} of 10. The answers you missed are shown in grey.`;
+  $('endP').textContent=`You found ${got} of 10. The answers you missed are shown in grey.`;
   const extra=b.ranked?[]:missing.slice(10-got);
   $('also').innerHTML=extra.length?'<b>Also correct:</b> '+extra.map(x=>x.n).join(', ')+'.':'';
+  $('reveal').hidden=true;
+}
+const revKey=()=>'rev'+today();const wasRevealed=()=>G.mode==='daily'&&store.get(revKey(),false);const markRevealed=()=>{if(G.mode==='daily')store.set(revKey(),true)};
+function finish(restoring){
+  const got=G.found.size;
+  render();
+  $('entry').hidden=true;$('end').hidden=false;
+  $('endT').textContent=got>=10?'Full ranks!':got>=7?'So close':got>=4?'Well fought':'Routed';
+  $('also').innerHTML='';
+  if(got>=10){$('endP').textContent=`All ten found with ${G.lives} ${G.lives===1?'life':'lives'} to spare.`;$('reveal').hidden=true}
+  else if(wasRevealed())revealMissed();
+  else{$('endP').textContent=`You found ${got} of 10. The rest stay hidden until you reveal them.`;$('reveal').hidden=false}
   if(!restoring){
     const st=store.get('stats',{played:0,full:0,total:0,streak:0,lastDay:null});
     st.played++;st.total+=got;if(got>=10)st.full++;
@@ -324,6 +334,7 @@ $('guess').addEventListener('keydown',e=>{
 });
 $('guess').addEventListener('blur',()=>setTimeout(closeSugg,120));
 $('submit').onclick=()=>submit();
+$('reveal').onclick=()=>{markRevealed();revealMissed();$('share').focus()};
 $('giveup').onclick=()=>{if(G.over)return;if($('giveup').dataset.arm){G.over=true;save();finish();delete $('giveup').dataset.arm;$('giveup').textContent='Give up'}else{$('giveup').dataset.arm=1;$('giveup').textContent='Tap again to reveal';setTimeout(()=>{delete $('giveup').dataset.arm;$('giveup').textContent='Give up'},2500)}};
 
 // ---------- modes ----------

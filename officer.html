@@ -96,7 +96,7 @@ tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-del
   <div class="endcard" id="end" hidden>
     <h2 id="endT">Found!</h2>
     <p id="endP"></p>
-    <div class="actions"><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
+    <div class="actions"><button class="btn primary" id="reveal" hidden>Reveal answer</button><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
   </div>
 
   <div class="tablewrap">
@@ -298,11 +298,16 @@ function submit(name){
   save();render(true);
   if(G.over)setTimeout(()=>finish(false),500);
 }
+// On a loss the answer stays hidden until the player taps Reveal answer
+function revealAns(){const a=G.ans;$('endP').textContent=`It was ${a.n}. ${a.f}, ${bornTxt(a)} to ${a.d}.`;$('reveal').hidden=true}
+const revKey=()=>'rev'+today();const wasRevealed=()=>G.mode==='daily'&&store.get(revKey(),false);const markRevealed=()=>{if(G.mode==='daily')store.set(revKey(),true)};
 function finish(restoring){
   $('entry').hidden=true;$('end').hidden=false;
   const a=G.ans,n=G.guesses.length;
   $('endT').textContent=G.win?'Found!':'Out of guesses';
-  $('endP').textContent=(G.win?`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. `:`It was ${a.n}. `)+`${a.f}, ${bornTxt(a)} to ${a.d}.`;
+  if(G.win){$('endP').textContent=`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. ${a.f}, ${bornTxt(a)} to ${a.d}.`;$('reveal').hidden=true}
+  else if(wasRevealed())revealAns();
+  else{$('endP').textContent="Today's officer stays hidden until you reveal them.";$('reveal').hidden=false}
   if(!restoring){const st=store.get('stats',{played:0,won:0,streak:0,lastDay:null});st.played++;if(G.win)st.won++;
     if(G.mode==='daily'){st.streak=G.win?((st.lastDay===today()-1?st.streak:0)+1):0;st.lastDay=today()}store.set('stats',st);render(false)}
   $('share').focus();
@@ -327,6 +332,7 @@ $('guess').addEventListener('input',showSugg);
 $('guess').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();moveSel(1)}else if(e.key==='ArrowUp'){e.preventDefault();moveSel(-1)}else if(e.key==='Enter'){e.preventDefault();submit()}else if(e.key==='Escape')closeSugg()});
 $('guess').addEventListener('blur',()=>setTimeout(closeSugg,120));
 $('submit').onclick=()=>submit();
+$('reveal').onclick=()=>{markRevealed();revealAns();$('share').focus()};
 $('home').onclick=()=>start('daily');
 $('share').onclick=()=>{
   const sq=c=>c==='hit'||c===true?'🟩':c==='near'?'🟨':'⬛';

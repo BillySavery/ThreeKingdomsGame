@@ -46,8 +46,8 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <header class="mast">
     <div class="han" aria-hidden="true">三國</div>
     <h1>Three Kingdoms <em>Daily</em></h1>
-    <p>Four puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
-    <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/4</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
+    <p>Five puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
+    <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/5</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
   </header>
 
   <main class="games">
@@ -87,6 +87,15 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       </div>
       <a class="play" href="map.html">Play</a>
     </article>
+    <article class="game" id="g-novel">
+      <div class="top"><div class="seal" aria-hidden="true">真</div><span class="status" id="s-novel">Not played</span></div>
+      <div class="body">
+        <h2>Novel or History</h2>
+        <p class="what">Ten statements about the era. Did it really happen, or did the Romance make it up? Every answer tells you where the story comes from.</p>
+        <p class="how">About 4 minutes</p>
+      </div>
+      <a class="play" href="novel.html">Play</a>
+    </article>
     <article class="game" id="g-fact">
       <div class="top"><div class="seal" aria-hidden="true">史</div><span class="status" id="s-fact">Not revealed</span></div>
       <div class="body">
@@ -119,7 +128,9 @@ const ban=get('fb_day'+t);
 if(ban){const s=(ban.solved||[]).length;if(ban.over){set('banners',s+' / 4 banners','done');done++}else if(s||ban.mistakes)set('banners',s+' / 4 so far','live')}
 const bm=get('bm_day'+t);
 if(bm){const n=(bm.guesses||[]).length,p=(bm.guesses||[]).reduce((a,g)=>a+g.p,0);if(bm.done){set('map',p.toLocaleString('en-GB')+' points','done');done++}else if(n)set('map',n+' of 5 so far','live')}
-document.getElementById('doneCount').textContent=done+'/4';
+const nh=get('nh_day'+t);
+if(nh){const s=(nh.picks||[]).length;if(nh.over){set('novel',(nh.score!=null?nh.score:'?')+' / 10','done');done++}else if(s)set('novel',s+' of 10 so far','live')}
+document.getElementById('doneCount').textContent=done+'/5';
 if(get('fd_day'+t)){const s=document.getElementById('s-fact');s.textContent='Revealed';s.className='status done';const c=document.getElementById('g-fact');c.classList.add('finished');c.querySelector('.play').textContent='Read again'}
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);

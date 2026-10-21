@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Novel or History</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Progress pips, a statement card with two seal buttons, the verdict, then the end card and a review list */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --miss:#9b3a2c; --jade:#1f4a40;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.chip{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--mute);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold2)}
+.pips{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.pip{height:8px;background:var(--miss);opacity:1;background:#3a2e25}
+.pip.cur{background:var(--gold)}
+.pip.ok{background:var(--hit)}.pip.bad{background:var(--miss)}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold)}
+.card .head{padding:14px 18px 0;display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);font-variant-numeric:tabular-nums}
+.card .head b{color:var(--gold)}
+.stmt{font-family:var(--display);font-weight:400;font-size:clamp(23px,5.4vw,30px);line-height:1.25;margin:0;padding:14px 18px 22px;text-wrap:balance;min-height:7.5em;display:flex;align-items:center}
+.choices{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--gold)}
+.choice{display:grid;justify-items:center;gap:8px;padding:16px 10px;background:transparent;color:var(--paper);border:0;cursor:pointer;font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+.choice + .choice{border-left:1px solid var(--line)}
+.choice .s{width:54px;height:54px;border:2px solid var(--gold);background:var(--lacquer);display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--gold);font-weight:400;letter-spacing:0;transition:transform .15s ease}
+.choice small{font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:none;color:var(--mute)}
+.choice:hover .s{transform:translateY(-2px)}
+.choice:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+.choice[disabled]{cursor:default;opacity:.45}
+.choice.picked{opacity:1;background:rgba(217,164,65,.08)}
+.verdict{border-top:1px solid var(--line);padding:16px 18px 18px;display:grid;gap:8px;animation:in .35s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.vtag{font-family:var(--display);font-size:26px;line-height:1.1;margin:0}
+.vtag.ok{color:#6fd0b0}.vtag.bad{color:#f08a72}
+.vtag span{display:block;font-family:var(--ui);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin-top:4px}
+.why{margin:0;line-height:1.55;font-size:16px;max-width:62ch}
+.btn{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:13px 16px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold);cursor:pointer;justify-self:start}
+.btn:hover{background:#a8261f}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:20px 18px;display:grid;gap:12px;text-align:center;justify-items:center}
+.score{font-family:var(--display);font-size:64px;line-height:1;color:var(--gold2);font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--mute)}
+.rank{font-family:var(--display);font-size:24px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.5;color:var(--mute);max-width:44ch}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.nextin b{color:var(--gold2);font-variant-numeric:tabular-nums}
+.copied{font-size:13px;color:var(--gold2);min-height:18px}
+.review{display:grid;gap:6px}
+.review h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 4px;color:var(--gold)}
+.ritem{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);padding:12px 14px;display:grid;gap:4px}
+.ritem .rh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ritem .rh b{color:var(--paper)}
+.ritem .rs{font-size:15px;line-height:1.4}
+.ritem .rw{font-size:13.5px;color:var(--mute);line-height:1.5}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.verdict{animation:none}.choice .s{transition:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Novel or History<small>THREE KINGDOMS DAILY &middot; 三国</small></div>
+    <span class="chip">Day <b id="dayNo">1</b></span>
+  </header>
+
+  <div class="pips" id="pips" aria-hidden="true"></div>
+
+  <section id="play">
+    <article class="card" aria-live="polite">
+      <div class="head"><span>Statement <b id="qn">1</b> of 10</span><span>Score <b id="sc">0</b></span></div>
+      <p class="stmt" id="stmt"></p>
+      <div class="choices">
+        <button class="choice" id="pickH" type="button"><span class="s" aria-hidden="true">史</span>History<small>It's in the records</small></button>
+        <button class="choice" id="pickN" type="button"><span class="s" aria-hidden="true">義</span>Novel<small>The Romance or legend</small></button>
+      </div>
+      <div class="verdict" id="verdict" hidden>
+        <p class="vtag" id="vtag"></p>
+        <p class="why" id="why"></p>
+        <button class="btn" id="next" type="button">Next statement</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="endcard" id="end" hidden>
+    <div class="score" id="final">0<small>/10</small></div>
+    <p class="rank" id="rank"></p>
+    <p id="rankline"></p>
+    <div class="actions"><button class="btn" id="share" type="button">Copy result</button></div>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="stats">
+      <div><b id="stPlayed">0</b>Played</div>
+      <div><b id="stAvg">0</b>Average</div>
+      <div><b id="stStreak">0</b>Streak</div>
+    </div>
+    <div class="nextin">Ten new statements in <b id="cd">0h 0m</b></div>
+  </section>
+
+  <section class="review" id="review" hidden>
+    <h2>Today's ten</h2>
+    <div id="rlist" class="review"></div>
+  </section>
+
+  <div class="rules"><b>How to play.</b> Ten statements a day about the Three Kingdoms. Decide whether each one really happened according to the histories, or was invented by the Romance or later legend. Each answer explains where the story comes from.</div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+
+<script>
+const POOL=[
+["Liu Bei's arms reached down past his knees.", "H", "The official Records of the Three Kingdoms says so, and adds that he could see his own ears."],
+["Cao Cao cut off his own hair after his horse trampled a crop field.", "H", "He had ordered death for anyone damaging crops, so he cut his hair as a stand in for his head. It's in the notes to the official history."],
+["Guan Yu had poison scraped from his arm bone while he carried on eating and drinking.", "H", "The surgery really happened, blood filling a basin while he chatted with his officers."],
+["Hua Tuo was the doctor who scraped poison from Guan Yu's arm.", "N", "The history doesn't name the doctor. The novel brought in Hua Tuo, who had probably died years earlier."],
+["Guan Yu rode into Yan Liang's army at Baima and came back with his head.", "H", "He did it in 200 while fighting for Cao Cao. It's one of the few duels the histories record."],
+["Guan Yu killed Wen Chou.", "N", "Wen Chou died fighting Cao Cao's forces, but no source credits Guan Yu."],
+["Guan Yu killed Hua Xiong before his cup of wine had cooled.", "N", "The histories credit Sun Jian's troops with killing Hua Xiong."],
+["Liu Bei tied an inspector to a tree, whipped him 200 times and quit his post.", "H", "It was Liu Bei himself. The novel hands the beating to Zhang Fei."],
+["Liu Bei, Guan Yu and Zhang Fei swore brotherhood in a peach garden.", "N", "The Peach Garden Oath is the novel's creation."],
+["Liu Bei, Guan Yu and Zhang Fei slept in the same bed.", "H", "The official history says they shared a bed and loved each other like brothers."],
+["Zhang Fei held off Cao Cao's army at Changban with about 20 horsemen.", "H", "He broke the bridge, glared and roared a challenge. Nobody dared come near."],
+["Lady Mi threw herself into a well at Changban.", "N", "Her real fate is unknown. The well scene is pure Romance."],
+["Zhuge Liang borrowed 100,000 arrows using boats stuffed with straw.", "N", "Fiction, though Sun Quan had a boat fill with arrows at Ruxu in 213 and turned it round to balance it."],
+["Sun Quan's boat took so many arrows on one side he turned it to stop it tipping.", "H", "It happened at Ruxu in 213, and probably inspired the straw boats story."],
+["Zhuge Liang prayed for the east wind before Red Cliffs.", "N", "The wind ceremony was invented for the novel."],
+["Huang Gai came up with the fire attack at Red Cliffs.", "H", "He noticed Cao Cao's ships were linked and suggested burning them."],
+["Zhou Yu had Huang Gai flogged to make his fake surrender believable.", "N", "The bitter flesh ruse is fiction, but it became a well known idiom."],
+["Cao Cao's ships at Red Cliffs were linked together.", "H", "Zhou Yu's biography says Huang Gai saw the ships tied prow to stern."],
+["Pang Tong talked Cao Cao into chaining his fleet together.", "N", "The chaining was real but Pang Tong's role in it is invented."],
+["Guan Yu let Cao Cao escape at Huarong out of gratitude.", "N", "Cao Cao did flee through Huarong, but Guan Yu wasn't there."],
+["Cao Cao's army escaped Red Cliffs through mud so deep they laid grass to cross it.", "H", "Many weak soldiers were trampled in the mire on the Huarong road."],
+["Cao Cao claimed he burned his own ships after Red Cliffs.", "H", "He wrote to Sun Quan that disease made him do it, and Zhou Yu got the credit he didn't deserve."],
+["Zhuge Liang provoked Zhou Yu into dying of rage.", "N", "Zhou Yu died of illness in 210. The novel's rivalry is invented."],
+["Zhou Yu could spot a wrong note in music even after drinking.", "H", "People said when a tune had a mistake, Zhou Lang would turn his head."],
+["Zhuge Liang scolded Wang Lang so hard he fell dead from his horse.", "N", "Wang Lang died of natural causes in 228."],
+["Zhuge Liang played a zither on an empty city wall to bluff Sima Yi.", "N", "The story was quoted by Pei Songzhi, who pointed out Sima Yi wasn't even nearby."],
+["Zhao Yun opened his camp gates and beat the drums to scare off Cao Cao's army.", "H", "At the Han river in 219. Cao Cao feared an ambush and pulled back."],
+["Zhuge Liang sent Sima Yi women's clothes to taunt him.", "H", "It happened at Wuzhang Plains. Sima Yi still refused to fight."],
+["Zhuge Liang tried to extend his life with a ring of 49 lamps.", "N", "Wei Yan bursting in and knocking out the lamp is pure novel."],
+["A wooden statue of Zhuge Liang scared Sima Yi into running away.", "N", "Sima Yi pulled back when Shu turned to fight. The statue is the novel's addition."],
+["Sima Yi faked paralysis to avoid working for Cao Cao.", "H", "The Jin history says he stayed in bed claiming palsy."],
+["Sima Yi dribbled porridge down his front to look senile before his coup.", "H", "He fooled Cao Shuang's man Li Sheng in 248 and struck early in 249."],
+["Sima Yi could turn his head to look straight behind him.", "H", "The Jin history calls it his wolf glance. Cao Cao found it unsettling."],
+["Diaochan turned Lü Bu against Dong Zhuo.", "N", "Diaochan is fictional. The history mentions only an affair with one of Dong Zhuo's maids."],
+["Lü Bu had an affair with one of Dong Zhuo's maids.", "H", "He feared being found out, which helped push him to kill Dong Zhuo."],
+["Lü Bu settled a quarrel by shooting an arrow through a halberd's blade.", "H", "He hit the small side blade at 150 paces in 196, and both sides backed down."],
+["Lü Bu fought Liu Bei, Guan Yu and Zhang Fei at the same time.", "N", "Three heroes against Lü Bu at Hulao is a famous novel and opera scene."],
+["Dong Zhuo's corpse burned for days after a guard put a wick in his navel.", "H", "His body lay in the market and his fat kept the wick alight."],
+["Cao Cao tried to assassinate Dong Zhuo with a Seven Star Sword.", "N", "The sword and the attempt are inventions of the novel."],
+["Chen Gong freed Cao Cao after he was arrested on the run.", "N", "Chen Gong served Cao Cao, then betrayed him for Lü Bu. The rescue is fiction."],
+["Guan Yu passed five gates and killed six generals to rejoin Liu Bei.", "N", "One of the novel's best loved scenes, and entirely made up."],
+["Guan Yu sealed all of Cao Cao's gifts before leaving him.", "H", "He wrote a farewell letter, left the gifts and went to find Liu Bei."],
+["Guan Yu refused a marriage alliance by calling Sun Quan's son a dog.", "H", "He said a tiger's daughter would not marry a dog's son."],
+["Guan Yu's flood at Fancheng swallowed seven of Yu Jin's armies.", "H", "Autumn rains in 219 swamped them, and Yu Jin surrendered."],
+["Pang De took a coffin into battle against Guan Yu.", "N", "He did refuse to surrender and was executed, but the coffin comes from the novel."],
+["Cao Cao buried Guan Yu's head with full honours.", "H", "Sun Quan sent it to him, and he buried it at Luoyang."],
+["Guan Yu's ghost killed Lü Meng at a victory feast.", "N", "Lü Meng died of illness soon after taking Jing Province."],
+["Lü Meng's soldiers dressed as merchants to take Guan Yu's beacon towers.", "H", "They hid in boats wearing white robes and took the towers without a fight."],
+["Red Hare starved itself to death after Guan Yu died.", "N", "Historically the horse disappears from the records with Lü Bu."],
+["Zhang Fei was murdered by two of his own officers.", "H", "Zhang Da and Fan Qiang killed him in 221 and fled to Wu with his head."],
+["Pang Tong was killed at a place called Fallen Phoenix Slope.", "N", "He died from an arrow at the siege of Luo. The slope is fiction."],
+["Liu Bei wept because his thighs had grown fat.", "H", "He saw it as proof he'd gone too long without riding to war."],
+["Liu Bei dropped his chopsticks when Cao Cao called him a hero.", "H", "Cao Cao said the only heroes were the two of them. The thunder excuse came later."],
+["Liu Bei told Zhuge Liang to take the throne if his son proved useless.", "H", "He said it on his deathbed at Baidi in 223."],
+["Liu Bei warned that Ma Su's words exceeded his real ability.", "H", "Zhuge Liang ignored the warning, and Ma Su lost Jieting."],
+["Zhuge Liang spotted a rebel's bone at the back of Wei Yan's skull.", "N", "It's a novel device to mark Wei Yan as a future traitor."],
+["Zhuge Liang demoted himself three ranks after losing Jieting.", "H", "He asked for the punishment himself."],
+["Huang Zhong killed Xiahou Yuan at Mount Dingjun.", "H", "His charge in 219 broke Cao Cao's army in Hanzhong."],
+["Huang Zhong was around 70 when he fought at Mount Dingjun.", "N", "The novel makes him a fiery old man. His real age isn't recorded."],
+["Ma Chao forced Cao Cao to cut off his beard to escape.", "N", "Historically Xu Chu shielded Cao Cao with a saddle as they crossed the river."],
+["Xu Chu held up a saddle to shield Cao Cao from arrows.", "H", "He did it crossing the Wei river in 211 while punting the boat with his other hand."],
+["Xiahou Dun pulled out his eye and ate it.", "N", "He did lose an eye to an arrow, but eating it is the novel's touch."],
+["Xiahou Dun hated mirrors so much he smashed them.", "H", "Losing his eye made him sensitive about his looks."],
+["Dian Wei died holding a gate so Cao Cao could escape.", "H", "At Wan in 197, after Zhang Xiu turned on Cao Cao."],
+["Cao Cao's eldest son gave him his horse and died covering his escape.", "H", "Cao Ang died at Wan. Lady Ding never forgave Cao Cao."],
+["Sun Jian's men fished the imperial seal out of a well in Luoyang.", "H", "Wu records say so, though some historians doubted the story."],
+["Sun Ce was hounded to death by the ghost of a Daoist he executed.", "N", "He died from assassins' wounds in 200. The ghost comes from later tales."],
+["Taishi Ci and Sun Ce fought one on one.", "H", "Sun Ce grabbed his halberd and Taishi Ci took Sun Ce's helmet."],
+["Sun Quan chopped his desk in half and swore he would not surrender to Cao Cao.", "H", "He said anyone talking of surrender would end up like the desk."],
+["Sun Quan tried to burn Zhang Zhao out of his own house.", "H", "After a quarrel they blocked his door from both sides. Sun Quan set it alight to make him come out."],
+["Sun Quan wrote Zhuge Ziyu on a donkey to mock Zhuge Jin's long face.", "H", "Zhuge Jin's young son added two characters making it Zhuge Ziyu's donkey."],
+["Huang Gai was left in a toilet after being fished out of the river at Red Cliffs.", "H", "Nobody recognised him until Han Dang heard his voice."],
+["Gan Ning wore bells so people knew he was coming.", "H", "He did it as a young river pirate."],
+["Gan Ning raided Cao Cao's camp at night with about 100 men and lost none.", "H", "Sun Quan said Cao Cao had Zhang Liao, and he had Gan Ning."],
+["Zhang Liao charged Sun Quan's huge army at Hefei with about 800 men.", "H", "He reached Sun Quan's banner and almost caught him."],
+["Sun Quan escaped Zhang Liao by jumping his horse over a broken bridge.", "H", "It happened at Xiaoyao Ford in 215."],
+["Zhou Tai stripped at a banquet so Sun Quan could point out his scars.", "H", "Sun Quan told the story behind each wound."],
+["Lu Xun got lost in Zhuge Liang's Stone Sentinel Maze.", "N", "The magic rock formation exists only in the novel."],
+["Lu Xun waited months before burning Liu Bei's camps at Yiling.", "H", "His officers thought he was a coward until the fire attack in 222."],
+["Zhuge Liang's wife was said to have yellow hair and dark skin.", "H", "Her father described her that way. Her name Huang Yueying is later legend."],
+["Zhuge Liang stood about 1.84 metres tall.", "H", "He was eight chi tall in Han measures."],
+["The boy Cao Chong weighed an elephant using a boat.", "H", "It's in the official history, though some scholars doubt it."],
+["Cao Pi asked every mourner at Wang Can's funeral to bray like a donkey.", "H", "Wang Can loved the sound, so they brayed in his honour."],
+["Wang Can could rebuild a game of Go from memory.", "H", "When a board was knocked over, he put every stone back."],
+["Mi Heng stripped naked to drum in front of Cao Cao.", "H", "Cao Cao sent him to Liu Biao rather than kill him."],
+["Hua Tuo offered to cut open Cao Cao's skull to cure his headaches.", "N", "In the novel this gets Hua Tuo thrown in jail. The history gives other reasons for his death."],
+["Cao Cao fell fatally ill after chopping down a sacred pear tree.", "N", "He died of illness in 220. The tree spirit is the novel's."],
+["Cao Cao told his concubines to learn to make shoes after he died.", "H", "His will also asked for his incense to be shared out among them."],
+["Cao Cao wrote a commentary on The Art of War.", "H", "It's the oldest surviving commentary on Sun Tzu."],
+["Yuan Shu died asking for honey water that nobody could find.", "H", "He cried out, vomited blood and died in 199."],
+["Gongsun Zan's elite cavalry all rode white horses.", "H", "They were called the White Horse Volunteers."],
+["Zhang Lu sealed his treasury instead of burning it when Cao Cao came.", "H", "He said the goods belonged to the state. Cao Cao rewarded him."],
+["Cao Cao's daughter threw the imperial seal at Cao Pi's envoys.", "H", "Empress Cao cursed her brother as she hurled it down."],
+["Zhang Fei's wife was Xiahou Yuan's niece.", "H", "He captured her while she gathered firewood. Their daughters became Shu empresses."],
+["Liu Shan said he was too happy in Luoyang to miss Shu.", "H", "His answer to Sima Zhao gave Chinese an idiom for forgetting home."],
+["Deng Ai wrapped himself in felt and rolled down a mountain.", "H", "He did it on the Yinping route in 263, weeks before Shu fell."],
+["Lady Sun kept over 100 armed maids.", "H", "Liu Bei was nervous every time he went into her rooms."],
+["Zhao Yun and Zhang Fei blocked a river to stop Lady Sun taking Liu Shan to Wu.", "H", "They brought the boy back."],
+["Liu Bei's Wu wife was called Sun Shangxiang.", "N", "The histories just say Lady Sun. Shangxiang comes from later opera."],
+["Zhou Cang carried Guan Yu's great blade.", "N", "Zhou Cang is a fictional character."],
+["Guan Ping was Guan Yu's adopted son.", "N", "He was Guan Yu's natural son. The novel made him adopted."],
+["Guan Yu fought with the Green Dragon Crescent Blade.", "N", "No early source mentions it, and that kind of polearm looks much later."],
+["Lü Bu's weapon was the Sky Piercer halberd.", "N", "It's novel kit. The histories praise his archery and riding."],
+["Zhao Yun took the Qinggang sword from Xiahou En at Changban.", "N", "Both the sword and Xiahou En are fiction."],
+["Lü Bu murdered his master Ding Yuan.", "H", "Dong Zhuo bribed him to do it in 189."],
+["Yuan Shu declared himself emperor of a new dynasty.", "H", "He did it in 197 and quickly lost almost all his allies."],
+["Cao Cao burned his officers' secret letters to Yuan Shao without reading them.", "H", "He said that even he hadn't been sure he'd win at Guandu."],
+["Jiang Gan stole a forged letter from Zhou Yu's tent.", "N", "He visited Zhou Yu to win him over but went home empty handed."],
+["Liu Bei visited Zhuge Liang's cottage three times.", "H", "Zhuge Liang says so in his own memorial to Liu Shan."],
+["Xu Shu's mother killed herself in shame after he joined Cao Cao.", "N", "She was captured, and he left Liu Bei for her sake. The suicide is fiction."],
+["Zhou Yu and Sun Ce were born in the same year.", "H", "Both were born in 175 and called each other brothers."],
+["Cao Cao built the Bronze Sparrow Terrace to hold the Qiao sisters.", "N", "It comes from a playful Tang poem that the novel ran with."],
+["Guan Yu refused a title because it didn't contain the word Han.", "N", "His title Hanshou Ting was just a place name. The novel turned it into a pun."],
+["Liu Bei claimed descent from a prince who had over 120 sons.", "H", "Liu Sheng, Prince of Zhongshan, had so many sons the claim was hard to check."],
+["Zhang Fei untied a captured general who refused to surrender.", "H", "Yan Yan said Ba had generals who lose their heads but none who surrender."],
+["Zhuge Liang improved a crossbow that fired ten bolts at once.", "H", "He's credited with improving the repeating crossbow."],
+["Sima Shi's eye burst from its socket when he was startled.", "H", "He had an eye tumour treated, and Wen Yang's charge in 255 was too much."],
+["A Wei emperor died leading palace guards against Sima Zhao.", "H", "Cao Mao attacked in 260 and was stabbed to death."],
+["Yu Jin died of shame after seeing a painting of his own surrender.", "H", "Cao Pi had it painted at Cao Cao's tomb."],
+["Meng Huo's allies wore oiled rattan armour and were burned in a valley.", "N", "The rattan armour soldiers are fiction."],
+["Meng Huo's wife Zhu Rong fought Shu with flying knives.", "N", "Zhu Rong is the novel's invention."],
+["Guan Yu loved the Zuo Commentary on the Spring and Autumn Annals.", "H", "He could recite much of it."],
+["Kong Rong gave the bigger pears to his brothers when he was four.", "H", "Chinese children still learn the story."],
+["The Five Tiger Generals was an official title in Shu.", "N", "The novel made it up. The official history just grouped them in one chapter."],
+["Zhuge Liang called Guan Yu the Beard in a letter.", "H", "He said Ma Chao couldn't match the Beard."],
+["Emperor Xian cooked famine porridge himself to catch corrupt officials.", "H", "He did it in Chang'an in 194."],
+["Liu Bei minted coins marked as worth a hundred.", "H", "The treasury filled within months of taking Chengdu."],
+["Liu Bei lent Pang Tong his white horse just before the ambush.", "N", "The horse swap is part of the novel's Fallen Phoenix scene."],
+["Dong Zhuo moved the capital from Luoyang to Chang'an.", "H", "He did it in 190 and burned Luoyang."],
+["Zhang Jue died before the Yellow Turbans were defeated.", "H", "He fell ill and died in 184."],
+["Cao Cao's grandfather by adoption was a palace eunuch.", "H", "Cao Teng adopted his father, Cao Song."],
+["Wang Yun promised Diaochan to both Dong Zhuo and Lü Bu.", "N", "The chain stratagem is fiction, as is Diaochan."],
+["Wu mothers hushed crying children by saying Zhang Liao was coming.", "H", "His charge at Hefei made his name a scare story."],
+["Sun Quan accepted the title King of Wu from Cao Pi.", "H", "He did it in 221, then broke away and became emperor in 229."],
+["Ma Dai killed Wei Yan after Wei Yan shouted who dares kill me.", "N", "Ma Dai did kill him, but the shouted challenge is the novel's scene."],
+["Cao Cao ordered a simple burial with no gold or jade.", "H", "His will asked for plain clothes and no treasure."],
+["Cao Cao built 72 decoy tombs to fool robbers.", "N", "It's folklore. His real tomb was found near Anyang."],
+["Zhuge Liang invented steamed buns.", "N", "A legend says he offered buns shaped like heads to a river spirit. It isn't history."],
+["Guan Yu was turned into a god.", "H", "Over the centuries emperors raised him to Guandi, a god of war and loyalty."],
+["A Roman merchant visited Sun Quan's court.", "H", "Qin Lun arrived in 226 and told Sun Quan about the Roman Empire."],
+["Queen Himiko of Japan sent envoys to Wei.", "H", "Wei gave her a gold seal in 239."],
+["Liu Bei's horse Dilu was believed to bring bad luck to its rider.", "H", "Its markings were thought unlucky. Liu Bei rode it anyway."],
+["Xiahou Yuan's army was famous for its speed.", "H", "Soldiers said it covered 500 li in three days."],
+["Sun Ce and Zhou Yu married sisters.", "H", "Sun Ce took the elder Qiao, Zhou Yu the younger."],
+["Cao Cao composed poetry.", "H", "He's one of the great poets of his age. His Short Song is still learned in schools."],
+["Zhuge Liang always carried a feather fan.", "N", "The fan image was first used for Zhou Yu in a Song poem, and later moved to Zhuge Liang."],
+["Cao Cao said he'd rather betray the world than let the world betray him.", "N", "The famous wording is the novel's. A later account gives a milder line about wronging others."],
+["Jiang Wei defected from Wei to Shu.", "H", "He crossed over in 228 during Zhuge Liang's first northern campaign."],
+["Jiang Wei led nine campaigns against Wei.", "N", "The novel says nine. Historians count around eleven."],
+["Zhuge Liang marched out of Qishan six times.", "N", "The novel's number. He led five northern campaigns, and not all went by Qishan."],
+["Zhuge Liang captured Meng Huo seven times.", "N", "It isn't in the main official history. It comes from a later source and may be legend."],
+["Hulao Pass and Sishui Pass were two different places.", "N", "They're two names for the same pass. The novel treats them as separate."],
+["Cao Cao's army at Red Cliffs numbered over 800,000.", "N", "That was Cao Cao's boast. Zhou Yu put the real figure nearer 230,000."]
+];
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=id=>document.getElementById(id);
+const t=today(),PER=10;
+
+/* each day takes 6 history and 4 novel statements; each type cycles through its whole list before repeating */
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+function shuffled(arr,seed){const r=rng(seed),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function take(kind,count,d,salt){
+  const list=POOL.map((_,i)=>i).filter(i=>POOL[i][1]===kind),span=Math.floor(list.length/count);
+  const pos=((d%span)+span)%span;
+  return shuffled(list,salt).slice(pos*count,pos*count+count);
+}
+function dayItems(d){return shuffled(take('H',6,d,9001).concat(take('N',4,d,4242)),d*31+7)}
+const items=dayItems(t);
+const KEY='nh_day'+t;
+let st=get(KEY)||{picks:[],over:false};
+$('dayNo').textContent=t+1;
+
+const pips=$('pips');
+for(let i=0;i<PER;i++){const p=document.createElement('div');p.className='pip';pips.append(p)}
+function paintPips(){[...pips.children].forEach((p,i)=>{const k=st.picks[i];p.className='pip'+(k?(k===POOL[items[i]][1]?' ok':' bad'):(i===st.picks.length&&!st.over?' cur':''))})}
+const score=()=>st.picks.reduce((a,k,i)=>a+(k===POOL[items[i]][1]?1:0),0);
+
+let showing=false;
+function renderQ(){
+  const i=st.picks.length;
+  if(i>=PER){finish();return}
+  const s=POOL[items[i]];
+  $('qn').textContent=i+1;$('sc').textContent=score();
+  $('stmt').textContent=s[0];
+  $('verdict').hidden=true;
+  ['pickH','pickN'].forEach(id=>{const b=$(id);b.disabled=false;b.classList.remove('picked')});
+  showing=false;paintPips();
+}
+function pick(k){
+  if(showing||st.over) return;
+  const i=st.picks.length,s=POOL[items[i]];
+  st.picks.push(k);put(KEY,st);showing=true;
+  const ok=k===s[1];
+  $('pickH').disabled=true;$('pickN').disabled=true;
+  $(k==='H'?'pickH':'pickN').classList.add('picked');
+  const v=$('vtag');v.className='vtag '+(ok?'ok':'bad');
+  v.innerHTML='';v.append(document.createTextNode(ok?'Correct':'Not quite'));
+  const sp=document.createElement('span');sp.textContent=s[1]==='H'?'This is history':'This is from the novel or legend';v.append(sp);
+  $('why').textContent=s[2];
+  $('next').textContent=st.picks.length>=PER?'See your score':'Next statement';
+  $('verdict').hidden=false;$('sc').textContent=score();paintPips();
+  $('next').focus({preventScroll:true});
+}
+$('pickH').addEventListener('click',()=>pick('H'));
+$('pickN').addEventListener('click',()=>pick('N'));
+$('next').addEventListener('click',()=>renderQ());
+
+const RANKS=[[10,'Chen Shou himself','A perfect day. You know where every story comes from.'],[8,'Court historian','Very few tall tales get past you.'],[6,'Teahouse storyteller','You know the legends, and most of the truth behind them.'],[4,'Opera regular','Luo Guanzhong fooled you a few times today.'],[0,'Taken in by the Romance','The novel is very persuasive. Come back tomorrow.']];
+function updateStats(){
+  const s=get('nh_stats')||{played:0,total:0,streak:0,last:null};
+  if(s.last!==t){s.played++;s.total+=score();s.streak=(s.last===t-1)?s.streak+1:1;s.last=t;put('nh_stats',s)}
+  return s;
+}
+function finish(){
+  const n=score();
+  if(!st.over||st.score!==n){st.over=true;st.score=n;put(KEY,st)}
+  const s=updateStats();
+  $('play').hidden=true;$('end').hidden=false;paintPips();
+  $('final').firstChild.nodeValue=n;
+  const r=RANKS.find(x=>n>=x[0]);$('rank').textContent=r[1];$('rankline').textContent=r[2];
+  $('stPlayed').textContent=s.played;$('stAvg').textContent=(s.total/s.played).toFixed(1);$('stStreak').textContent=s.streak;
+  const list=$('rlist');list.innerHTML='';
+  items.forEach((ix,i)=>{const it=POOL[ix],ok=st.picks[i]===it[1];
+    const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',ok?'var(--hit)':'var(--miss)');
+    const h=document.createElement('div');h.className='rh';h.append(document.createTextNode((i+1)+' · '));const b=document.createElement('b');b.textContent=it[1]==='H'?'History':'Novel';h.append(b,document.createTextNode(ok?' · you got it':' · you said '+(it[1]==='H'?'Novel':'History')));
+    const s1=document.createElement('div');s1.className='rs';s1.textContent=it[0];
+    const s2=document.createElement('div');s2.className='rw';s2.textContent=it[2];
+    d.append(h,s1,s2);list.append(d)});
+  $('review').hidden=false;
+}
+$('share').addEventListener('click',()=>{
+  const line=st.picks.map((k,i)=>k===POOL[items[i]][1]?'\u{1F7E9}':'\u{1F7E5}').join('');
+  const text='Novel or History · Day '+(t+1)+'\n'+score()+'/10 '+line+'\nthreekingdomsgame.co.uk';
+  const done=()=>$('copied').textContent='Copied. Paste it anywhere.';
+  try{navigator.clipboard.writeText(text).then(done,()=>{$('copied').textContent=text})}catch(e){$('copied').textContent=text}
+});
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+document.addEventListener('keydown',e=>{if(st.over)return;if(!showing){if(e.key==='h'||e.key==='H'||e.key==='ArrowLeft')pick('H');else if(e.key==='n'||e.key==='N'||e.key==='ArrowRight')pick('N')}else if(e.key==='Enter'&&document.activeElement!==$('next'))renderQ()});
+
+if(st.over||st.picks.length>=PER) finish(); else renderQ();
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+</body></html>

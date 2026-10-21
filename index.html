@@ -46,7 +46,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <header class="mast">
     <div class="han" aria-hidden="true">三國</div>
     <h1>Three Kingdoms <em>Daily</em></h1>
-    <p>Four puzzles every day from the age of heroes: the history, the Romance and the games.</p>
+    <p>Four puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
     <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/4</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
   </header>
 
@@ -87,6 +87,15 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       </div>
       <a class="play" href="map.html">Play</a>
     </article>
+    <article class="game" id="g-fact">
+      <div class="top"><div class="seal" aria-hidden="true">史</div><span class="status" id="s-fact">Not revealed</span></div>
+      <div class="body">
+        <h2>Daily Fact</h2>
+        <p class="what">One little known story from the era each day, from the histories and the Romance. Read the question, then reveal the answer.</p>
+        <p class="how">About 1 minute</p>
+      </div>
+      <a class="play" href="fact.html">Reveal</a>
+    </article>
   </main>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -111,6 +120,7 @@ if(ban){const s=(ban.solved||[]).length;if(ban.over){set('banners',s+' / 4 banne
 const bm=get('bm_day'+t);
 if(bm){const n=(bm.guesses||[]).length,p=(bm.guesses||[]).reduce((a,g)=>a+g.p,0);if(bm.done){set('map',p.toLocaleString('en-GB')+' points','done');done++}else if(n)set('map',n+' of 5 so far','live')}
 document.getElementById('doneCount').textContent=done+'/4';
+if(get('fd_day'+t)){const s=document.getElementById('s-fact');s.textContent='Revealed';s.className='status done';const c=document.getElementById('g-fact');c.classList.add('finished');c.querySelector('.play').textContent='Read again'}
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);
 })();

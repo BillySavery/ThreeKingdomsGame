@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Daily Fact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Today's fact card with seal, a reveal button, the answer scroll, then a log of earlier facts */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f; --done:#4fae94;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.chip{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--mute);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold2)}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);display:grid}
+.card .top{padding:18px 18px 0;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.seal{width:68px;height:68px;border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:38px;color:var(--gold);background:var(--lacquer)}
+.kind{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.no{font-size:12px;color:var(--mute);margin-top:4px;font-variant-numeric:tabular-nums}
+.q{font-family:var(--display);font-weight:400;font-size:clamp(24px,5.6vw,32px);line-height:1.2;margin:0;padding:18px 18px 20px;text-wrap:balance}
+.reveal{display:block;width:100%;font-family:var(--ui);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;padding:16px;background:var(--lacquer);color:var(--paper);border:0;border-top:1px solid var(--gold);cursor:pointer}
+.reveal:hover{background:#a8261f}
+.reveal:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+.answer{border-top:1px solid var(--line);padding:18px;display:grid;gap:10px;background:linear-gradient(180deg,rgba(217,164,65,.08),transparent 70%)}
+.answer.fresh{animation:unroll .5s ease-out both}
+@keyframes unroll{from{clip-path:inset(0 0 100% 0);opacity:.3}to{clip-path:inset(0 0 0 0);opacity:1}}
+.a{font-family:var(--display);font-weight:400;font-size:clamp(26px,6vw,34px);line-height:1.1;color:var(--gold2);margin:0;text-wrap:balance}
+.b{margin:0;line-height:1.6;font-size:16px;max-width:62ch}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);padding-top:4px}
+.nextin b{color:var(--gold2);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.log{display:grid;gap:8px}
+.log h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 0;color:var(--gold)}
+.log p.sub{margin:0;color:var(--mute);font-size:13px}
+details{background:var(--panel);border:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.mini{width:32px;height:32px;border:1px solid var(--gold);background:var(--lacquer);color:var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:18px}
+.lq{font-size:15px;line-height:1.35}
+.lq small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
+details[open] summary{border-bottom:1px solid var(--line)}
+.lbody{padding:12px 14px 14px;display:grid;gap:6px}
+.lbody .la{font-family:var(--display);color:var(--gold2);font-size:20px;margin:0}
+.lbody p{margin:0;line-height:1.55;font-size:14.5px}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.answer.fresh{animation:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Daily Fact<small>THREE KINGDOMS DAILY &middot; 三国</small></div>
+    <span class="chip">Day <b id="dayNo">1</b></span>
+  </header>
+
+  <article class="card" aria-live="polite">
+    <div class="top">
+      <div class="seal" id="seal" aria-hidden="true">史</div>
+      <div><div class="kind" id="kind"></div><div class="no" id="no"></div></div>
+    </div>
+    <h1 class="q" id="q"></h1>
+    <button class="reveal" id="reveal" type="button">Reveal the answer</button>
+    <div class="answer" id="answer" hidden>
+      <p class="a" id="a"></p>
+      <p class="b" id="b"></p>
+      <div class="nextin">Next fact in <b id="cd">0h 0m</b></div>
+    </div>
+  </article>
+
+  <section class="log" id="log" hidden>
+    <h2>Your fact log</h2>
+    <p class="sub">Facts you've revealed on earlier days.</p>
+    <div id="logList" class="log"></div>
+  </section>
+
+  <div class="rules"><b>One new fact every day.</b> Seals show which realm a fact belongs to: Han 漢, Wei 魏, Shu 蜀, Wu 吳 and Jin 晉. Romance 義 facts set the novel against the histories, and Legacy 傳 facts follow the story into sayings, opera and games.</div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>New fact at midnight, your local time.</span></footer>
+</div>
+
+<script>
+const FACTS=[
+["S", "What did Zhuge Liang tell his son about calm?", "Quiet builds character", "His Admonition to his Son says tranquillity cultivates the self and frugality nourishes virtue. It's still memorised in schools."],
+["W", "Which young Wei scholar wrote a classic Daodejing commentary?", "Wang Bi", "He died at just 23 in 249, but his commentary is still among the most read."],
+["R", "Did Zhuge Liang anger Zhou Yu to death?", "No", "The novel's dying cry of why create Liang when you made Yu is pure fiction. Zhou Yu died of illness."],
+["L", "Who performs the Three Kingdoms in Chinese storytelling?", "Pingshu artists", "Storytellers like Yuan Kuocheng recorded hundreds of episodes for radio."],
+["S", "Who really whipped the inspector, Liu Bei or Zhang Fei?", "Liu Bei", "The novel blames Zhang Fei. Historically Liu Bei tied the inspector to a tree, gave him 200 lashes and quit his post."],
+["L", "Which Korean author's version of the Romance became a huge bestseller?", "Yi Mun Yol", "His Samgukji retelling has sold millions of copies in South Korea."],
+["S", "Who did Guan Yu kill at Baima in 200?", "Yan Liang", "Fighting for Cao Cao, he rode into Yan Liang's army, cut him down and came back with his head."],
+["H", "Who did Lü Bu kill before he killed Dong Zhuo?", "Ding Yuan, his first master", "Dong Zhuo bribed Lü Bu to murder Ding Yuan in 189. Three years later Lü Bu stabbed Dong Zhuo too."],
+["S", "Where did the name Sun Shangxiang come from?", "Later plays", "The histories just call her Lady Sun. Shangxiang comes from much later opera."],
+["W", "What was Cao Cao's childhood name?", "Ah Man", "He was also known as Jili. His enemies later used Ah Man to belittle him."],
+["R", "Were there rattan armoured soldiers in the south?", "Only in the novel", "The Wutugu troops in oiled rattan armour who are burned in a valley are fiction."],
+["L", "Which early landscape poem did Cao Cao write?", "Viewing the Blue Sea", "He wrote it on the march home from White Wolf Mountain in 207. It's often called one of the first complete Chinese landscape poems."],
+["U", "Why did Gan Ning wear bells?", "So people knew he was coming", "As a young river pirate he carried bells. Locals heard him and got out of the way."],
+["L", "What does Sima Zhao's heart mean?", "An open secret", "From Cao Mao's words, it describes ambitions everyone can see."],
+["U", "How long did Lu Xun wait before striking at Yiling?", "About six months", "His officers thought the young scholar was a coward. He waited for the summer heat to wear Liu Bei down, then burned his camps in 222."],
+["S", "How did Pang Tong die?", "An arrow at Luo", "He was killed besieging Luo in 214, aged 36. Liu Bei wept whenever his name came up."],
+["H", "Who gave Liu Bei his first province?", "Tao Qian", "On his deathbed in 194 Tao Qian asked Liu Bei to take over Xu Province. Liu Bei refused at first, then accepted."],
+["J", "What title did Jin give Sun Hao?", "Marquis Who Returned to Allegiance", "After surrendering in 280 he lived quietly in Luoyang until he died in 284."],
+["U", "Where is Sun Quan buried?", "Next to the first Ming emperor", "His tomb on Plum Blossom Hill in Nanjing sits in the way of Zhu Yuanzhang's mausoleum. Zhu left it to guard his gate."],
+["W", "Who shared a mat with Hua Xin until he cut it?", "Guan Ning", "When Hua Xin got distracted by gold and a passing carriage, Guan Ning cut the mat and said they were no longer friends."],
+["R", "What did the novel say Hua Tuo offered Cao Cao?", "Brain surgery", "He suggested opening Cao Cao's skull to cure his headaches. Cao Cao thought it was an assassination attempt."],
+["H", "How did some men prove they weren't eunuchs when Yuan Shao stormed the palace?", "They undressed", "Yuan Shao's troops killed over 2,000 eunuchs in 189. Beardless men were cut down by mistake, and some had to expose themselves to survive."],
+["W", "How did Deng Ai answer a joke about his stammer?", "Phoenix, oh phoenix", "Sima Zhao teased him for saying Ai, Ai. He replied that the old song repeated phoenix, oh phoenix, and it was still one phoenix."],
+["S", "What was Liu Shan's childhood name?", "A Dou", "A Dou who can't be propped up is still a Chinese insult for someone hopeless."],
+["W", "What made Xiahou Yuan famous?", "Speed", "Soldiers said his army moved 500 li in three days and 1,000 in six. He was killed by Huang Zhong at Mount Dingjun in 219."],
+["S", "Who advised Liu Shan to surrender in 263?", "Qiao Zhou", "The scholar argued resistance was hopeless. One of his students was Chen Shou, who later wrote the Records of the Three Kingdoms."],
+["U", "Why did Ling Tong hate Gan Ning?", "Gan Ning killed his father", "Ling Cao died fighting Gan Ning before Gan Ning joined Wu. Sun Quan had to keep them apart."],
+["W", "How did Jia Xu settle Cao Cao's choice of heir?", "He mentioned two dead warlords", "Asked about succession, he said he was thinking of Yuan Shao and Liu Biao, who both favoured younger sons. Cao Cao laughed and chose Cao Pi."],
+["S", "Who gave Zhuge Liang and Pang Tong their nicknames?", "Pang Degong", "The recluse called Zhuge Liang Sleeping Dragon and his own nephew Pang Tong Young Phoenix."],
+["H", "Which famous scholar died the year of Guandu?", "Zheng Xuan", "The most respected classicist of the age was dragged along with Yuan Shao's army and died on the march in 200."],
+["W", "What did Cao Cao tell Liu Bei over wine?", "Only you and I are heroes", "Liu Bei was hiding his ambitions in Xu. When Cao Cao said it, he dropped his chopsticks in shock."],
+["R", "Where does the Empty Fort story come from?", "A note the annotator rejected", "Pei Songzhi quoted it, then pointed out that Sima Yi wasn't even nearby at the time."],
+["S", "Which two cities argue over Zhuge Liang's home?", "Xiangyang and Nanyang", "Both claim Longzhong, where Liu Bei visited him. The argument has gone on for centuries."],
+["U", "Which southeast Asian kingdom did Wu send envoys to?", "Funan", "Kang Tai and Zhu Ying visited Funan, in today's Cambodia, around the 240s and wrote about it."],
+["S", "What is odd about the Wuhou Shrine in Chengdu?", "Liu Bei is the one buried there", "Liu Bei's tomb is on the site, but the whole temple is named after Zhuge Liang."],
+["W", "What did Cao Cao say when he saw Sun Quan's fleet at Ruxu?", "Have a son like Sun Zhongmou", "He admired Sun Quan's order and discipline in 213 and said a son should be like him, while Liu Biao's sons were pigs and dogs."],
+["U", "Whose tomb gave us Wu lacquer paintings?", "Zhu Ran", "His tomb in Ma'anshan, opened in 1984, held painted lacquerware and wooden name cards."],
+["W", "How did Sima Yi avoid serving Cao Cao at first?", "He faked paralysis", "He claimed a palsy and lay still in bed. When rain soaked his books, a maid saw him get up. His wife killed her to keep the secret."],
+["S", "What did Liu Shan say about Shu after he surrendered?", "I'm too happy to miss it", "At a feast in Luoyang, Sima Zhao asked if he missed Shu. He said he was enjoying himself too much, giving us an idiom for forgetting home."],
+["U", "What coins did Sun Quan issue?", "Worth 500 and 1,000", "His big da quan coins were face value only. People hated them and he withdrew them."],
+["S", "What did Cao Cao make Guan Yu a marquis of?", "Hanshou Ting", "It's a place name. The novel misreads it as a pun on Han, so Guan Yu refuses the title without the word Han."],
+["R", "Was Su Shi at the real Red Cliff?", "No", "He wrote his famous Red Cliff pieces at Huangzhou. The battle was probably far upriver."],
+["S", "Why did Liu Bei say he betrayed Huang Quan?", "He'd ignored his advice", "After Yiling, Huang Quan was cut off and joined Wei. Officials wanted his family punished. Liu Bei refused."],
+["U", "What did Gongsun Yuan do to Wu's envoys in 233?", "Beheaded them", "He'd promised to ally with Wu, then killed the envoys and sent their heads to Wei."],
+["S", "Who defended Jicheng against Ma Chao?", "Lady Wang Yi", "She fought alongside her husband Zhao Ang. When Ma Chao killed her son, she helped drive him out of Liang Province."],
+["W", "Who did Cao Cao compare Xu Huang to?", "Zhou Yafu", "After Xu Huang broke the siege of Fancheng in 219, Cao Cao praised him as a match for the great Han general."],
+["S", "How did Ma Su die?", "Records disagree", "Zhuge Liang's biography says he was executed. Ma Su's own biography says he died in prison."],
+["H", "Who taught both Liu Bei and Gongsun Zan?", "Lu Zhi", "They studied together under the scholar general Lu Zhi. Gongsun Zan was the older student, and Liu Bei treated him like an elder brother."],
+["S", "Where did Zhuge Liang ask to be buried?", "Mount Dingjun", "He wanted a grave just big enough for a coffin, dressed in everyday clothes, with no treasure."],
+["U", "Who was allowed tea instead of wine at Sun Hao's feasts?", "Wei Zhao", "Sun Hao made guests drink seven sheng of wine. He secretly let the scholar Wei Zhao drink tea, an early record of tea at banquets."],
+["R", "Was Diaochan a real person?", "No", "She's fictional. Historically Lü Bu had an affair with one of Dong Zhuo's maids, which made him fear Dong Zhuo."],
+["W", "Who predicted Sun Ce would die at an assassin's hand?", "Guo Jia", "He said Sun Ce was careless with his safety. Sun Ce was killed by assassins in 200, just as predicted."],
+["R", "Did the three brothers fight Lü Bu together at Hulao?", "No", "Three heroes fighting Lü Bu is a favourite opera scene, but it never happened."],
+["L", "What does Xu Shu in Cao's camp mean?", "Present but silent", "Xu Shu entered Cao's camp and never offered a plan. It describes someone who shows up and contributes nothing."],
+["W", "Who burned Cao Cao's ships after Red Cliffs?", "Cao Cao, he claimed", "He wrote to Sun Quan that disease forced him to burn his own ships, and that Zhou Yu had stolen undeserved fame."],
+["R", "Whose version of the novel do most people read?", "Mao Zonggang's", "He and his father revised it in the 1660s, trimming and sharpening it into the 120 chapter standard text."],
+["U", "Which Roman merchant met Sun Quan?", "Qin Lun", "He arrived in 226 and answered Sun Quan's questions about the Roman Empire and its customs before sailing home."],
+["H", "How long did Emperor Xian live after giving up the throne?", "14 years", "He became Duke of Shanyang and died in 234, the same year as Zhuge Liang. He's said to have practised medicine among local people."],
+["U", "How did Sun Jian die?", "Ambushed at Xian Mountain", "He was hit by arrows or rocks while chasing Huang Zu's men in 191, aged about 36."],
+["H", "What did the Yellow Turbans promise would replace the Azure Sky?", "The Yellow Sky", "Their slogan said the Azure Sky was dead and the Yellow Sky would rise in the jiazi year. That year was 184, and the rebellion broke out right on cue."],
+["W", "Who wrote the seven step poem, according to legend?", "Cao Zhi", "Cao Pi ordered him to compose a poem in seven steps or die. He wrote of beans weeping as their own stalks burned beneath them."],
+["R", "Who does the novel say killed Wen Chou?", "Guan Yu", "History says Wen Chou died in battle against Cao Cao's forces, with no named killer."],
+["U", "How did Sun Quan try to make Zhang Zhao come out?", "Set fire to his door", "After a quarrel Sun Quan blocked Zhang Zhao's door with earth. Zhang Zhao blocked it from inside, so Sun Quan tried to burn him out."],
+["R", "How did Sun Ce die in the novel?", "Haunted by a Daoist", "After executing Yu Ji, he keeps seeing his ghost and dies in a rage. The story comes from old tales."],
+["W", "Who posed as Cao Cao to meet a Xiongnu envoy?", "Cui Yan", "A famous anecdote says Cao Cao felt he didn't look impressive enough and stood behind with a sword. The envoy said the swordsman was the real hero."],
+["R", "How does the novel describe Guan Yu's beard?", "Two chi long", "He's nine chi tall with a face like a ripe date and a long beard. The history doesn't give his height."],
+["U", "What was Sun Ce's nickname?", "The Little Conqueror", "People compared him to Xiang Yu, the conqueror who fought Han's founder."],
+["W", "How did Zhang He die?", "An arrow at Mumen", "Chasing Zhuge Liang's retreating army in 231, he was hit in the knee by an arrow and died."],
+["R", "What is Lü Bu's weapon in the novel?", "The Sky Piercer halberd", "The fang tian hua ji is novel kit. Historically he was famed as an archer and rider."],
+["H", "What did Zhang Lu do with his treasury when Cao Cao came in 215?", "Sealed it", "His officers wanted to burn it. He said the goods belonged to the state and locked them up. Cao Cao was impressed and treated him well."],
+["W", "Who was called a talent fit to aid a king?", "Xun Yu", "Cao Cao compared him to Zhang Liang, the strategist of Han's founder. He opposed Cao Cao becoming Duke and died in 212."],
+["H", "Who really killed Hua Xiong?", "Sun Jian's troops", "In the novel Guan Yu slays him before his wine cools. The histories credit Sun Jian's forces."],
+["S", "What was Guan Yu's original style name?", "Changsheng", "He changed it to Yunchang. Tradition says he fled his hometown in Hedong after killing a local tyrant."],
+["L", "Which dumplings are linked to doctor Zhang Zhongjing?", "Jiaozi", "A folk tale says he made ear shaped dumplings to treat frostbitten ears in winter."],
+["S", "What was Zhang Fei's real style name?", "Yide, written differently", "The novel uses 翼德, meaning winged virtue. The history writes it 益德, meaning increasing virtue."],
+["H", "What did Sun Jian reportedly find in a well in Luoyang?", "The imperial seal", "The jade Heirloom Seal of the Realm had vanished in the chaos of 189. Wu records say Sun Jian's men fished it out of a palace well."],
+["S", "What did Yan Yan tell Zhang Fei when captured?", "We have no surrendering generals", "He said Ba had generals who lose their heads but none who surrender. Zhang Fei was so moved he untied him."],
+["H", "How did Emperor Xian catch corrupt famine officials in 194?", "He cooked porridge himself", "With people starving in Chang'an, he had relief porridge made in front of him to check how much grain was really being handed out."],
+["J", "Who wrote the Records of the Three Kingdoms?", "Chen Shou", "A former Shu official, he finished it under Jin around 280 to 290. It's the main source for the era."],
+["U", "How did Lu Meng surprise Guan Yu?", "His men dressed as merchants", "In 219 his troops hid in boats wearing white robes and took Guan Yu's beacon towers without a fight."],
+["J", "Which kingdom was biggest?", "Wei", "At their ends, Wei counted around 4.4 million registered people, Wu 2.3 million and Shu under a million."],
+["S", "Did Liu Bei really visit Zhuge Liang three times?", "Zhuge Liang said so", "His Chu Shi Biao memorial says Liu Bei came to his thatched cottage three times."],
+["U", "What did Wu mothers say to stop children crying?", "Zhang Liao is coming", "After his charge at Hefei, his name was enough to scare Wu children quiet."],
+["S", "Which famous Han general was Ma Chao descended from?", "Ma Yuan", "Ma Yuan is famous for saying a true man should die on the battlefield and come home wrapped in horse hide."],
+["H", "What did Xu Shao say about the young Cao Cao?", "Able in peace, villainous in chaos", "Xu Shao ran a famous monthly character review. His verdict on Cao Cao is usually rendered as a capable minister in an ordered age, a treacherous hero in a chaotic one. Cao Cao laughed."],
+["W", "What was strange about Xun Yu's scent?", "It lingered for three days", "People said a room smelled of his fragrance for days after he sat in it."],
+["U", "How big were Wang Jun's warships?", "Big enough to ride horses on", "Jin records say the decks held 2,000 men and horses could gallop on them."],
+["S", "What did Guan Yu leave behind when he left Cao Cao?", "All his gifts", "He sealed everything Cao Cao had given him, wrote a farewell and went to find Liu Bei."],
+["W", "How did Sima Yi fool Cao Shuang's spy in 248?", "He played senile", "He let porridge dribble down his chest and misheard questions. Months later he launched his coup."],
+["S", "How did Liu Bei finance his new state in Chengdu?", "Inflated coins", "He minted coins marked as worth a hundred, and the treasury filled within months."],
+["L", "Which novel did Yokoyama and Koei build on?", "Eiji Yoshikawa's", "His Sangokushi, serialised from 1939, retold the story for a Japanese audience."],
+["U", "What did archaeologists find in 1996 in Changsha?", "Over 100,000 Wu bamboo slips", "The Zoumalou slips record taxes, households and grain, giving a rare look at ordinary life in Wu."],
+["R", "Is the Bronze Sparrow Terrace linked to the Qiao sisters?", "Only in poetry", "Du Mu's Tang poem jokes that without the east wind, the sisters would be locked in the terrace. The novel ran with it."],
+["U", "What did Lu Su tell Lu Meng after he started studying?", "You're not Ah Meng of Wu any more", "Lu Meng replied that a scholar apart for three days should be seen with new eyes. Both lines became idioms."],
+["H", "Why was it called the Five Pecks of Rice?", "The joining fee", "Followers paid five dou of rice to enter. The movement later grew into the Celestial Masters school of Daoism."],
+["W", "Who are the Three Caos of literature?", "Cao Cao, Cao Pi and Cao Zhi", "Father and two sons led the Jian'an school of poetry, known for its strong, sorrowful style."],
+["U", "What did Wu stretch across the Yangtze to stop Jin?", "Iron chains", "Jin's Wang Jun sent rafts with torches soaked in oil to melt them and sailed through in 280."],
+["L", "What makes a red face in Chinese opera?", "Loyalty", "Guan Yu's red face set the convention. Red stands for loyalty and courage."],
+["W", "How fast did Sima Yi move against Meng Da in 228?", "1,200 li in eight days", "Meng Da thought he had a month. Sima Yi arrived in days and took his city in 16."],
+["S", "What did Zhuge Liang call Guan Yu in a letter?", "The Beard", "He referred to him as Ran, the bearded one, and said Ma Chao couldn't match the Beard."],
+["R", "When was the famous first line added?", "The 1660s", "The line about divided empires uniting and united ones dividing was added by Mao Zonggang."],
+["W", "How did Cao Cao get his thirsty army moving?", "He promised plum trees", "He told them a plum grove lay ahead and their mouths watered. The phrase gazing at plums to quench thirst is still used in Chinese."],
+["R", "Which unlucky horse did Liu Bei ride?", "Dilu", "Its markings were said to bring death to its rider. In the novel Liu Bei lends it to Pang Tong just before Pang Tong is ambushed."],
+["W", "How did Cao Cao punish himself when his horse trampled crops?", "He cut off his hair", "He'd ordered death for anyone who damaged crops. When his own horse did it, he cut his hair as a stand in for his head."],
+["S", "How many horsemen did Zhang Fei have at Changban bridge?", "About 20", "He broke the bridge, glared and challenged Cao Cao's army to fight. Nobody came close."],
+["L", "What does weeping and executing Ma Su mean?", "Punishing a friend for the greater good", "It's used when someone disciplines a person they love because the rules demand it."],
+["W", "Who recreated 400 lost works from memory?", "Cai Wenji", "Captured by the Xiongnu for 12 years, she was ransomed by Cao Cao. She wrote out about 400 of her father Cai Yong's lost texts."],
+["L", "What does Zhou Yu beating Huang Gai mean?", "Both sides agreed", "One is willing to hit, one is willing to be hit. It describes a deal both parties want."],
+["W", "What did Ji Kang play before his execution?", "Guangling San", "The Bamboo Grove sage played the tune on his zither in 262, then said it would die with him."],
+["R", "In which chapter does Zhuge Liang die?", "104", "That leaves 16 chapters, and nearly 50 years, for the rest of the story."],
+["W", "What did Cao Cao do in Xu Province in 193?", "Massacred its people", "After his father was killed there, he slaughtered tens of thousands. Records say the Si river was blocked with corpses."],
+["S", "Why did Liu Bei cry about his thighs?", "They'd got fat", "At a feast with Liu Biao he noticed flesh on his thighs from years without riding to war. He wept that time was passing him by."],
+["H", "What were Gongsun Zan's White Horse Volunteers?", "Elite cavalry", "He picked his best mounted archers and put them all on white horses. The northern tribes learned to fear the sight of them."],
+["R", "What bone does the novel give Wei Yan?", "A rebel's bone", "Zhuge Liang spots a bump at the back of his skull and says it marks a traitor. It's fiction."],
+["S", "Did the Peach Garden Oath happen?", "No", "It's from the novel. Historically Liu Bei, Guan Yu and Zhang Fei shared a bed and were close as brothers."],
+["R", "Whose idea was the fire attack at Red Cliffs?", "Huang Gai's", "He noticed Cao Cao's ships were linked together and suggested burning them. Zhou Yu agreed."],
+["S", "Who were Shu's White Ear Soldiers?", "Liu Bei's guard", "Led by Chen Dao, they were Liu Bei's elite troops and known for never losing their discipline."],
+["U", "Who did Sun Jian claim as an ancestor?", "Sun Tzu", "Wu families liked the link to the author of The Art of War. There's no proof."],
+["J", "When was China reunited?", "280", "Jin conquered Wu, ending nearly a century of division that began with the chaos of 189."],
+["S", "Who stopped Lady Sun taking Liu Shan to Wu?", "Zhao Yun and Zhang Fei", "When she sailed home in 211 with the boy, they blocked the river and brought him back."],
+["L", "What do three cobblers add up to?", "One Zhuge Liang", "Three ordinary people thinking together can match a genius. It's a common Chinese proverb."],
+["W", "How did Cao Cao split Ma Chao from Han Sui?", "A friendly chat", "At Tong Pass in 211 he talked old times with Han Sui in full view, then sent him a letter full of crossings out. Ma Chao suspected a secret deal."],
+["J", "What did Liu Bei call his state?", "Han", "Shu was the name others used. Liu Bei saw himself as continuing the Han dynasty."],
+["S", "How many times did Zhuge Liang invade Wei?", "Five", "The novel says six times out of Qishan, but only some campaigns used that route."],
+["R", "Was Zhou Cang real?", "No", "Guan Yu's loyal blade bearer was invented for the novel and folk tales."],
+["S", "What were the wooden ox and gliding horse?", "Supply carts", "Zhuge Liang designed them to haul grain over mountain roads. Many historians think they were types of wheelbarrow."],
+["L", "Which city renamed itself Chibi in 1998?", "Puqi", "It took the name of the battle. Historians still argue about the exact site."],
+["U", "What did people say when a musician made a mistake?", "Zhou Lang turns his head", "Even after drinking, Zhou Yu would catch a wrong note and glance at the player."],
+["H", "Who governed northern Vietnam for about 40 years during the era?", "Shi Xie", "He kept Jiaozhi peaceful while China burned. He is still honoured in Vietnam, where temples call him King Si."],
+["W", "Who were the Tiger and Leopard Cavalry?", "Cao Cao's elite", "Their officers were often Cao family members. They helped kill Yuan Tan and capture Liu Bei's daughters."],
+["J", "When did the Three Kingdoms period formally begin?", "220", "Cao Pi ended Han that year. Liu Bei followed in 221, and Sun Quan in 229."],
+["W", "How did Dian Wei die?", "Holding a gate for Cao Cao", "At Wan in 197 Zhang Xiu rebelled. Dian Wei blocked the camp gate alone, killing many before he fell."],
+["L", "What kind of game was the first Dynasty Warriors?", "A fighting game", "The 1997 PlayStation original was a one on one fighter. The crowd battling style began with Dynasty Warriors 2 in 2000."],
+["H", "How did Zhang Jue win followers before the Yellow Turban rising?", "Faith healing", "His Way of Supreme Peace treated the sick with talismans, holy water and confession of sins. Hundreds of thousands joined across eight provinces."],
+["L", "What does Liu Bei borrowing Jingzhou mean?", "Never paying back", "It describes a loan that will never be returned."],
+["W", "What could Wang Can rebuild from memory?", "A game of Go", "When a board was knocked over, he set every stone back in place. People tested him with a second board and he did it again."],
+["S", "Where is Guan Yu buried?", "In two places", "His head is at Luoyang, where Cao Cao buried it, and his body at Dangyang. A saying adds that his spirit returned to Shanxi."],
+["U", "How did a 17 year old Sun Jian scare off pirates?", "He pretended to command an army", "He waved his arms on the shore as if directing troops. The pirates fled and he chased one down."],
+["R", "Where does better I betray the world come from?", "A later account", "Cao Cao's line after killing Lü Boshe's family comes from Sun Sheng, with milder wording. The novel made it famous."],
+["W", "Which Korean capital did Wei sack in 244?", "Hwando", "General Guanqiu Jian invaded Goguryeo and took its capital, carving an inscription to mark the victory."],
+["R", "How much of the novel is true?", "Seven parts fact, three parts fiction", "That's the verdict of the Qing scholar Zhang Xuecheng, who said the mix was what made it confusing."],
+["W", "How good was Cao Cao at Go?", "Equal to the masters", "Records say he played as well as the leading players of his day."],
+["R", "How does Cao Cao die in the novel?", "After cutting a sacred tree", "He chops a pear tree, sees its spirit and gets worse. Historically he died of illness in 220."],
+["L", "What Tang poet's lines are carved at the Wuhou Shrine?", "Du Fu's", "His poem about the Shu Prime Minister ends with heroes weeping that Zhuge Liang died before victory."],
+["W", "What did Cao Mao say about Sima Zhao?", "Everyone knows his heart", "Cao Mao said the ambition of Sima Zhao was known to every passer by. He attacked with palace guards in 260 and was stabbed to death."],
+["R", "Did Guan Yu have the Green Dragon Crescent Blade?", "Probably not", "No early source mentions it, and that style of polearm looks much later."],
+["W", "Which famous military text did Cao Cao annotate?", "The Art of War", "His commentary on Sun Tzu is the oldest that survives, and he is partly responsible for the version we read today."],
+["H", "What did officials eat when Emperor Xian returned to ruined Luoyang in 196?", "Wild plants", "The palace was rubble. Some officials foraged for greens, and a few starved or were killed by soldiers, before Cao Cao took the court to Xu."],
+["L", "Which film was the most expensive Asian film when made?", "Red Cliff", "John Woo's two part epic of 2008 and 2009 cost about $80 million."],
+["W", "Why did Kong Rong mock Cao Cao's ban on wine?", "He loved drinking", "Kong Rong wrote that if wine ruined states, so did women, yet nobody banned marriage. Cao Cao had him executed in 208."],
+["R", "What happens to Lady Mi in the novel?", "She jumps into a well", "She gives Zhao Yun the baby Liu Shan and throws herself in a well. Her real fate is unknown."],
+["S", "Who led eleven northern campaigns against Wei?", "Jiang Wei", "The novel says nine. He defected from Wei to Shu in 228 and became Zhuge Liang's successor in the field."],
+["W", "How did Ruan Ji avoid a marriage alliance with Sima Zhao?", "He stayed drunk for 60 days", "The matchmaker never found him sober enough to ask, so the matter was dropped."],
+["R", "Did Zhuge Liang summon the east wind?", "No", "The novel has him pray for it. Historically the wind is simply part of the story of Huang Gai's fire attack."],
+["W", "What did Cao Cao ask his concubines to do after his death?", "Make shoes", "His will told them to learn to weave shoe ribbons to support themselves, and to share out his incense."],
+["R", "Did Zhuge Liang scold Wang Lang to death?", "No", "In the novel Wang Lang falls off his horse during a debate. In reality he died of natural causes in 228."],
+["W", "What was Xu Chu's nickname?", "Tiger Fool", "Soldiers called him Hu Chi because he was strong as a tiger and simple minded. Some took Chi as his real name."],
+["R", "How old does the novel make Huang Zhong?", "Around 70", "It makes him a feisty old man. The history doesn't record his age."],
+["S", "What did Liu Bei warn Zhuge Liang about Ma Su?", "His words exceeded his ability", "Zhuge Liang ignored it, and Ma Su lost Jieting in 228."],
+["W", "What did Cao Cao boast to Sun Quan before Red Cliffs?", "He had 800,000 troops", "He wrote that he would bring 800,000 men to go hunting with Sun Quan in Wu. Zhou Yu reckoned the real number was nearer 230,000."],
+["L", "Where is Cao Pi's tomb?", "Nobody knows", "He ordered a plain, hidden burial at Shouyang Hill. It has never been found."],
+["W", "What did Cao Cao supposedly send Xun Yu before he died?", "An empty food box", "One account says the empty box was a message. Xun Yu took poison soon after, though other records say he died of illness."],
+["S", "How did Wei Yan die?", "Killed by Ma Dai", "After Zhuge Liang's death he clashed with Yang Yi over the retreat and was hunted down in 234."],
+["W", "Who invented a south pointing chariot during Wei?", "Ma Jun", "He also improved the silk loom and built a chain pump for irrigation. Like Deng Ai, he had a stammer."],
+["R", "Did Cao Cao cut off his beard fleeing Ma Chao?", "No", "The novel has him shave and throw away his robe. Historically Xu Chu saved him crossing the river."],
+["J", "How much did China's population fall during the era?", "By about two thirds, on paper", "The census counted around 56 million in 157 and about 16 million in 280. Much of the drop was people missing from registers."],
+["R", "How many troops does the novel give Cao Cao at Red Cliffs?", "830,000", "Cao Cao's own boast was 800,000. Modern estimates are around 200,000 to 250,000."],
+["S", "How many armies did Guan Yu drown at Fancheng?", "Seven", "Autumn floods in 219 swamped Yu Jin's seven armies. Yu Jin surrendered. Pang De refused and was executed."],
+["W", "Who predicted Sima Yi would beat Cao Shuang?", "Xin Xianying", "She told her brother Sima Yi would win, but advised him to stand by Cao Shuang anyway because duty demanded it."],
+["S", "Who did Guan Yu ask Cao Cao to let him marry?", "Qin Yilu's wife", "At the siege of Xiapi he asked for her more than once. Cao Cao got suspicious, saw her and took her himself."],
+["W", "How many sons did Cao Cao have?", "Twenty five", "His favourite, Cao Chong, died at 12. Cao Cao told Cao Pi the loss was his misfortune but Cao Pi's good luck."],
+["S", "How did Zhuge Zhan die?", "Defending Mianzhu", "Zhuge Liang's son and grandson died fighting Deng Ai in 263, days before Shu surrendered."],
+["R", "Who wrote Romance of the Three Kingdoms?", "Luo Guanzhong", "It's credited to him in the 14th century. The oldest surviving edition dates from 1522."],
+["W", "Where was Cao Cao's tomb finally identified?", "Anyang", "Archaeologists announced in 2009 that a tomb at Xigaoxue held Cao Cao, with stone tablets naming King Wu of Wei's weapons."],
+["S", "How big was Jiang Wei's gallbladder?", "Huge, supposedly", "After he was killed in 264, soldiers said his gallbladder was as big as a measuring bowl. In Chinese, a big gall means great courage."],
+["J", "Who doubled the length of the Records?", "Pei Songzhi", "In 429 he added notes from over 200 other sources. Many famous stories, like Zhao Yun's open gate, come from his notes."],
+["S", "Who warned Zhang Fei that beating his soldiers would get him killed?", "Liu Bei", "Zhang Fei flogged his men and kept them close to him. Liu Bei told him it would end badly, and it did."],
+["W", "How did the boy Cao Chong weigh an elephant?", "With a boat", "He put the elephant on a boat, marked the waterline, then loaded stones to the same mark. Some historians doubt the story but it's in the official records."],
+["L", "What earliest Go game record is linked to the era?", "Sun Ce versus Lü Fan", "A game record is traditionally said to be theirs, though most think it's a later creation."],
+["W", "Who created the Nine Rank system?", "Chen Qun", "Introduced in 220 under Cao Pi, it graded candidates for office. Great families soon dominated it, and it lasted until the Sui."],
+["S", "What was Wei Yan's rejected plan?", "A dash through Ziwu Valley", "He proposed 10,000 men take a mountain route to Chang'an. Zhuge Liang thought it too risky."],
+["W", "Who was Lady Zhen before she married Cao Pi?", "Yuan Shao's daughter in law", "She was the wife of Yuan Xi. Cao Pi took her when Ye fell in 204, then ordered her death in 221."],
+["S", "Whose descendant did Liu Bei claim to be?", "Liu Sheng, Prince of Zhongshan", "Liu Sheng had over 120 sons, so plenty of people could claim the same. His famous jade burial suit was found in 1968."],
+["W", "Where is the earliest detailed description of Japan?", "The Records of the Three Kingdoms", "The Wei section includes an account of the Wa people, their customs and Himiko. Japanese historians still debate where her capital was."],
+["S", "How tall was Zhuge Liang?", "About 1.84 metres", "He was eight chi tall, which in Han measures is roughly 6 feet."],
+["U", "Who was the eldest of Wu's generals?", "Cheng Pu", "He'd served since Sun Jian's day. Officers called him Lord Cheng out of respect, and even Zhou Yu won him over with patience."],
+["R", "What did Zhuge Liang try to do with 49 lamps?", "Extend his life", "In the novel, if the main lamp stayed lit for seven days he'd live. Wei Yan burst in and knocked it out."],
+["S", "Who were Shu's four great ministers?", "Zhuge Liang, Jiang Wan, Fei Yi and Dong Yun", "They ran the state in turn. After Dong Yun, the eunuch Huang Hao took over and is blamed for the decline."],
+["R", "Did Xu Shu's mother kill herself?", "Only in the novel", "She was captured and Xu Shu left Liu Bei to be with her. The suicide is invented."],
+["W", "How did Cao Pi honour Wang Can at his funeral?", "He brayed like a donkey", "Wang Can loved donkey braying, so Cao Pi asked every mourner to bray once in his honour."],
+["U", "What did Taishi Ci grab in his duel with Sun Ce?", "Sun Ce's helmet", "They fought alone. Sun Ce seized Taishi Ci's halberd and Taishi Ci took Sun Ce's helmet before troops arrived."],
+["W", "How did Mi Heng insult Cao Cao?", "He drummed naked", "Made to play drum at a banquet, he stripped in front of the guests. Cao Cao sent him off to Liu Biao rather than kill him."],
+["U", "Whose daughter did Lu Xun marry?", "Sun Ce's", "Sun Ce had attacked the Lu clan years earlier and many died. The marriage helped heal the feud."],
+["W", "Who said Shu got the dragon, Wu the tiger, Wei the dog?", "People of the time", "The Zhuge cousins served all three: Zhuge Liang in Shu, Zhuge Jin in Wu and Zhuge Dan in Wei."],
+["L", "Who wrote the ode Short Song?", "Cao Cao", "His Duan Ge Xing is about wine, the shortness of life and wanting talented men. Chinese students still learn it."],
+["U", "How long did Sun Quan rule?", "About 52 years", "From his brother's death in 200 until 252, the longest of any ruler of the era."],
+["H", "Who led the Black Mountain bandits?", "Zhang Yan", "He claimed around a million followers in the hills of the north. He finally submitted to Cao Cao in 205."],
+["L", "Why is Cao Cao's opera face white?", "Treachery", "White face paint means a scheming character. Cao Cao is the classic example."],
+["J", "Which era name lasted from 196 to 220?", "Jian'an", "It covers most of Cao Cao's career and gives its name to the Jian'an school of poetry."],
+["R", "Who gets Red Hare after Lü Bu dies in the novel?", "Guan Yu", "Cao Cao gives him the horse, which later starves itself when Guan Yu dies. Historically Red Hare disappears with Lü Bu."],
+["H", "Which pass is really two passes in the novel?", "Hulao and Sishui", "The Romance treats Sishui Pass and Hulao Pass as different places. They're actually two names for the same pass near Luoyang."],
+["U", "Where did Huang Gai end up after falling in the river at Red Cliffs?", "A toilet", "He was hit by an arrow and fished out, but nobody recognised him and he was left in a latrine until Han Dang heard his voice."],
+["R", "What scared Sima Yi after Zhuge Liang died?", "A wooden statue, in the novel", "Historically Sima Yi pulled back when Shu turned to fight, and locals joked that dead Zhuge scared off living Zhongda."],
+["L", "What festival food is linked to Zhuge Liang?", "Steamed buns", "A legend says he offered buns shaped like heads to a river spirit instead of human sacrifices. That's one origin story for mantou."],
+["W", "Which country's queen sent envoys to Wei in 239?", "Japan", "Queen Himiko of Wa sent tribute. Wei made her Queen of Wa, Friend of Wei, with a gold seal."],
+["U", "Were Sun Ce and Zhou Yu really born in the same year?", "Yes, 175", "Zhou Yu gave Sun Ce's family a big house to live in. They called each other brothers."],
+["R", "Who wrote the poem that opens the novel?", "Yang Shen", "The Ming poet wrote the lyric about the rolling Yangtze. Mao Zonggang put it at the front of the book."],
+["W", "What did chicken rib mean to Yang Xiu?", "Time to retreat", "Cao Cao's password at Hanzhong in 219 was chicken rib, tasteless but a shame to throw away. Yang Xiu began packing and was later executed."],
+["U", "What did Lu Su propose before Zhuge Liang's Longzhong Plan?", "Hold the south and wait", "His plan to Sun Quan was to secure Jiangdong, watch for chaos in the north and claim the empire. It came years before Zhuge Liang's."],
+["S", "What did Jiang Wei plan after Shu surrendered?", "To bring it back", "He helped Zhong Hui rebel, hoping to kill him later and restore Shu. Both died when the plot collapsed."],
+["U", "What did Zhou Fang cut to fool Cao Xiu?", "His hair", "He pretended to be a disgraced officer ready to defect, cutting his hair as proof. Cao Xiu walked into a trap at Shiting in 228."],
+["S", "How many armed maids did Lady Sun keep?", "Over 100", "Liu Bei's Wu bride had her maids carry blades. Liu Bei was said to feel nervous every time he entered her rooms."],
+["W", "What gift did Zhuge Liang send to taunt Sima Yi?", "Women's clothes", "He hoped to shame Sima Yi into battle at Wuzhang. Sima Yi stayed in camp anyway."],
+["H", "Where did Zhang Lu run a religious state for nearly 30 years?", "Hanzhong", "His Five Pecks of Rice movement ran charity huts with free food for travellers and punished minor crimes with road repairs."],
+["R", "What does the novel say Cao Cao's Seven Star Sword was for?", "Killing Dong Zhuo", "He takes it to assassinate Dong Zhuo, gets caught, and pretends it's a gift."],
+["W", "What did Cao Cao value above virtue when hiring?", "Talent", "His talent edicts said he would take able men even if they were unfilial or corrupt."],
+["S", "How many bolts did Zhuge Liang's improved crossbow fire?", "Ten", "He's credited with improving the repeating crossbow so it shot ten iron bolts at once. Repeating crossbows existed before him."],
+["L", "What does Lü Meng's line about three days mean?", "People can change", "A scholar apart for three days should be looked at with new eyes. It's used when someone has improved."],
+["U", "What did Sun Quan jump at Xiaoyao Ford?", "A broken bridge", "Zhang Liao's charge in 215 nearly caught him. He spurred his horse over a gap in the bridge and escaped."],
+["S", "How long did Liu Shan reign?", "About 40 years", "From 223 to 263, longer than any other emperor of the era. He lived on as Duke of Anle until 271."],
+["W", "How did Cao Cao injure himself fighting Lü Bu at Puyang?", "He burned his hand", "He escaped a burning gate in 194 with his left palm scorched, then had to fall from his horse to get away."],
+["S", "Was Guan Ping adopted?", "No, he was Guan Yu's son", "The novel makes him adopted. History says he was Guan Yu's natural son and died with him in 220."],
+["W", "How did Xiahou Dun lose his eye?", "An arrow", "He was hit fighting Lü Bu. Soldiers called him Blind Xiahou, and he hated mirrors so much he smashed them."],
+["U", "What colour beard does Sun Quan have in later stories?", "Purple", "Later tradition and the novel give him a purple beard and green eyes."],
+["H", "How did Gongsun Zan die in 199?", "He burned himself", "Trapped by Yuan Shao in his tower fortress at Yijing, he killed his family and set the tower alight."],
+["J", "What did Sun Hao do to officials he disliked?", "Flayed and blinded them", "Wu's last emperor was known for gouging eyes and peeling faces. Many officials welcomed Jin."],
+["S", "What did Liu Bei's last words to his son say about small deeds?", "Don't skip them", "He wrote: do no evil because it is small, and leave no good undone because it is small."],
+["R", "What happens to Pang De in the novel before battle?", "He brings his own coffin", "He takes a coffin to face Guan Yu, ready to die. He did refuse to surrender and was executed."],
+["W", "What did Cao Pi write that literary critics still study?", "Discourse on Literature", "His Dian Lun calls literature a great work of state and an imperishable undertaking. It's among the earliest Chinese literary criticism."],
+["S", "Why is Zhuge Liang called Wuhou?", "His posthumous title", "He was made Marquis Zhongwu, loyal and martial. Wuhou means Martial Marquis."],
+["L", "Who wrote a famous poem at the Eight Formation rocks?", "Du Fu", "The Tang poet praised Zhuge Liang's achievements and his unfinished mission."],
+["S", "What was unusual about Liu Bei's body?", "Long arms and huge ears", "The official history says his arms reached past his knees and he could see his own ears."],
+["H", "What happened to the deposed boy emperor Liu Bian?", "He was poisoned", "On Dong Zhuo's orders he was forced to drink poison in 190. He sang a short farewell song with his consort before he died."],
+["J", "Who first argued Shu was the rightful dynasty?", "Xi Zuochi", "In his Han Jin Chunqiu he argued Shu carried the Han line. Later scholars like Zhu Xi agreed."],
+["S", "Who worships Guan Yu today?", "Police and gangsters alike", "As Guandi he's a god of war, loyalty and wealth. Hong Kong police stations and triads both keep his shrines."],
+["L", "Which sliding block puzzle is themed on Cao Cao's escape?", "Huarong Dao", "Cao Cao's block has to slide out past Guan Yu, Zhang Fei and others standing in the way."],
+["H", "Which warlord declared himself emperor in 197?", "Yuan Shu", "He named his dynasty Zhong. Allies abandoned him, and in 199 he died asking for honey water that nobody could find."],
+["R", "Where does the image of Zhuge Liang's feather fan come from?", "A poem about Zhou Yu", "Su Shi's Red Cliff lyric describes Zhou Yu with a feather fan and silk headband. Later the image moved to Zhuge Liang."],
+["W", "What is Kong Rong famous for as a child?", "Giving away the big pears", "At four he took the smallest pear and left the big ones for his brothers. Chinese children still learn the story."],
+["U", "What did Sun Quan rename Moling as?", "Jianye", "He moved there in 212. It's now Nanjing, one of China's great capitals."],
+["R", "Did Guan Yu let Cao Cao go at Huarong?", "No", "Cao Cao did escape through Huarong in the mud, but Guan Yu wasn't waiting there."],
+["J", "How long did Jin's unity last?", "About 20 years", "The War of the Eight Princes broke out in 291, and northern China fell to invaders within decades."],
+["U", "How did Sun Quan go tiger hunting?", "From a special cart", "Zhang Zhao scolded him for riding at tigers, so he built a cart with a hole to shoot from. He kept hunting anyway."],
+["H", "What strange thing happened to Dong Zhuo's corpse?", "It was used as a lamp", "His body was left in the marketplace and a guard stuck a wick in his navel. The fat kept it burning for days."],
+["L", "Which disease hit Cao Cao's army at Red Cliffs?", "Possibly a parasite", "The records just say plague. Some modern researchers suggest schistosomiasis from the marshes."],
+["W", "What did Deng Ai roll down a mountain wrapped in?", "Felt", "Crossing the Yinping route in 263, he wrapped himself in felt and rolled down a slope. Shu surrendered weeks later."],
+["R", "Did Liu Bei's horse really leap Tan Stream?", "Maybe not", "The story comes from a later source, and Pei Songzhi himself doubted it."],
+["W", "Which singing girl became Wei's empress dowager?", "Lady Bian", "She was a former entertainer who became Cao Cao's main wife and the mother of Cao Pi and Cao Zhi."],
+["U", "What did Ding Feng's men take off before charging at Dongxing?", "Their armour", "In the snow of 252 they stripped to short blades and shields and charged. Wei's army broke."],
+["L", "What does a dead Zhuge scaring a living Zhongda mean?", "A reputation that outlives you", "It's said when someone's legacy still frightens rivals."],
+["U", "How did Sun Xiu name his sons?", "With characters he invented", "He made up new characters so no one else would ever have to avoid using them out of respect."],
+["S", "What did Liu Bei say after Zhao Yun's open gate trick?", "His whole body is courage", "At the Han river in 219, Zhao Yun opened his camp gates and beat drums. Cao Cao's troops feared an ambush and fled."],
+["H", "What did Yuan Shu say when he couldn't get honey water?", "Has Yuan Shu come to this?", "Sitting on his bed with no honey to drink, he let out a cry, vomited blood and died."],
+["R", "What was the Stone Sentinel Maze?", "A fictional trap", "In the novel Zhuge Liang's rock formation traps Lu Xun. Rock piles at Fengjie were later shown to tourists as the real thing."],
+["S", "What was the Longzhong Plan?", "A three way split", "Zhuge Liang told Liu Bei to take Jing and Yi provinces, ally with Wu and wait for a chance to strike Wei."],
+["J", "Which kingdom did Chen Shou treat as legitimate?", "Wei", "He wrote as a Jin official, and Jin inherited from Wei. Only Wei rulers get full imperial annals."],
+["U", "Why did Sun Quan ban executions after drinking?", "He nearly killed Yu Fan", "Yu Fan pretended to be drunk at a feast. Sun Quan drew his sword, was talked down, and ordered that no one be killed for what he said while drunk."],
+["R", "Did Pang Tong die at Fallen Phoenix Slope?", "No", "The novel has him riding Liu Bei's white horse into an ambush there. He was hit by an arrow besieging Luo."],
+["U", "How did Lu Xun die?", "Of anger", "He was rebuked by Sun Quan during a fight over succession in 245 and died soon after."],
+["S", "How many Ma brothers were there?", "Five", "People said of the five, White Brows was best. That was Ma Liang. Ma Su was his younger brother."],
+["L", "What two modes does Total War: Three Kingdoms offer?", "Records and Romance", "Released in 2019, Records keeps generals human, while Romance lets heroes fight like legends."],
+["W", "How did Sima Shi die?", "His eye burst", "He had an eye tumour removed. When Wen Yang charged his camp in 255, the shock made the eye pop from its socket and he died soon after."],
+["L", "What exercises did Hua Tuo invent?", "Five Animal Frolics", "They copy the moves of the tiger, deer, bear, ape and bird. Versions are still practised today."],
+["J", "When did Jin replace Wei?", "266", "Sima Yan, Sima Yi's grandson, forced Cao Huan to abdicate, the same way Cao Pi had taken the throne from Han."],
+["S", "Who held Shu's eastern border against Wu after the surrender?", "Luo Xian", "Wu tried to grab Shu territory in 264. Luo Xian held Yong'an for months until Wei relief arrived."],
+["U", "Who wanted Wu to surrender to Cao Cao?", "Zhang Zhao", "He led the surrender camp. Sun Quan later joked that if he'd listened, he'd be begging for food."],
+["W", "Why did Xu You get himself executed?", "He used Cao Cao's childhood name", "After his defection won Guandu, he kept boasting and calling Cao Cao Ah Man in public. Cao Cao eventually had him killed."],
+["U", "How did Zhuge Ke die?", "Assassinated", "As regent of Wu after a failed invasion, he was killed at a banquet by Sun Jun in 253."],
+["R", "What does the novel give Zhang Fei as a weapon?", "A serpent spear", "The eighteen foot snake spear is from the novel, not the histories."],
+["W", "What was Sima Yi's wolf glance?", "He could look straight behind him", "Cao Cao tested it. Sima Yi turned his head right round while his body stayed facing forward, which Cao Cao found alarming."],
+["H", "Which empress threw the imperial seal at Cao Pi's envoys?", "Empress Cao", "She was Cao Cao's own daughter and Emperor Xian's wife. When forced to hand over the seal in 220, she hurled it down and cursed her brother."],
+["W", "How was Yu Jin shamed after returning from captivity?", "With a mural", "Cao Pi had Cao Cao's tomb painted with Pang De standing firm and Yu Jin begging for mercy. Yu Jin saw it and died of shame."],
+["S", "Who did Zhuge Liang say could have stopped Liu Bei invading Wu?", "Fa Zheng", "Fa Zheng died in 220. Zhuge Liang later said he'd have talked Liu Bei out of it, or at least saved him from disaster."],
+["W", "Where was Cao Shuang when Sima Yi struck in 249?", "At the Gaoping tombs", "He'd taken the boy emperor Cao Fang outside Luoyang to visit his father's tomb. Sima Yi seized the city behind him."],
+["U", "What happened at the Two Palaces Incident?", "A succession war", "Sun Quan let two sons, Sun He and Sun Ba, compete for years. Officials took sides and many were killed or exiled."],
+["W", "Who gave Cao Cao his horse at Wan?", "Cao Ang", "His eldest son died covering his escape. Lady Ding, who raised Cao Ang, left Cao Cao over it and never forgave him."],
+["H", "What happened to Empress Fu in 214?", "Cao Cao had her killed", "A letter she wrote years earlier, asking her father to act against Cao Cao, came to light. She was dragged from the palace barefoot."],
+["W", "Which famous painting was inspired by Cao Zhi?", "The Nymph of the Luo River", "Gu Kaizhi's scroll illustrates Cao Zhi's rhapsody. Legend links the goddess to Lady Zhen."],
+["U", "How did Wu's last emperor answer Jin's emperor?", "I saved you a seat too", "Sima Yan said he'd kept a seat for Sun Hao for a long time. Sun Hao replied he'd kept one for Sima Yan in the south."],
+["W", "Which son did Cao Cao call his yellow bearded child?", "Cao Zhang", "He was the strongest of the sons and loved fighting more than books. Cao Cao praised him after a victory over the Wuhuan."],
+["H", "How much grain did Dong Zhuo store in his fortress at Mei?", "Enough for 30 years", "He boasted that if he failed, he could still grow old inside its walls. He was murdered before he got the chance."],
+["L", "How many tombs did legend give Cao Cao?", "Seventy two", "Folklore said he built 72 decoys. The real one turned up near Anyang."],
+["H", "What did Dong Zhuo do to Luoyang in 190?", "Burned it", "He forced the court and population west to Chang'an and set the old capital ablaze, looting imperial tombs on the way."],
+["S", "What did Liu Bei offer Zhuge Liang on his deathbed?", "The throne", "He said if Liu Shan proved worthless, Zhuge Liang should take over. Zhuge Liang wept and swore loyalty."],
+["L", "What anaesthetic did Hua Tuo use?", "Mafeisan", "He gave patients this powder in wine before surgery. The recipe was lost."],
+["H", "What titles did Zhang Jue and his two brothers take?", "Generals of Heaven, Earth and Man", "Zhang Jue was General of Heaven, Zhang Bao General of Earth and Zhang Liang General of Man. Zhang Jue died of illness in 184 before the rising was crushed."],
+["R", "Did Guan Yu pass five gates and kill six generals?", "No", "It's one of the novel's most famous scenes, and entirely made up."],
+["L", "Which flying lanterns are named after Zhuge Liang?", "Kongming lanterns", "Legend says he used sky lanterns to send messages. They're named after his style name."],
+["W", "How did Xu Chu save Cao Cao crossing the Wei river?", "He used a saddle as a shield", "Ma Chao's men were firing arrows at the boat in 211. Xu Chu held up a saddle to protect Cao Cao and punted the boat with his other hand."],
+["S", "What was Shu's most valuable export?", "Brocade", "Shu silk brocade paid for much of the war effort. Zhuge Liang called it the source of the army's funds."],
+["U", "Who did Sun Quan prank with a donkey?", "Zhuge Jin", "He wrote Zhuge Ziyu on a donkey to mock Zhuge Jin's long face. Zhuge Jin's young son Zhuge Ke added two characters making it Zhuge Ziyu's donkey and won the donkey."],
+["S", "What was Guan Yu's posthumous title in Shu?", "Zhuangmou", "It means strong and resourceful. Later emperors kept promoting him until he became a full god in the Ming."],
+["H", "Why did Cai Yong get executed in 192?", "He sighed for Dong Zhuo", "The great scholar showed grief at Dong Zhuo's death and Wang Yun had him arrested. He begged to finish his history of Han, but died in prison."],
+["S", "Which tribal leader allied with Zhuge Liang in 231?", "Kebineng", "The Xianbei chief brought cavalry to the north to help against Wei."],
+["W", "Which bronze statue supposedly wept when moved?", "The Immortal holding the Dew Plate", "Cao Rui moved Han bronzes from Chang'an to Luoyang in 237. Legend says the statue cried as it was carted off."],
+["S", "How did Zhang Fei die?", "Murdered by his officers", "Zhang Da and Fan Qiang killed him in 221 and fled to Wu with his head. Liu Bei guessed the news before he read the report."],
+["R", "How many times did Zhuge Liang capture Meng Huo?", "Seven, in a later account", "The official history barely mentions Meng Huo. The seven captures come from a later source, and some doubt he existed."],
+["J", "How many soldiers did Shu have at its fall?", "About 102,000", "The surrender records list around 280,000 households and 102,000 soldiers."],
+["U", "How many men did Gan Ning take on his night raid?", "About 100", "He attacked Cao Cao's camp at Ruxu and came back without losing a man. Sun Quan said Cao Cao had Zhang Liao and he had Gan Ning."],
+["W", "Who calculated pi to 3.1416 in 263?", "Liu Hui", "Working in Wei, he cut circles into polygons of up to 3,072 sides in his commentary on the Nine Chapters."],
+["U", "How did Sun Ce die?", "An assassin's arrow", "Retainers of Xu Gong, whom he'd killed, ambushed him on a hunt in 200. He died of the wounds aged 25."],
+["S", "What did Liu Shan tell Xiahou Ba when he defected in 249?", "My son is your nephew", "Pointing at his children, he joked they were Xiahou grandchildren, since his wives were Zhang Fei's daughters."],
+["U", "How old was Zhou Yu when he died?", "35", "He fell ill in 210 while preparing to invade Yi Province. Zhuge Liang had nothing to do with it."],
+["W", "Why was Cao Zhi passed over as heir?", "He was drunk", "In 219 he was ordered to relieve Cao Ren at Fancheng but was too drunk to receive the command. His chances never recovered."],
+["U", "What did Sun Quan do to his desk before Red Cliffs?", "Chopped it with a sword", "He swore that anyone who still talked of surrender would end up like the desk."],
+["S", "What did Guan Yu love to read?", "The Zuo Commentary", "He could recite much of this history of the Spring and Autumn period. Statues often show him holding a book."],
+["R", "Did Chen Gong free Cao Cao after his arrest?", "No", "The novel invents it. Historically Chen Gong served Cao Cao, then betrayed him for Lü Bu."],
+["U", "Which island expedition did Sun Quan send in 230?", "Yizhou", "Ten thousand men sailed to an island many think was Taiwan. Most died of disease, and the two commanders were executed."],
+["S", "What did Guan Yu say when Sun Quan proposed a marriage?", "A tiger's daughter won't marry a dog's son", "Sun Quan wanted his son to marry Guan Yu's daughter. The insult helped push Wu to attack Jing Province."],
+["U", "Who married the Qiao sisters?", "Sun Ce and Zhou Yu", "Sun Ce took the elder and Zhou Yu the younger, after capturing Huancheng in 199."],
+["L", "Where is Liu Bei's tomb?", "Chengdu", "Huiling sits inside the Wuhou Shrine complex. It has never been excavated."],
+["U", "What was the Qiao sisters' real surname?", "Qiao, written differently", "The histories write 橋, not the 喬 used in the novel. Their personal names were never recorded."],
+["W", "What did Cao Cao want written on his tomb as a young man?", "General who Conquered the West", "In a later edict he said his early dream was a tombstone reading Tomb of the Late Han General Who Conquers the West, Lord Cao."],
+["S", "What song did Zhuge Liang like to sing?", "Liangfu Yin", "It's a mournful song about three warriors killed by a scheming minister with two peaches."],
+["W", "What were the three terraces at Ye?", "Bronze Sparrow, Golden Tiger and Ice Well", "Cao Cao built the Bronze Sparrow Terrace in 210 at his northern base, later adding the other two."],
+["S", "What did young Liu Bei prefer over books?", "Dogs, horses and music", "The records say he didn't enjoy study and liked fine clothes. He spoke little and hid his feelings."],
+["W", "Which Indian empire sent an envoy to Wei in 229?", "The Kushans", "Vasudeva of the Kushan Empire sent tribute, and Cao Rui gave him the title King of the Great Yuezhi, Friend of Wei."],
+["S", "Who did Zhuge Liang compare himself to?", "Guan Zhong and Yue Yi", "Most people laughed. A few friends like Xu Shu agreed."],
+["R", "What happens to Lü Meng in the novel?", "Guan Yu's ghost kills him", "He's possessed at a victory feast. Historically he died of illness."],
+["W", "What did Cao Hong say when he gave Cao Cao his horse in 190?", "The world needs you, not me", "After defeat at Xingyang, Cao Cao's horse was lost. Cao Hong said the world could manage without Cao Hong but not without him."],
+["R", "Did Jiang Gan steal a fake letter from Zhou Yu?", "No", "He did visit Zhou Yu to win him over, but went home empty handed."],
+["W", "What happened when Sima Yi took Liaodong in 238?", "He massacred the men", "After Gongsun Yuan fell, every male over 15 in Xiangping was reportedly killed."],
+["R", "How many characters appear in the novel?", "Over 1,000", "Fans have counted around 1,200 named people across 120 chapters."],
+["W", "What riddle did Yang Xiu solve on the Cao E stele?", "Superb fine words", "Eight characters meaning yellow silk, young woman, grandson and mortar combine into a phrase meaning superbly fine writing. Cao Cao took 30 li longer to work it out."],
+["S", "How much property did Zhuge Liang say he owned?", "800 mulberry trees", "He told Liu Shan that 800 mulberry trees and some land was enough for his family. He wanted no extra wealth."],
+["H", "How many years did the Han dynasty last?", "Over 400", "With a short break under Wang Mang, Han ruled from 202 BC to 220 AD. The Three Kingdoms came out of its collapse."],
+["R", "Did Huang Gai get beaten as part of a trick?", "No", "The bitter flesh ruse is fiction, but it became an idiom for hurting yourself to fool an enemy."],
+["S", "How did Guan Yu behave during surgery on his arm?", "He kept eating", "A doctor cut to the bone to scrape poison while Guan Yu drank and chatted with his officers. Blood filled a basin."],
+["L", "Which manga made the story famous in Japan?", "Yokoyama Mitsuteru's Sangokushi", "It ran 60 volumes from 1971 to 1987 and introduced generations of Japanese readers."],
+["R", "Is Ma Chao called Splendid in history?", "Only in the novel", "Jin Ma Chao, Splendid Ma Chao, is a nickname from the novel."],
+["U", "How did Zhou Tai prove his loyalty at a feast?", "He showed his scars", "Sun Quan made him remove his robe, then pointed to each wound and told the story of how he got it saving Sun Quan."],
+["L", "What medical classic was written during the era?", "Treatise on Cold Damage", "Zhang Zhongjing's Shanghan Lun is still a core text of Chinese medicine."],
+["H", "How old was Emperor Xian when Dong Zhuo put him on the throne?", "Eight", "Dong Zhuo deposed his half brother Liu Bian in 189 and installed the boy Liu Xie. He would be the last emperor of Han."],
+["S", "Who was Zhang Fei's wife related to?", "Xiahou Yuan", "She was Xiahou Yuan's niece, taken by Zhang Fei while gathering firewood. Their two daughters became Liu Shan's empresses."],
+["J", "What happened to Chen Shou's father?", "Punished after Jieting", "The Jin history says he served under Ma Su and had his head shaved as punishment. Some think this coloured Chen Shou's view of Zhuge Liang."],
+["W", "What did Cao Cao do with his officers' secret letters to Yuan Shao?", "Burned them unread", "After Guandu he found letters from his own men to the enemy. He burned them, saying even he hadn't been sure he'd win."],
+["R", "Did Pang Tong trick Cao Cao into chaining his ships?", "No", "The ships were linked, but Pang Tong's role is invented."],
+["W", "Who suggested Cao Cao's farming colonies?", "Zao Zhi and Han Hao", "From 196 Cao Cao settled soldiers and refugees on abandoned land at Xu. The tuntian system fed his armies for decades."],
+["L", "When was Koei's first Romance of the Three Kingdoms game released?", "1985", "The strategy game came out in Japan on PC. The series has run for over a dozen main entries since."],
+["W", "What did Cao Cao say about Guo Jia after Red Cliffs?", "He wouldn't have lost", "He lamented that if Guo Jia had lived, the defeat would never have happened. Guo Jia died in 207, aged around 37."],
+["S", "Were the Five Tiger Generals a real title?", "No", "The novel invented the group. The official history did put Guan Yu, Zhang Fei, Ma Chao, Huang Zhong and Zhao Yun in one chapter."],
+["L", "What does speak of Cao Cao mean?", "Speak of the devil", "Speak of Cao Cao and Cao Cao arrives is the Chinese version of the English saying."],
+["W", "Who was Cao Cao's grandfather by adoption?", "A eunuch", "His father Cao Song was adopted by the powerful palace eunuch Cao Teng. Cao Song's birth family is unknown, possibly the Xiahou clan."],
+["S", "What did Liu Bei sell as a young man?", "Straw sandals and mats", "His father died young and he lived with his mother making shoes. A big mulberry tree by his house looked like an imperial canopy."],
+["L", "What happened to Hua Tuo's book?", "It was burned", "Before his execution by Cao Cao, he gave his notes to a jailer, who burned them out of fear."],
+["W", "What did Xu Huang and Guan Yu do before fighting at Fancheng?", "They chatted as friends", "They talked of old times, then Xu Huang announced that the head of Guan Yu was worth a thousand jin of gold."],
+["S", "How did Mi Zhu help Liu Bei?", "He gave him 2,000 servants", "The rich merchant also gave money and his sister, Lady Mi. His brother Mi Fang later betrayed Guan Yu, and Mi Zhu died of shame."],
+["W", "Who is credited with developing regular script calligraphy?", "Zhong Yao", "The Wei official's writing is a forerunner of standard Chinese characters. Wang Xizhi later studied his style."],
+["J", "What did Zhong Hui do in Chengdu in 264?", "Rebelled", "He tried to set up his own state. His soldiers mutinied and killed him and Jiang Wei."],
+["W", "Why did Cao Rui refuse to shoot a fawn?", "Its mother had been killed", "Cao Pi shot a doe and told his son to shoot the fawn. Cao Rui wept and said he couldn't kill the child after the mother, thinking of Lady Zhen."],
+["H", "What trade did He Jin's family come from?", "Butchers", "The grand general who dominated court in 189 rose because his half sister became Empress He. The eunuchs lured him into the palace and killed him."],
+["S", "What was Zhuge Liang's wife said to look like?", "Plain, with yellow hair", "Her father said she was ugly with yellow hair and dark skin but as clever as Zhuge Liang. Her name Huang Yueying comes from later legend."],
+["R", "What does Guan Yu's ghost shout in the novel?", "Give me back my head", "He wanders crying for his head until a monk reminds him of all the heads he took."],
+["U", "When did Sun Quan finally call himself emperor?", "229", "He had accepted the title King of Wu from Cao Pi in 221 before breaking away."],
+["S", "Who said Liao Hua leads the vanguard?", "A saying", "When Shu runs out of great generals, Liao Hua leads the vanguard. It means making do with whoever's left."],
+["R", "Did Zhuge Liang really borrow arrows with straw boats?", "No, but Sun Quan did something similar", "At Ruxu in 213, Sun Quan's boat was so full of arrows on one side he turned it to balance the load."],
+["H", "How many eunuchs were in the so called Ten Attendants?", "Twelve", "The Han histories actually name twelve palace eunuchs. Ten was simply a round label that stuck."],
+["S", "Who was Liu Bei's adopted son?", "Liu Feng", "He refused to help Guan Yu in 219. Zhuge Liang feared he'd be trouble and Liu Bei ordered him to kill himself."],
+["R", "What did Zhao Yun's famous sword cut through?", "Iron, in the novel", "He takes the Qinggang sword from Xiahou En at Changban and slices armour like mud."],
+["S", "How long is Zhao Yun's official biography?", "Very short", "It's only a few hundred characters. Much of his fame comes from a separate Unofficial Biography quoted in later notes."],
+["L", "What does fan gu mean in Chinese today?", "Disloyal by nature", "From Wei Yan's rebel bone, it describes someone born to betray."],
+["S", "What did Zhuge Liang do to himself after Jieting?", "Demoted himself", "He asked to be lowered three ranks. Liu Shan agreed but let him keep running the state."],
+["U", "What was Wu's famous fortress city in Nanjing?", "Stone City", "Sun Quan built Shitoucheng on a cliff above the Yangtze. Parts of its wall still survive."],
+["R", "Who is the novel's greatest crier?", "Liu Bei", "A saying claims Liu Bei won his country by crying."],
+["S", "What did Yang Yi say that ended his career?", "He should have joined Wei", "He complained that he'd have done better defecting when Zhuge Liang died. He was demoted and killed himself."]
+];
+(()=>{
+const KIND={H:["Han","漢"],W:["Wei","魏"],S:["Shu","蜀"],U:["Wu","吳"],J:["Jin","晉"],R:["Romance","義"],L:["Legacy","傳"]};
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const N=FACTS.length;
+const idx=d=>((d%N)+N)%N;
+const $=id=>document.getElementById(id);
+const t=today();
+const f=FACTS[idx(t)];
+const k=KIND[f[0]];
+$('dayNo').textContent=t+1;
+$('seal').textContent=k[1];
+$('kind').textContent=k[0];
+$('no').textContent='Fact '+(idx(t)+1)+' of '+N;
+$('q').textContent=f[1];
+$('a').textContent=f[2];
+$('b').textContent=f[3];
+
+function show(fresh){
+  $('reveal').hidden=true;
+  const ans=$('answer');ans.hidden=false;
+  if(fresh)ans.classList.add('fresh')
+}
+if(get('fd_day'+t)) show(false);
+$('reveal').addEventListener('click',()=>{put('fd_day'+t,{r:1,at:Date.now()});show(true)});
+
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+
+/* log of earlier revealed days, newest first, capped at 60 */
+const list=$('logList');let shown=0;
+for(let d=t-1;d>=t-400&&shown<60;d--){
+  if(!get('fd_day'+d)) continue;
+  const g=FACTS[idx(d)],kk=KIND[g[0]];
+  const el=document.createElement('details');
+  const s=document.createElement('summary');
+  const m=document.createElement('span');m.className='mini';m.textContent=kk[1];m.setAttribute('aria-hidden','true');
+  const lq=document.createElement('span');lq.className='lq';
+  const sm=document.createElement('small');sm.textContent='Day '+(d+1)+' · '+kk[0];
+  lq.append(sm,document.createTextNode(g[1]));
+  s.append(m,lq);
+  const body=document.createElement('div');body.className='lbody';
+  const la=document.createElement('p');la.className='la';la.textContent=g[2];
+  const lb=document.createElement('p');lb.textContent=g[3];
+  body.append(la,lb);el.append(s,body);list.append(el);shown++;
+}
+if(shown) $('log').hidden=false;
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new fact */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+</body></html>

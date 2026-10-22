@@ -39,6 +39,13 @@ body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15
 .play:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
 .game.finished .play{background:transparent;color:var(--gold);border-top-color:var(--line)}
 footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+.community{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 18px;background:var(--panel);border:1px solid var(--line);color:var(--paper);text-decoration:none}
+.community:hover{border-color:var(--gold)}
+.community:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.community .seal{width:44px;height:44px;font-size:24px}
+.community b{display:block;font-family:var(--display);font-weight:400;font-size:22px}
+.community small{display:block;color:var(--mute);font-size:13px;margin-top:2px;line-height:1.4}
+.community .arrow{color:var(--gold);font-size:20px}
 .wrap{grid-template-columns:minmax(0,1fr)}.wrap>*{min-width:0}.logo small{white-space:normal}.homelink{display:inline-block;padding:12px 0}
 </style>
 
@@ -106,6 +113,8 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       <a class="play" href="fact.html">Reveal</a>
     </article>
   </main>
+
+  <a class="community" href="community.html"><span class="seal" aria-hidden="true">會</span><span><b>Meet the community</b><small>Watch Serious Trivia play every day and find your people on Reddit</small></span><span class="arrow" aria-hidden="true">&rarr;</span></a>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>

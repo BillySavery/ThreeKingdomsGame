@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Meet the Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Featured YouTube creator with his uploads embedded, then subreddit cards */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:720px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+.logo{font-family:var(--display);font-size:34px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:6px}
+.intro{margin:0;color:var(--mute);line-height:1.55;max-width:56ch}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:8px 0 0;color:var(--paper)}
+.label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.feature{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);display:grid}
+.feature .top{padding:18px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.seal{width:60px;height:60px;flex:none;border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:32px;color:var(--gold);background:var(--lacquer)}
+.feature h3,.sub h3{font-family:var(--display);font-weight:400;font-size:26px;margin:4px 0 0;line-height:1.1}
+.feature p,.sub p{margin:4px 0 0;color:var(--mute);font-size:14px;line-height:1.5}
+.video{position:relative;aspect-ratio:16/9;background:#000;border-block:1px solid var(--line)}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.btns{display:flex;flex-wrap:wrap;gap:10px;padding:16px 18px}
+.btn{display:inline-block;font-family:var(--ui);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;color:var(--paper);border:1px solid var(--line);text-decoration:none}
+.btn.primary{background:var(--lacquer);border-color:var(--gold)}
+.btn:hover{border-color:var(--gold)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.subs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.sub{background:var(--panel);border:1px solid var(--line);padding:16px;display:grid;gap:10px;grid-template-rows:auto 1fr auto;text-decoration:none;color:inherit}
+.sub:hover{border-color:var(--gold)}
+.sub:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sub .seal{width:44px;height:44px;font-size:24px}
+.sub h3{font-size:20px}
+.sub .go{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Meet the Community<small>THREE KINGDOMS DAILY &middot; 三国</small></div>
+  </header>
+  <p class="intro">The people playing, talking and arguing about the Three Kingdoms every day. Come and find them.</p>
+
+  <section>
+    <div class="label">Plays every day</div>
+    <article class="feature">
+      <div class="top">
+        <div class="seal" aria-hidden="true">播</div>
+        <div>
+          <h3>Serious Trivia</h3>
+          <p>Takes on the daily games on camera. Watch along, then see if you can beat his score.</p>
+        </div>
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UUw64RL17YRZtEbE7gbDltpQ" title="Latest videos from Serious Trivia" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="btns">
+        <a class="btn primary" href="https://www.youtube.com/@serioustrivia?sub_confirmation=1" target="_blank" rel="noopener">Subscribe on YouTube</a>
+        <a class="btn" href="https://www.youtube.com/@serioustrivia/videos" target="_blank" rel="noopener">All videos</a>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="label">Talk about it</div>
+    <h2>On Reddit</h2>
+    <div class="subs" style="margin-top:12px">
+      <a class="sub" href="https://www.reddit.com/r/threekingdoms/" target="_blank" rel="noopener">
+        <div class="seal" aria-hidden="true">史</div>
+        <div><h3>r/threekingdoms</h3><p>The history, the Romance and everything in between.</p></div>
+        <span class="go">Visit &rarr;</span>
+      </a>
+      <a class="sub" href="https://www.reddit.com/r/dynastywarriors/" target="_blank" rel="noopener">
+        <div class="seal" aria-hidden="true">無</div>
+        <div><h3>r/dynastywarriors</h3><p>Musou, officers, builds and a thousand soldiers per swing.</p></div>
+        <span class="go">Visit &rarr;</span>
+      </a>
+      <a class="sub" href="https://www.reddit.com/r/totalwarthreekingdoms/" target="_blank" rel="noopener">
+        <div class="seal" aria-hidden="true">兵</div>
+        <div><h3>r/totalwarthreekingdoms</h3><p>Campaigns, factions and grand strategy across the realm.</p></div>
+        <span class="go">Visit &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <div data-support></div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span></footer>
+</div>
+<script src="support.js"></script>
+</body></html>

@@ -115,6 +115,7 @@ ol.tower{list-style:none;margin:0;padding:0;display:grid;gap:5px}
       <button class="btn" id="share">Copy result</button>
       <span class="nextin" id="next" aria-live="polite"></span>
     </div>
+    <div data-support></div>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -389,4 +390,5 @@ function countdown(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),
 /* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzles */
 (()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
 </script>
+<script src="support.js"></script>
 </body></html>

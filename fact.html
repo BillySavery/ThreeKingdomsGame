@@ -79,6 +79,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       <p class="a" id="a"></p>
       <p class="b" id="b"></p>
       <div class="nextin">Next fact in <b id="cd">0h 0m</b></div>
+      <div data-support></div>
     </div>
   </article>
 
@@ -90,7 +91,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 
   <div class="rules"><b>One new fact every day.</b> Seals show which realm a fact belongs to: Han 漢, Wei 魏, Shu 蜀, Wu 吳 and Jin 晉. Romance 義 facts set the novel against the histories, and Legacy 傳 facts follow the story into sayings, opera and games.</div>
 
-  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>New fact at midnight, your local time.</span></footer>
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>New fact at midnight, your local time.</span></footer>
 </div>
 
 <script>
@@ -517,4 +518,5 @@ if(shown) $('log').hidden=false;
 /* New day check: reload when the local date changes, so a tab left open overnight gets the new fact */
 (()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
 </script>
+<script src="support.js"></script>
 </body></html>

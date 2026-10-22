@@ -107,7 +107,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     </article>
   </main>
 
-  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>Puzzles reset at midnight, your local time.</span></footer>
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
 
 <script>
@@ -141,4 +141,5 @@ cd();setInterval(cd,30000);
 /* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzles */
 (()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
 </script>
+<script src="support.js"></script>
 </body></html>

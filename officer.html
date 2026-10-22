@@ -97,6 +97,7 @@ tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-del
     <h2 id="endT">Found!</h2>
     <p id="endP"></p>
     <div class="actions"><button class="btn primary" id="reveal" hidden>Reveal answer</button><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
+    <div data-support></div>
   </div>
 
   <div class="tablewrap">
@@ -351,4 +352,5 @@ function countdown(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),
 /* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzles */
 (()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
 </script>
+<script src="support.js"></script>
 </body></html>

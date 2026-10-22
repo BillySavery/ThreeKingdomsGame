@@ -89,6 +89,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
     <h2 id="endT">Campaign over</h2>
     <ol id="summary"></ol>
     <div class="controls"><button class="btn" id="share">Copy result</button><span class="nextin" id="nextin"></span></div>
+    <div data-support></div>
   </div>
 
   <div class="rules">
@@ -365,4 +366,5 @@ render();
 /* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzles */
 (()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
 </script>
+<script src="support.js"></script>
 </body></html>

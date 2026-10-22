@@ -114,6 +114,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       <div><b id="stStreak">0</b>Streak</div>
     </div>
     <div class="nextin">Ten new statements in <b id="cd">0h 0m</b></div>
+    <div data-support></div>
   </section>
 
   <section class="review" id="review" hidden>
@@ -123,7 +124,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 
   <div class="rules"><b>How to play.</b> Ten statements a day about the Three Kingdoms. Decide whether each one really happened according to the histories, or was invented by the Romance or later legend. Each answer explains where the story comes from.</div>
 
-  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span>Puzzles reset at midnight, your local time.</span></footer>
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
 
 <script>
@@ -531,4 +532,5 @@ if(st.over||st.picks.length>=PER) finish(); else renderQ();
 /* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
 (()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
 </script>
+<script src="support.js"></script>
 </body></html>

@@ -42,7 +42,8 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:8px 0 0;colo
 .sub:hover{border-color:var(--gold)}
 .sub:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .sub .seal{width:44px;height:44px;font-size:24px}
-.sub h3{font-size:20px}
+.sub h3{font-size:20px;overflow-wrap:anywhere}
+.sub>*{min-width:0}
 .sub .go{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
 </style>
@@ -90,7 +91,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       </a>
       <a class="sub" href="https://www.reddit.com/r/totalwarthreekingdoms/" target="_blank" rel="noopener">
         <div class="seal" aria-hidden="true">兵</div>
-        <div><h3>r/totalwarthreekingdoms</h3><p>Campaigns, factions and grand strategy across the realm.</p></div>
+        <div><h3>r/totalwar<wbr>threekingdoms</h3><p>Campaigns, factions and grand strategy across the realm.</p></div>
         <span class="go">Visit &rarr;</span>
       </a>
     </div>

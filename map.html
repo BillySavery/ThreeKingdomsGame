@@ -300,7 +300,7 @@ function pin(lo,la,cls){
 function render(){
   layer.innerHTML='';
   $('total').textContent=S.guesses.reduce((a,g)=>a+g.p,0).toLocaleString('en-GB');
-  $('dayno').textContent='Daily #'+(t+1);
+  $('dayno').textContent='Daily';
   $('pips').innerHTML=S.ids.map((_,i)=>{const g=S.guesses[i];return `<span class="pip ${g?band(g.p):i===S.round&&!S.done?'now':''}"></span>`}).join('');
   if(S.done){finish();return}
   const b=BATTLES[S.ids[S.round]];
@@ -351,7 +351,7 @@ function finish(){
 }
 $('share').onclick=()=>{
   const sq={g:'🟩',y:'🟨',o:'🟧',r:'🟥'};const tot=S.guesses.reduce((a,g)=>a+g.p,0);
-  const txt=`Battle Map #${t+1}\n${S.guesses.map(g=>sq[band(g.p)]).join('')} ${tot.toLocaleString('en-GB')}/5,000`;
+  const txt=`Battle Map ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})}\n${S.guesses.map(g=>sq[band(g.p)]).join('')} ${tot.toLocaleString('en-GB')}/5,000`;
   const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{fb(txt);done()})}catch(e){fb(txt);done()}
 };

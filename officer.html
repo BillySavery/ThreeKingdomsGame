@@ -256,7 +256,7 @@ function start(mode){
   const ans=mode==='daily'?dailyAnswer():OFF[Math.floor(Math.random()*OFF.length)];
   G={mode,ans,guesses:[],over:false,win:false};
   if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.ans===ans.n){G.guesses=s.guesses.map(n=>BY.get(n)).filter(Boolean);G.over=s.over;G.win=s.win}}
-  $('modeLbl').textContent=mode==='daily'?'Daily #'+(today()+1):'';
+  $('modeLbl').textContent=mode==='daily'?'Daily':'';
   $('title').textContent=mode==='daily'?"Who is today's officer?":'Who is the mystery officer?';
   $('fb').textContent='';$('guess').value='';closeSugg();
   render(false);
@@ -338,7 +338,7 @@ $('home').onclick=()=>start('daily');
 $('share').onclick=()=>{
   const sq=c=>c==='hit'||c===true?'🟩':c==='near'?'🟨':'⬛';
   const lines=G.guesses.map(g=>{const c=compare(g,G.ans);return[c.f,c.g,c.b.c,c.d.c,c.sur].map(sq).join('')});
-  const txt=`Mystery Officer ${G.mode==='daily'?'#'+(today()+1):''} ${G.win?G.guesses.length:'X'}/${MAX}\n${lines.join('\n')}`;
+  const txt=`Mystery Officer ${G.mode==='daily'?new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''} ${G.win?G.guesses.length:'X'}/${MAX}\n${lines.join('\n')}`;
   const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{fb2(txt);done()})}catch(e){fb2(txt);done()}
 };

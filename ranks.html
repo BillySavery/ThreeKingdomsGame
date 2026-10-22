@@ -232,7 +232,7 @@ function start(bi,m){
   const b=BOARDS[bi];
   G={bi,b,mode:m,lives:3,slots:Array(10).fill(null),found:new Set(),wrong:[],tried:new Set(),over:false};
   if(m==='daily'){const saved=store.get('day'+today(),null);if(saved&&saved.bi===bi){G.lives=saved.lives;saved.found.forEach(n=>place(n,false));G.wrong=saved.wrong||[];G.tried=new Set([...saved.found,...G.wrong]);if(saved.over)G.over=true}}
-  $('qnum').textContent=m==='daily'?'Daily #'+dailyNo():'';
+  $('qnum').textContent=m==='daily'?'Daily':'';
   $('qsrc').textContent=b.src+(b.ranked?' · Ranked':'');
   $('qtext').textContent=b.q;$('qsub').textContent=b.sub;
   $('fb').textContent='';$('fb').className='feedback';$('guess').value='';closeSugg();
@@ -375,7 +375,7 @@ $('home').onclick=()=>setMode('daily');
 $('share').onclick=()=>{
   const got=G.found.size;
   const grid=G.slots.map(s=>s&&!s.miss?'🟥':'⬛').join('');
-  const txt=`Full Ranks ${G.mode==='daily'?'#'+dailyNo():'· '+G.b.q}\n${grid} ${got}/10\n${'🗡️'.repeat(Math.max(0,G.lives))}`;
+  const txt=`Full Ranks ${G.mode==='daily'?new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'· '+G.b.q}\n${grid} ${got}/10\n${'🗡️'.repeat(Math.max(0,G.lives))}`;
   const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{fallbackCopy(txt);done()})}catch(e){fallbackCopy(txt);done()}
 };

@@ -54,7 +54,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <div class="han" aria-hidden="true">三國</div>
     <h1>Three Kingdoms <em>Daily</em></h1>
     <p>Five puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
-    <div class="today"><span>Day <b id="dayNo">1</b></span><span>Done today <b id="doneCount">0/5</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
+    <div class="today"><span>Done today <b id="doneCount">0/5</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
   </header>
 
   <main class="games">
@@ -125,7 +125,6 @@ const EPOCH=Date.UTC(2026,9,1);
 const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
 const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
 const t=today();
-document.getElementById('dayNo').textContent=t+1;
 function set(id,text,cls){const el=document.getElementById('s-'+id);el.textContent=text;el.className='status'+(cls?' '+cls:'');
   const card=document.getElementById('g-'+id);card.classList.toggle('finished',cls==='done');card.querySelector('.play').textContent=cls==='done'?'See result':cls==='live'?'Continue':'Play'}
 let done=0;

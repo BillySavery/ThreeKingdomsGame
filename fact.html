@@ -65,7 +65,6 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <a class="homelink" href="index.html">&larr; All games</a>
   <header>
     <div class="logo">Daily Fact<small>THREE KINGDOMS DAILY &middot; 三国</small></div>
-    <span class="chip">Day <b id="dayNo">1</b></span>
   </header>
 
   <article class="card" aria-live="polite">
@@ -474,7 +473,6 @@ const $=id=>document.getElementById(id);
 const t=today();
 const f=FACTS[idx(t)];
 const k=KIND[f[0]];
-$('dayNo').textContent=t+1;
 $('seal').textContent=k[1];
 $('kind').textContent=k[0];
 $('no').textContent='Fact '+(idx(t)+1)+' of '+N;
@@ -502,7 +500,7 @@ for(let d=t-1;d>=t-400&&shown<60;d--){
   const s=document.createElement('summary');
   const m=document.createElement('span');m.className='mini';m.textContent=kk[1];m.setAttribute('aria-hidden','true');
   const lq=document.createElement('span');lq.className='lq';
-  const sm=document.createElement('small');sm.textContent='Day '+(d+1)+' · '+kk[0];
+  const sm=document.createElement('small');sm.textContent=new Date(EPOCH+d*864e5).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'})+' · '+kk[0];
   lq.append(sm,document.createTextNode(g[1]));
   s.append(m,lq);
   const body=document.createElement('div');body.className='lbody';

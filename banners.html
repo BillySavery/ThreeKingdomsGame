@@ -307,7 +307,7 @@ function start(mode,pi){
   G={mode,pi,groups:p.map(([label,items,note],lv)=>({label,items,note,lv})),solved:[],sel:new Set(),mistakes:0,history:[],tried:new Set(),over:false};
   G.order=shuffle(p.flatMap(g=>g[1]));
   if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.pi===pi){G.solved=s.solved;G.mistakes=s.mistakes;G.history=s.history;G.tried=new Set(s.tried||[]);G.over=s.over}}
-  $('pno').textContent=mode==='daily'?'Daily #'+(today()+1):'Puzzle '+(pi+1)+' of '+PUZZLES.length;
+  $('pno').textContent=mode==='daily'?'Daily':'Puzzle '+(pi+1)+' of '+PUZZLES.length;
   $('fb').textContent='';
   render();
   if(G.over)finish(true);else{$('end').hidden=true;$('controls').hidden=false;$('lives').hidden=false}
@@ -368,7 +368,7 @@ $('clear').onclick=()=>{G.sel.clear();render()};
 $('home').onclick=()=>start('daily',dailyIdx());
 $('share').onclick=()=>{
   const sq=['🟨','🟩','🟥','🟪'];
-  const txt=`Four Banners ${G.mode==='daily'?'#'+(today()+1):''}\n`+G.history.map(r=>r.map(l=>sq[l]).join('')).join('\n');
+  const txt=`Four Banners ${G.mode==='daily'?new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}\n`+G.history.map(r=>r.map(l=>sq[l]).join('')).join('\n');
   const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{fb2(txt);done()})}catch(e){fb2(txt);done()}
 };

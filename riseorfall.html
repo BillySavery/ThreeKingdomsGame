@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
 .homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
 .homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
@@ -31,6 +31,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;fl
 .lives{display:inline-flex;gap:4px}
 .life{width:12px;height:12px;border:1px solid var(--gold);background:var(--lacquer);transform:rotate(45deg)}
 .life.lost{background:transparent;border-color:var(--line)}
+.source{margin:0;padding:10px 14px;border:1px solid var(--line);border-left:3px solid var(--gold);background:var(--panel);font-size:13px;line-height:1.5;color:var(--mute)}
+.source b{color:var(--gold2);font-weight:600}
 .pips{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .pip{height:6px;background:#3a2e25}.pip.ok{background:var(--hit)}.pip.bad{background:var(--miss)}.pip.now{background:var(--gold)}
 .statbar{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);padding:14px 16px}
@@ -83,6 +85,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <div class="logo">Rise or Fall<small>THREE KINGDOMS DAILY &middot; 三国</small></div>
     <span class="hud"><span class="chip" id="lifeChip" title="Spare lives">Life <span class="lives" id="lives" aria-label="1 life left"></span></span><span class="chip" id="roundChip">Round <b id="rnd">1</b> of 10</span></span>
   </header>
+  <p class="source">All stats come from <b>Romance of the Three Kingdoms XIV</b> by Koei Tecmo, the latest game in the series. Every officer is rated from 1 to 100.</p>
   <div class="pips" id="pips" aria-hidden="true"></div>
 
   <section id="play">
@@ -332,6 +335,7 @@ function end(){
   const sc=score();$('final').innerHTML=sc+'<small>/10</small>';
   $('endLine').textContent=sc===10?'A clean sweep. Not even Zhuge Liang saw that coming.':sc>=7?'A fine campaign. The court will hear of this.':sc>=4?'A respectable showing. Regroup and march again tomorrow.':'A short campaign. Even Liu Bei lost plenty of battles before Chengdu.';
   const st=store.get('stats',{played:0,total:0,best:0,lastDay:null});
+  if(S.score!==sc){S.score=sc;save()}
   if(!S.counted){st.played++;st.total+=sc;st.best=Math.max(st.best,sc);st.lastDay=t;store.set('stats',st);S.counted=true;save()}
   $('stats').innerHTML='<div><b>'+st.played+'</b>Played</div><div><b>'+(st.played?(st.total/st.played).toFixed(1):0)+'</b>Average</div><div><b>'+st.best+'</b>Best</div>';
   const list=$('rlist');list.innerHTML='';

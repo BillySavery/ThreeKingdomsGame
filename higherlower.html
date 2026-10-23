@@ -124,6 +124,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <section class="review" id="review" hidden>
     <h2>Today's ten</h2>
     <div id="rlist"></div>
+    <button class="btn" id="revealRest" type="button" hidden style="width:100%;padding:12px;font-size:13px;font-weight:600">Reveal the rest</button>
   </section>
 
   <div class="rules"><b>How to play.</b> Ten pairs a day. You can see the first officer's score. Is the second officer's score for the same stat higher or lower? You have one life: your first wrong guess uses it up, and a second wrong guess ends your run. If the two are level, either answer counts. Stats are from <b>Romance of the Three Kingdoms XIV</b> by Koei Tecmo, the latest game in the series, and run from 1 to 100.</div>
@@ -334,8 +335,12 @@ function end(){
   if(!S.counted){st.played++;st.total+=sc;st.best=Math.max(st.best,sc);st.lastDay=t;store.set('stats',st);S.counted=true;save()}
   $('stats').innerHTML='<div><b>'+st.played+'</b>Played</div><div><b>'+(st.played?(st.total/st.played).toFixed(1):0)+'</b>Average</div><div><b>'+st.best+'</b>Best</div>';
   const list=$('rlist');list.innerHTML='';
+  const left=ROUNDS-S.picks.length;
+  $('revealRest').hidden=!left||S.revealed;
+  $('revealRest').textContent='Reveal the '+left+(left===1?' pair':' pairs')+' you didn\'t reach';
   for(let i=0;i<ROUNDS;i++){
     const s=P.stats[i],played=i<S.picks.length,ok=played&&correct(i,S.picks[i]);
+    if(!played&&!S.revealed)break;
     const a=OFF[P.chain[i]],b=OFF[P.chain[i+1]];
     const row=document.createElement('div');row.className='rrow '+(played?(ok?'ok':'bad'):'unplayed');
     row.innerHTML='<span class="st" aria-hidden="true"></span><span><small></small><span class="names"></span></span><span class="vals"></span>';
@@ -345,6 +350,7 @@ function end(){
   }
   pips();
 }
+$('revealRest').onclick=()=>{S.revealed=true;save();end();const r=document.querySelector('.rrow.unplayed');if(r)r.scrollIntoView({behavior:'smooth',block:'nearest'})};
 $('hi').onclick=()=>guess('H');$('lo').onclick=()=>guess('L');
 $('next').onclick=()=>{if(isOver())end();else showRound()};
 document.addEventListener('keydown',e=>{if($('play').hidden||$('choices').hidden)return;if(e.key==='ArrowUp'){e.preventDefault();guess('H')}if(e.key==='ArrowDown'){e.preventDefault();guess('L')}});

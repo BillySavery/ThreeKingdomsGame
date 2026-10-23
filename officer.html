@@ -225,17 +225,18 @@ Emperor Xian|Other|M|Ruler|234
 Yan Liang|Other|M|General|200
 Wen Chou|Other|M|General|200
 Tian Feng|Other|M|Strategist|200
-Ju Shou|Other|M|Strategist|200`;
+Ju Shou|Other|M|Strategist|200
+Li Dian|Wei|M|General|c217`;
 const ALIAS={"Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Lianshi":["Bu Lianshi","Lady Bu"],"Zhuge Liang":["Kongming"],"Lu Bu":["Lv Bu"],"Emperor Xian":["Liu Xie"],"Sima Yi":["Zhongda"],"Liu Shan":["Adou"],"Taishi Ci":["Taishici"],"Wang Yuanji":["Yuanji"]};
 // Family names that take two characters
 const DOUBLE=["Xiahou","Sima","Zhuge","Taishi","Gongsun"];
 // Birth years from the Records of the Three Kingdoms as summarised on Wikipedia. Negative = approximate (c.), missing = not recorded.
-const BORN={"Cao Cao":155,"Cao Pi":187,"Cao Rui":-205,"Cao Ren":168,"Zhang Liao":169,"Jia Xu":147,"Guo Jia":170,"Xun Yu":163,"Xun You":157,"Cao Zhi":192,"Cao Zhang":-189,"Zhen Ji":183,"Yang Xiu":175,
+const BORN={"Cao Cao":155,"Li Dian":-180,"Cao Pi":187,"Cao Rui":-205,"Cao Ren":168,"Zhang Liao":169,"Jia Xu":147,"Guo Jia":170,"Xun Yu":163,"Xun You":157,"Cao Zhi":192,"Cao Zhang":-189,"Zhen Ji":183,"Yang Xiu":175,
 "Sima Yi":179,"Sima Shi":208,"Sima Zhao":211,"Sima Yan":236,"Zhang Chunhua":189,"Wang Yuanji":217,"Deng Ai":-197,"Zhong Hui":225,"Jia Chong":217,"Wen Yang":238,
 "Liu Bei":161,"Liu Shan":207,"Ma Chao":176,"Zhuge Liang":181,"Pang Tong":179,"Fa Zheng":176,"Jiang Wei":202,"Ma Su":190,"Ma Liang":187,
 "Sun Jian":155,"Sun Ce":175,"Sun Quan":182,"Sun Liang":243,"Sun Xiu":235,"Sun Hao":242,"Zhou Yu":175,"Lu Su":172,"Lu Meng":178,"Lu Xun":183,"Taishi Ci":166,"Zhu Ran":182,"Zhu Huan":177,"Zhuge Jin":174,"Zhang Zhao":156,"Lu Kang":226,"Zhuge Ke":203,
 "Wang Yun":137,"Liu Biao":142,"Kong Rong":153,"Tao Qian":132,"Emperor Xian":181};
-const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n.split(' ')[0]);const by=BORN[n];return{n,f,g,r,d:+d,sur,b:by==null?null:Math.abs(by),bc:by<0}});
+const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n.split(' ')[0]);const by=BORN[n];return{n,f,g,r,d:+String(d).replace('c',''),dc:String(d).startsWith('c'),sur,b:by==null?null:Math.abs(by),bc:by<0}});
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 OFF.forEach(o=>{o.keys=[o.n,...(ALIAS[o.n]||[])].map(norm)});
 const BY=new Map(OFF.map(o=>[o.n,o]));
@@ -246,7 +247,9 @@ const store={get(k,d){try{const v=localStorage.getItem('mo_'+k);return v==null?d
 
 // Daily: same answer for everyone on a given day
 function seeded(s){return()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648}}
-const ORDER=(()=>{const r=seeded(220),idx=OFF.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return idx})();
+// The first 106 officers keep their original shuffled order so past and current days never change; officers added later join the end of the rotation
+const BASE=106;
+const ORDER=(()=>{const r=seeded(220),idx=OFF.slice(0,BASE).map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}for(let i=BASE;i<OFF.length;i++)idx.push(i);return idx})();
 const EPOCH=Date.UTC(2026,9,1);
 const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
 const dailyAnswer=()=>OFF[ORDER[((today()%OFF.length)+OFF.length)%OFF.length]];
@@ -268,6 +271,7 @@ function compare(g,a){
   return{f:g.f===a.f,g:g.g===a.g,b:yr(g.b,a.b),d:yr(g.d,a.d),sur:g.sur===a.sur};
 }
 const bornTxt=o=>o.b==null?'?':(o.bc?'c. ':'')+o.b;
+const diedTxt=o=>(o.dc?'c. ':'')+o.d;
 function render(animateFirst){
   const tb=$('rows');tb.innerHTML='';
   [...G.guesses].reverse().forEach((g,i)=>{
@@ -277,7 +281,7 @@ function render(animateFirst){
     tr.appendChild(cell(g.f,c.f?'hit':''));
     tr.appendChild(cell(g.g==='F'?'Female':'Male',c.g?'hit':''));
     tr.appendChild(cell(bornTxt(g),c.b.c,c.b.arr));
-    tr.appendChild(cell(String(g.d),c.d.c,c.d.arr));
+    tr.appendChild(cell(diedTxt(g),c.d.c,c.d.arr));
     tr.appendChild(cell(g.sur,c.sur?'hit':''));
     tb.appendChild(tr);
   });
@@ -300,13 +304,13 @@ function submit(name){
   if(G.over)setTimeout(()=>finish(false),500);
 }
 // On a loss the answer stays hidden until the player taps Reveal answer
-function revealAns(){const a=G.ans;$('endP').textContent=`It was ${a.n}. ${a.f}, ${bornTxt(a)} to ${a.d}.`;$('reveal').hidden=true}
+function revealAns(){const a=G.ans;$('endP').textContent=`It was ${a.n}. ${a.f}, ${bornTxt(a)} to ${diedTxt(a)}.`;$('reveal').hidden=true}
 const revKey=()=>'rev'+today();const wasRevealed=()=>G.mode==='daily'&&store.get(revKey(),false);const markRevealed=()=>{if(G.mode==='daily')store.set(revKey(),true)};
 function finish(restoring){
   $('entry').hidden=true;$('end').hidden=false;
   const a=G.ans,n=G.guesses.length;
   $('endT').textContent=G.win?'Found!':'Out of guesses';
-  if(G.win){$('endP').textContent=`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. ${a.f}, ${bornTxt(a)} to ${a.d}.`;$('reveal').hidden=true}
+  if(G.win){$('endP').textContent=`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. ${a.f}, ${bornTxt(a)} to ${diedTxt(a)}.`;$('reveal').hidden=true}
   else if(wasRevealed())revealAns();
   else{$('endP').textContent="Today's officer stays hidden until you reveal them.";$('reveal').hidden=false}
   if(!restoring){const st=store.get('stats',{played:0,won:0,streak:0,lastDay:null});st.played++;if(G.win)st.won++;

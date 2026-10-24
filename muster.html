@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Muster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Status chips, the officer being called up, the 4x4 board, then the end card and a review list */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --miss:#9b3a2c; --jade:#1f4a40;
+  --t-fac:#c07a3a; --t-bat:#b0453a; --t-evt:#5a9a86;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--mute);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold2)}
+.chip.bad b{color:#f08a72}
+
+.caller{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px}
+.caller .seal{width:54px;height:54px;border:2px solid var(--gold);background:var(--lacquer);display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--gold)}
+.caller .lab{font-size:11px;letter-spacing:.14em;white-space:nowrap;text-transform:uppercase;color:var(--mute);font-variant-numeric:tabular-nums}
+.caller .name{font-family:var(--display);font-size:clamp(24px,6vw,32px);line-height:1.05;margin:2px 0 0;overflow-wrap:anywhere}
+.caller .name.pop{animation:pop .3s ease-out both}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.skip{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:11px 12px;background:transparent;color:var(--gold);border:1px solid var(--gold);cursor:pointer;white-space:nowrap}
+.skip:hover{background:rgba(217,164,65,.12)}
+.skip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.skip[disabled]{opacity:.4;cursor:default}
+.btns{display:grid;gap:6px}
+.tally{background:var(--lacquer);color:var(--gold2)}
+.tally:hover{background:#a8261f}
+.tally span{font-family:var(--display);font-size:15px;letter-spacing:0;font-weight:400}
+.tally.used{background:transparent;color:var(--mute);border-color:var(--line)}
+.sq.tallied{border-color:var(--gold2)}
+.sq.tallied .who::before{content:"虎 ";color:var(--gold2)}
+.msg{min-height:22px;font-size:14px;line-height:1.45;color:var(--mute);margin:-6px 2px 0}
+.msg.ok{color:#6fd0b0}.msg.bad{color:#f08a72}
+
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.sq{position:relative;aspect-ratio:1/1;min-height:0;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--tc);color:var(--paper);font-family:var(--ui);padding:7px 6px 6px;display:grid;grid-template-rows:auto 1fr auto;text-align:left;cursor:pointer;overflow:hidden}
+.sq:hover:not([disabled]){border-color:var(--gold);border-top-color:var(--tc)}
+.sq:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.sq .ty{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--tc);font-weight:600}
+.sq .lb{align-self:center;font-family:var(--display);font-size:clamp(12px,3.3vw,16px);line-height:1.12;overflow-wrap:anywhere;hyphens:none}
+.sq .who{font-size:clamp(10px,2.7vw,12px);font-weight:700;letter-spacing:.02em;color:var(--paper);line-height:1.15;overflow-wrap:anywhere}
+.sq.filled{background:var(--jade);border-color:#2f8a6f;border-top-color:var(--tc);cursor:default}
+.sq.filled .lb{opacity:.7;font-size:clamp(11px,2.9vw,14px)}
+.sq.filled .who{color:#bff0dc}
+.sq[disabled]:not(.filled){cursor:default}
+.sq.flash{animation:flash .5s ease-out}
+.sq.shake{animation:shake .4s ease-in-out;border-color:var(--miss)}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(111,208,176,.8)}100%{box-shadow:0 0 0 10px rgba(111,208,176,0)}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.sq.miss{background:#2a1714;border-color:var(--miss)}
+.sq.could{outline:2px dashed var(--gold);outline-offset:-4px}
+.key{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.key span::before{content:"";display:inline-block;width:10px;height:3px;background:var(--c);margin-right:6px;vertical-align:middle}
+
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:20px 18px;display:grid;gap:12px;text-align:center;justify-items:center}
+.score{font-family:var(--display);font-size:64px;line-height:1;color:var(--gold2);font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--mute)}
+.rank{font-family:var(--display);font-size:24px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.5;color:var(--mute);max-width:44ch}
+.btn{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:13px 16px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold);cursor:pointer}
+.btn:hover{background:#a8261f}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.nextin b{color:var(--gold2);font-variant-numeric:tabular-nums}
+.copied{font-size:13px;color:var(--gold2);min-height:18px}
+.review{display:grid;gap:6px}
+.review h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 4px;color:var(--gold)}
+.ritem{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);padding:10px 14px;display:grid;gap:3px}
+.ritem .rh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ritem .rh b{color:var(--paper)}
+.ritem .rs{font-family:var(--display);font-size:18px;line-height:1.2}
+.ritem .rw{font-size:13.5px;color:var(--mute);line-height:1.5}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:8px}
+.rules p{margin:0}
+.rules b{color:var(--paper)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (max-width:380px){.caller{grid-template-columns:minmax(0,1fr) auto}.caller .seal{display:none}.sq .ty{font-size:8px;letter-spacing:.1em}}
+@media (prefers-reduced-motion:reduce){.sq.flash,.sq.shake,.caller .name.pop{animation:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Muster<small>THREE KINGDOMS DAILY &middot; 點將</small></div>
+    <div class="chips">
+      <span class="chip">Board <b id="cFill">0</b>/16</span>
+      <span class="chip bad">Wrong <b id="cWrong">0</b></span>
+    </div>
+  </header>
+
+  <section id="play">
+    <div style="display:grid;gap:12px">
+      <div class="caller" aria-live="polite">
+        <div class="seal" aria-hidden="true">將</div>
+        <div><div class="lab">Officer <b id="oNum">1</b> of 30</div><p class="name" id="oName"></p></div>
+        <div class="btns">
+          <button class="skip tally" id="tally" type="button"><span aria-hidden="true">虎</span> Tiger Tally</button>
+          <button class="skip" id="skip" type="button">Send away</button>
+        </div>
+      </div>
+      <p class="msg" id="msg" aria-live="polite">Tap a square that fits this officer, or send them away.</p>
+    </div>
+  </section>
+
+  <div class="board" id="board" role="grid" aria-label="Muster board"></div>
+  <div class="key"><span style="--c:var(--t-fac)">Faction</span><span style="--c:var(--t-bat)">Battle</span><span style="--c:var(--t-evt)">Event</span></div>
+
+  <section class="endcard" id="end" hidden>
+    <div class="score" id="final">0<small>/16</small></div>
+    <p class="rank" id="rank"></p>
+    <p id="rankline"></p>
+    <div class="actions"><button class="btn" id="share" type="button">Copy result</button></div>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="stats">
+      <div><b id="stPlayed">0</b>Played</div>
+      <div><b id="stFull">0</b>Full boards</div>
+      <div><b id="stStreak">0</b>Streak</div>
+    </div>
+    <div class="nextin">A new board in <b id="cd">0h 0m</b></div>
+    <div data-support></div>
+  </section>
+
+  <section class="review" id="review" hidden>
+    <h2>Today's thirty</h2>
+    <div id="rlist" class="review"></div>
+  </section>
+
+  <div class="rules">
+    <p><b>How to play.</b> Sixteen squares of factions, battles and events. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
+    <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen.</p>
+    <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
+    <p>Everything is based on the Romance of the Three Kingdoms. Factions count anyone who served that side at any point. Battles count anyone who fought there on either side.</p>
+  </div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+
+<script>
+/* Squares: code, type (F faction, B battle, E event), label */
+const SQ={
+WEI:['F','Wei'],SHU:['F','Shu'],WU:['F','Wu'],
+DZ:['F','Served Dong Zhuo'],YS:['F','Served Yuan Shao'],LB:['F','Served Lü Bu'],LBI:['F','Served Liu Biao'],LZ:['F','Served Liu Zhang'],MA:['F','Served the Ma clan'],
+YT:['B','Yellow Turban Rebellion'],XP:['B','Siege of Xiapi'],GD:['B','Guandu'],CB:['B','Changban'],RC:['B','Red Cliffs'],TP:['B','Tong Pass'],HF:['B','Hefei'],DJ:['B','Mount Dingjun'],FC:['B','Fancheng'],YL:['B','Yiling'],JT:['B','Jieting'],WZ:['B','Wuzhang Plains'],
+CO:['E','Coalition against Dong Zhuo'],PG:['E','Peach Garden Oath'],FT:['E','Five Tiger Generals'],KG:['E','Killed by Guan Yu'],JF:['E','Fall of Jing Province'],FS:['E','Fall of Shu'],SC:['E','Southern campaign'],NE:['E','Northern Expeditions'],ST:['E','Famous strategist'],DB:['E','Died in battle']
+};
+/* Officers and the squares they fit, per the Romance */
+const OFF=[
+['Liu Bei','SHU YT CO PG XP CB RC YL'],
+['Guan Yu','SHU WEI YT CO PG XP GD RC FC FT JF'],
+['Zhang Fei','SHU YT CO PG XP CB RC FT'],
+['Zhao Yun','SHU CB RC FT SC NE'],
+['Ma Chao','SHU MA TP FT'],
+['Huang Zhong','SHU LBI DJ YL FT DB'],
+['Zhuge Liang','SHU RC SC NE JT WZ ST'],
+['Pang Tong','SHU RC ST DB'],
+['Wei Yan','SHU LBI SC NE WZ'],
+['Jiang Wei','WEI SHU NE WZ FS'],
+['Ma Su','SHU SC NE JT'],
+['Wang Ping','WEI SHU SC NE JT'],
+['Fa Zheng','LZ SHU DJ ST'],
+['Huang Quan','LZ SHU WEI YL'],
+['Yan Yan','LZ SHU'],
+['Zhang Ren','LZ'],
+['Zhang Song','LZ'],
+['Meng Da','LZ SHU WEI'],
+['Guan Ping','SHU FC JF'],
+['Zhou Cang','SHU FC JF'],
+['Liao Hua','SHU JF'],
+['Mi Fang','SHU WU JF'],
+['Ma Dai','MA SHU TP SC NE WZ'],
+['Guan Xing','SHU YL NE'],
+['Liu Shan','SHU CB FS'],
+['Zhuge Zhan','SHU FS DB'],
+['Xu Shu','SHU WEI ST'],
+['Jian Yong','SHU CB'],
+['Lady Mi','CB'],
+['Meng Huo','SC'],
+['Zhurong','SC'],
+['Wutugu','SC'],
+['Cao Cao','WEI YT CO XP GD CB RC TP'],
+['Xiahou Dun','WEI CO'],
+['Xiahou Yuan','WEI CO DJ DB'],
+['Cao Ren','WEI CO FC'],
+['Cao Hong','WEI CO TP'],
+['Xu Chu','WEI GD RC TP'],
+['Zhang Liao','WEI LB XP GD RC HF'],
+['Xu Huang','WEI GD TP FC'],
+['Yu Jin','WEI GD FC'],
+['Pang De','MA WEI TP FC KG'],
+['Dian Wei','WEI DB'],
+['Guo Jia','WEI XP ST'],
+['Xun Yu','YS WEI ST'],
+['Xun You','WEI XP GD ST'],
+['Cheng Yu','WEI ST'],
+['Jia Xu','DZ WEI TP ST'],
+['Sima Yi','WEI JT NE WZ ST'],
+['Zhang He','YS WEI GD DJ JT NE DB'],
+['Gao Lan','YS WEI GD'],
+['Xu You','YS WEI GD'],
+['Cao Zhen','WEI NE'],
+['Guo Huai','WEI NE WZ'],
+['Deng Ai','WEI FS'],
+['Zhong Hui','WEI FS'],
+['Li Dian','WEI HF'],
+['Yue Jin','WEI HF'],
+['Cai Mao','LBI WEI RC'],
+['Zhang Yun','LBI WEI RC'],
+['Wen Pin','LBI WEI'],
+['Cao Pi','WEI'],
+['Jiang Gan','WEI RC'],
+['Cai Yang','WEI KG DB'],
+['Kong Xiu','WEI KG DB'],
+['Sun Jian','WU YT CO DB'],
+['Sun Ce','WU'],
+['Sun Quan','WU HF'],
+['Zhou Yu','WU RC ST'],
+['Lu Su','WU RC ST'],
+['Lü Meng','WU HF JF'],
+['Lu Xun','WU JF YL ST'],
+['Gan Ning','LBI WU RC HF'],
+['Taishi Ci','WU HF DB'],
+['Huang Gai','WU CO RC'],
+['Cheng Pu','WU CO RC'],
+['Han Dang','WU CO RC YL'],
+['Zhou Tai','WU RC YL'],
+['Ling Tong','WU RC HF'],
+['Ding Feng','WU RC'],
+['Xu Sheng','WU RC'],
+['Pan Zhang','WU JF YL DB'],
+['Zhuge Jin','WU'],
+['Zhang Zhao','WU'],
+['Sun Shangxiang','WU'],
+['Lü Bu','DZ XP'],
+['Chen Gong','LB XP ST'],
+['Gao Shun','LB XP'],
+['Hua Xiong','DZ KG DB'],
+['Li Jue','DZ'],
+['Guo Si','DZ'],
+['Li Ru','DZ ST'],
+['Dong Zhuo','YT'],
+['Yuan Shao','CO GD'],
+['Yuan Shu','CO'],
+['Gongsun Zan','CO'],
+['Ma Teng','CO'],
+['Kong Rong','CO'],
+['Tao Qian','CO'],
+['Yan Liang','YS GD KG DB'],
+['Wen Chou','YS GD KG DB'],
+['Ju Shou','YS GD ST'],
+['Tian Feng','YS ST'],
+['Shen Pei','YS'],
+['Han Sui','TP'],
+['Zhang Jiao','YT'],
+['Diaochan',''],
+['Wang Yun',''],
+['Hua Tuo',''],
+['Liu Biao',''],
+['Liu Zhang',''],
+['Lady Zhen','']
+].map(([n,t])=>({n,t:t?t.split(' '):[]}));
+
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=id=>document.getElementById(id);
+const t=today(),N=30,SIZE=16;
+
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+function shuf(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const fits=(o,sq)=>OFF[o].t.includes(sq);
+
+/* Build the day: 5 factions, 6 battles, 5 events, then a set of 16 officers that fills the board one each,
+   6 to 9 duds that fit nothing, and decoys that fit something. A full board is always possible. */
+function build(d){
+  const r=rng(d*7919+1234);
+  for(let tries=0;tries<500;tries++){
+    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k),r);
+    const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
+    const used=new Set(),solve=[];let ok=true;
+    const order=squares.slice().sort((a,b)=>OFF.filter(o=>o.t.includes(a)).length-OFF.filter(o=>o.t.includes(b)).length);
+    for(const sq of order){
+      const c=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&fits(i,sq)),r);
+      if(!c.length){ok=false;break}
+      used.add(c[0]);solve.push(c[0]);
+    }
+    if(!ok) continue;
+    const duds=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&!squares.some(s=>fits(i,s))),r);
+    const nd=6+Math.floor(r()*4);
+    if(duds.length<nd) continue;
+    const pick=duds.slice(0,nd);pick.forEach(i=>used.add(i));
+    const decoys=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&squares.some(s=>fits(i,s))),r).slice(0,N-SIZE-nd);
+    if(decoys.length<N-SIZE-nd) continue;
+    return {squares,officers:shuf(solve.concat(pick,decoys),r)};
+  }
+}
+const day=build(t);
+const KEY='mu_day'+t;
+let st=get(KEY)||{i:0,board:{},wrong:0,log:[],over:false};
+let busy=false;
+
+const boardEl=$('board');
+const tcol={F:'var(--t-fac)',B:'var(--t-bat)',E:'var(--t-evt)'},tname={F:'Faction',B:'Battle',E:'Event'};
+day.squares.forEach(code=>{
+  const b=document.createElement('button');b.type='button';b.className='sq';b.dataset.sq=code;
+  b.style.setProperty('--tc',tcol[SQ[code][0]]);
+  b.innerHTML='<span class="ty"></span><span class="lb"></span><span class="who"></span>';
+  b.querySelector('.ty').textContent=tname[SQ[code][0]];
+  b.querySelector('.lb').textContent=SQ[code][1];
+  b.addEventListener('click',()=>place(code));
+  boardEl.append(b);
+});
+const sqEl=code=>boardEl.querySelector('[data-sq="'+code+'"]');
+const filled=()=>Object.keys(st.board).length;
+
+function paint(){
+  day.squares.forEach(code=>{
+    const b=sqEl(code),o=st.board[code];
+    b.classList.toggle('filled',o!=null);
+    b.querySelector('.who').textContent=o!=null?OFF[o].n:'';
+    b.disabled=o!=null||st.over;
+    b.setAttribute('aria-label',SQ[code][1]+(o!=null?', filled by '+OFF[o].n:''));
+    b.classList.toggle('tallied',!!(st.tally&&st.tally[1].includes(code)));
+  });
+  const tb=$('tally');tb.disabled=!!st.tally||st.over;tb.classList.toggle('used',!!st.tally);
+  tb.lastChild.nodeValue=st.tally?' Tally used':' Tiger Tally';
+  $('cFill').textContent=filled();$('cWrong').textContent=st.wrong;
+}
+function showOfficer(){
+  if(st.i>=N||filled()>=SIZE){finish();return}
+  const n=$('oName');n.textContent=OFF[day.officers[st.i]].n;
+  n.classList.remove('pop');void n.offsetWidth;n.classList.add('pop');
+  $('oNum').textContent=st.i+1;
+}
+function say(text,cls){const m=$('msg');m.textContent=text;m.className='msg'+(cls?' '+cls:'')}
+function advance(){st.i++;put(KEY,st);paint();busy=false;showOfficer()}
+
+function place(code){
+  if(busy||st.over||st.board[code]!=null) return;
+  const o=day.officers[st.i],b=sqEl(code);
+  busy=true;
+  if(fits(o,code)){
+    st.board[code]=o;st.log.push([o,code,1]);
+    say(OFF[o].n+' takes '+SQ[code][1]+'.','ok');
+    b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash');
+  }else{
+    st.wrong++;st.log.push([o,code,0]);
+    say(OFF[o].n+' does not fit '+SQ[code][1]+'. They leave the camp.','bad');
+    b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');
+  }
+  setTimeout(advance,450);
+}
+$('tally').addEventListener('click',()=>{
+  if(busy||st.over||st.tally) return;
+  const o=day.officers[st.i];busy=true;
+  const got=day.squares.filter(c=>st.board[c]==null&&fits(o,c));
+  st.tally=[o,got];
+  if(got.length){
+    got.forEach(c=>{st.board[c]=o;const b=sqEl(c);b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash')});
+    st.log.push([o,got,3]);
+    say('Tiger Tally. '+OFF[o].n+' takes '+got.map(c=>SQ[c][1]).join(', ')+'.','ok');
+  }else{
+    st.wrong++;st.log.push([o,[],3]);
+    say('Tiger Tally wasted. '+OFF[o].n+' fits no open square and leaves the camp.','bad');
+  }
+  setTimeout(advance,got.length?700:450);
+});
+$('skip').addEventListener('click',()=>{
+  if(busy||st.over) return;
+  const o=day.officers[st.i];busy=true;
+  st.log.push([o,null,2]);
+  say(OFF[o].n+' is sent away.');
+  setTimeout(advance,200);
+});
+
+const RANKS=[[16,'Grand Marshal','A full muster. Every banner flies today.'],[14,'General of the Guard','So close to a full board.'],[11,'Commandant','A strong camp, with a couple of gaps.'],[7,'Captain','Half the board is a fair day in the field.'],[0,'Raw recruit','The officers got away from you. Try again tomorrow.']];
+function updateStats(n){
+  const s=get('mu_stats')||{played:0,full:0,streak:0,last:null};
+  if(s.last!==t){s.played++;if(n>=SIZE)s.full++;s.streak=(s.last===t-1)?s.streak+1:1;s.last=t;put('mu_stats',s)}
+  return s;
+}
+function finish(){
+  const n=filled();
+  if(!st.over||st.score!==n){st.over=true;st.score=n;put(KEY,st)}
+  paint();
+  const s=updateStats(n);
+  $('play').hidden=true;$('end').hidden=false;
+  $('final').firstChild.nodeValue=n;
+  const r=RANKS.find(x=>n>=x[0]);$('rank').textContent=r[1];
+  $('rankline').textContent=r[2]+(st.wrong?' '+st.wrong+' wrong '+(st.wrong===1?'placement':'placements')+'.':' No wrong placements.');
+  $('stPlayed').textContent=s.played;$('stFull').textContent=s.full;$('stStreak').textContent=s.streak;
+  day.squares.forEach(c=>{if(st.board[c]==null)sqEl(c).classList.add('miss')});
+  const list=$('rlist');list.innerHTML='';
+  day.officers.forEach((o,i)=>{
+    const lg=st.log.find(x=>x[0]===o),could=day.squares.filter(c=>fits(o,c)).map(c=>SQ[c][1]);
+    let col,what;
+    if(!lg){col='var(--line)';what='not called up'}
+    else if(lg[2]===3){col=lg[1].length?'var(--gold2)':'var(--miss)';what=lg[1].length?'Tiger Tally on '+lg[1].map(c=>SQ[c][1]).join(', '):'Tiger Tally wasted'}
+    else if(lg[2]===1){col='var(--hit)';what='placed on '+SQ[lg[1]][1]}
+    else if(lg[2]===0){col='var(--miss)';what='wrong on '+SQ[lg[1]][1]}
+    else{col=could.length?'var(--gold)':'var(--hit)';what=could.length?'sent away':'sent away, rightly'}
+    const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',col);
+    const h=document.createElement('div');h.className='rh';h.textContent=(i+1)+' · '+what;
+    const nm=document.createElement('div');nm.className='rs';nm.textContent=OFF[o].n;
+    const w=document.createElement('div');w.className='rw';
+    w.textContent=could.length?'Fits '+could.join(', '):'A dud. Fits nothing on today’s board.';
+    d.append(h,nm,w);list.append(d);
+  });
+  $('review').hidden=false;
+}
+$('share').addEventListener('click',()=>{
+  const tl=st.tally?st.tally[1]:[];
+  let grid='';day.squares.forEach((c,i)=>{grid+=tl.includes(c)?'\u{1F7E8}':st.board[c]!=null?'\u{1F7E9}':'⬛';if(i%4===3)grid+='\n'});
+  const text='Muster · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'\n'+filled()+'/16 · '+st.wrong+' wrong\n'+grid+'threekingdomsgame.co.uk';
+  const done=()=>$('copied').textContent='Copied. Paste it anywhere.';
+  try{navigator.clipboard.writeText(text).then(done,()=>{$('copied').textContent=text})}catch(e){$('copied').textContent=text}
+});
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+document.addEventListener('keydown',e=>{if(st.over||busy)return;if(e.metaKey||e.ctrlKey)return;if(e.key==='s'||e.key==='S')$('skip').click();else if(e.key==='t'||e.key==='T')$('tally').click()});
+
+paint();
+if(st.over||st.i>=N||filled()>=SIZE) finish(); else showOfficer();
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+<script src="support.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d0d6d441d802490a8896d4f5249225a0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

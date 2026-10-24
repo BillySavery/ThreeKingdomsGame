@@ -312,10 +312,21 @@ function start(mode,pi){
   render();
   if(G.over)finish(true);else{$('end').hidden=true;$('controls').hidden=false;$('lives').hidden=false}
 }
+// Notes never give away a group that is still hidden. A sentence that names anything from an unsolved group,
+// or hints that a name "is needed elsewhere", waits until every group is on the board.
+const HINT=/needed|needs (him|her|it|them)|belongs|elsewhere|fit too|own banner|bigger job|but only|no relation|isn't that/i;
+const SURN=new Set(['Sun','Cao','Liu','Ma','Lu','Yuan','Zhang','Guan','Xiahou','Sima','Zhuge','Lady']);
+const esc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function noteFor(g){
+  const n=g.note||'';if(G.solved.length===4)return n;
+  const keys=[];G.groups.forEach(o=>{if(G.solved.includes(o.lv))return;o.items.forEach(x=>{keys.push(x);const w=x.split(' ');const last=w[w.length-1];if(w.length>1&&last.length>2&&!SURN.has(last))keys.push(last)})});
+  const res=keys.map(k=>new RegExp('\\b'+esc(k)+'\\b','i'));
+  return n.split(/(?<=[.!?])\s+/).filter(t=>!HINT.test(t)&&!res.some(r=>r.test(t))).join(' ');
+}
 function render(newLv){
   const sv=$('solved');sv.innerHTML='';
   G.solved.forEach(lv=>{const g=G.groups[lv];const d=document.createElement('div');d.className='solved l'+(lv+1)+(lv===newLv?' new':'');
-    d.innerHTML='<b></b><span></span><small></small>';d.children[0].textContent=g.label;d.children[1].textContent=g.items.join(', ');d.children[2].textContent=g.note||'';sv.appendChild(d)});
+    d.innerHTML='<b></b><span></span><small></small>';d.children[0].textContent=g.label;d.children[1].textContent=g.items.join(', ');d.children[2].textContent=noteFor(g);sv.appendChild(d)});
   const solvedItems=new Set(G.solved.flatMap(lv=>G.groups[lv].items));
   const gr=$('grid');gr.innerHTML='';
   G.order.filter(x=>!solvedItems.has(x)).forEach(x=>{const b=document.createElement('button');b.className='tile';b.textContent=x;b.setAttribute('aria-pressed',G.sel.has(x));

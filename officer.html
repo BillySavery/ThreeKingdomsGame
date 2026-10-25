@@ -238,8 +238,61 @@ Ma Dai|Shu|M|General|?
 Guan Xing|Shu|M|General|?
 Huang Yueying|Shu|F|Consort|?
 Meng Huo|Shu|M|Official|?
-Diaochan|Other|F|Consort|?`;
-const ALIAS={"Xu Zhu":["Xu Chu"],"Sun Shangxiang":["Lady Sun","Sun Ren","Sun Shang Xiang"],"Huang Yueying":["Yueying","Lady Huang"],"Diaochan":["Diao Chan"],"Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Lianshi":["Bu Lianshi","Lady Bu"],"Zhuge Liang":["Kongming"],"Lu Bu":["Lv Bu"],"Emperor Xian":["Liu Xie"],"Sima Yi":["Zhongda"],"Liu Shan":["Adou"],"Taishi Ci":["Taishici"],"Wang Yuanji":["Yuanji"]};
+Diaochan|Other|F|Consort|?
+Chen Qun|Wei|M|Official|237
+Hua Tuo|Other|M|Official|208
+Han Dang|Wu|M|General|227
+Xiao Qiao|Wu|F|Consort|?
+Zhang Bao|Other|M|General|184
+Gongsun Yuan|Other|M|Ruler|238
+Cao Chong|Wei|M|Official|208
+Yan Yan|Shu|M|General|?
+Cao Ang|Wei|M|General|197
+Sun Deng|Wu|M|Official|241
+Gu Yong|Wu|M|Official|243
+Wei Guan|Jin|M|Official|291
+Cao Fang|Wei|M|Ruler|274
+Da Qiao|Wu|F|Consort|?
+Zhang Ren|Other|M|General|213
+Deng Zhi|Shu|M|Official|251
+Xiahou Ba|Shu|M|General|?
+Xu Sheng|Wu|M|General|?
+Li Jue|Other|M|General|198
+Kan Ze|Wu|M|Official|243
+Liu Yan|Other|M|Ruler|194
+Shen Pei|Other|M|Strategist|204
+Cao Chun|Wei|M|General|210
+Jian Yong|Shu|M|Official|?
+Yuan Tan|Other|M|General|205
+Huang Zu|Other|M|General|208
+Du Yu|Jin|M|General|285
+Yang Hu|Jin|M|General|278
+Liu Zhang|Other|M|Ruler|c220
+Hua Xin|Wei|M|Official|232
+Zhurong|Shu|F|General|?
+Bu Zhi|Wu|M|Official|247
+Cao Huan|Wei|M|Ruler|302
+Cai Wenji|Wei|F|Official|?
+Zhang Song|Other|M|Strategist|212
+Liu Feng|Shu|M|General|220
+Liu Cong|Other|M|Ruler|?
+Li Ru|Other|M|Strategist|?
+Zhong Yao|Wei|M|Official|230
+Cao Mao|Wei|M|Ruler|260
+Zhang Liang|Other|M|General|184
+Cheng Pu|Wu|M|General|?
+Lady Bian|Wei|F|Consort|230
+Zhuge Zhan|Shu|M|General|263
+Wang Lang|Wei|M|Official|228
+Guo Si|Other|M|General|197
+Wang Jun|Jin|M|General|286
+Sima Lang|Wei|M|Official|217
+Wu Yi|Shu|M|General|237
+Zuo Ci|Other|M|Official|?
+Yuan Shang|Other|M|Ruler|207
+Yuan Xi|Other|M|General|207
+Cheng Yu|Wei|M|Strategist|220`;
+const ALIAS={"Xu Zhu":["Xu Chu"],"Sun Shangxiang":["Lady Sun","Sun Ren","Sun Shang Xiang"],"Huang Yueying":["Yueying","Lady Huang"],"Diaochan":["Diao Chan"],"Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Lianshi":["Bu Lianshi","Lady Bu"],"Zhuge Liang":["Kongming"],"Lu Bu":["Lv Bu"],"Emperor Xian":["Liu Xie"],"Sima Yi":["Zhongda"],"Liu Shan":["Adou"],"Taishi Ci":["Taishici"],"Wang Yuanji":["Yuanji"],"Cai Wenji":["Cai Yan","Wenji"],"Lady Bian":["Bian Shi","Empress Bian"],"Da Qiao":["Daqiao","Elder Qiao"],"Xiao Qiao":["Xiaoqiao","Younger Qiao"],"Zhurong":["Zhu Rong","Lady Zhurong"],"Liu Zhang":["Liu Jiyu"]};
 // Family names that take two characters
 const DOUBLE=["Xiahou","Sima","Zhuge","Taishi","Gongsun"];
 // Birth years from the Records of the Three Kingdoms as summarised on Wikipedia. Negative = approximate (c.), missing = not recorded.
@@ -247,8 +300,9 @@ const BORN={"Cao Cao":155,"Ling Tong":189,"Li Dian":-180,"Cao Pi":187,"Cao Rui":
 "Sima Yi":179,"Sima Shi":208,"Sima Zhao":211,"Sima Yan":236,"Zhang Chunhua":189,"Wang Yuanji":217,"Deng Ai":-197,"Zhong Hui":225,"Jia Chong":217,"Wen Yang":238,
 "Liu Bei":161,"Liu Shan":207,"Ma Chao":176,"Zhuge Liang":181,"Pang Tong":179,"Fa Zheng":176,"Jiang Wei":202,"Ma Su":190,"Ma Liang":187,
 "Sun Jian":155,"Sun Ce":175,"Sun Quan":182,"Sun Liang":243,"Sun Xiu":235,"Sun Hao":242,"Zhou Yu":175,"Lu Su":172,"Lu Meng":178,"Lu Xun":183,"Taishi Ci":166,"Zhu Ran":182,"Zhu Huan":177,"Zhuge Jin":174,"Zhang Zhao":156,"Lu Kang":226,"Zhuge Ke":203,
-"Wang Yun":137,"Liu Biao":142,"Kong Rong":153,"Tao Qian":132,"Emperor Xian":181};
-const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n==='Diaochan'?'None':n.split(' ')[0]);const by=BORN[n];return{n,f,g,r,d:d==='?'?null:+String(d).replace('c',''),dc:String(d).startsWith('c'),sur,b:by==null?null:Math.abs(by),bc:by<0}});
+"Wang Yun":137,"Liu Biao":142,"Kong Rong":153,"Tao Qian":132,"Emperor Xian":181,
+"Cheng Yu":141,"Hua Xin":157,"Zhong Yao":151,"Lady Bian":-160,"Cao Chong":196,"Sima Lang":171,"Zhuge Zhan":227,"Deng Zhi":178,"Hua Tuo":-140,"Gu Yong":168,"Sun Deng":209,"Yang Hu":221,"Du Yu":222,"Wang Jun":206,"Wei Guan":220,"Cao Huan":246,"Cao Mao":241,"Cao Fang":232,"Cao Chun":-170};
+const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n==='Diaochan'||n==='Zhurong'?'None':n==='Lady Bian'?'Bian':n==='Da Qiao'||n==='Xiao Qiao'?'Qiao':n.split(' ')[0]);const by=BORN[n];return{n,f,g,r,d:d==='?'?null:+String(d).replace('c',''),dc:String(d).startsWith('c'),sur,b:by==null?null:Math.abs(by),bc:by<0}});
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 OFF.forEach(o=>{o.keys=[o.n,...(ALIAS[o.n]||[])].map(norm)});
 const BY=new Map(OFF.map(o=>[o.n,o]));

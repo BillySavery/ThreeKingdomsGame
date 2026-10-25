@@ -136,7 +136,7 @@ const BOARDS=[
 {q:"Emperors of Wei, Shu and Wu",sub:"Every man who reigned as emperor of one of the three states. There are 11; find any 10.",src:"History",a:["Cao Pi::Wei","Cao Rui::Wei","Cao Fang::Wei","Cao Mao::Wei","Cao Huan::Wei","Liu Bei::Shu","Liu Shan::Shu","Sun Quan::Wu","Sun Liang::Wu","Sun Xiu::Wu","Sun Hao::Wu"]},
 {q:"Lords of the coalition against Dong Zhuo",sub:"The novel lists eighteen warlords, Cao Cao included, who rallied against Dong Zhuo. Find any 10.",src:"Romance novel",a:["Yuan Shao","Yuan Shu","Cao Cao","Sun Jian","Gongsun Zan","Ma Teng","Tao Qian","Kong Rong","Liu Dai","Wang Kuang","Zhang Miao","Qiao Mao","Yuan Yi","Bao Xin","Kong Zhou","Zhang Chao","Han Fu","Zhang Yang"]},
 {q:"Members of the Sun family",sub:"Anyone born into the Sun clan of Wu: rulers, brothers, sons, daughters, cousins.",src:"History",a:["Sun Jian","Sun Ce","Sun Quan","Sun Shangxiang","Sun Yi","Sun Kuang","Sun Jing","Sun Ben","Sun Huan","Sun Shao","Sun Yu","Sun Deng","Sun He","Sun Ba","Sun Luban","Sun Luyu","Sun Liang","Sun Xiu","Sun Hao","Sun Jun","Sun Chen"]},
-{q:"Members of the Cao family",sub:"Cao Cao, his ancestors, his sons and grandsons, and the cousins who led his armies.",src:"History",a:["Cao Cao","Cao Song","Cao Pi","Cao Zhi","Cao Zhang","Cao Ang","Cao Chong","Cao Xiong","Cao Biao","Cao Ren","Cao Hong","Cao Chun","Cao Xiu","Cao Zhen","Cao Shuang","Cao Rui","Cao Fang","Cao Mao","Cao Huan","Cao Anmin","Cao Jie","Cao Xi","Cao Xun","Cao Yu"]},
+{q:"Members of the Cao family",sub:"Cao Cao, his ancestors, his sons and grandsons, and the Cao and Xiahou cousins who led his armies.",src:"History",a:["Cao Cao","Cao Song","Xiahou Dun","Xiahou Yuan","Cao Pi","Cao Zhi","Cao Zhang","Cao Ang","Cao Chong","Cao Xiong","Cao Biao","Cao Ren","Cao Hong","Cao Chun","Cao Xiu","Cao Zhen","Cao Shuang","Cao Rui","Cao Fang","Cao Mao","Cao Huan","Cao Anmin","Cao Jie","Cao Xi","Cao Xun","Cao Yu"]},
 {q:"Women who are playable in Dynasty Warriors",sub:"Any woman who has been a playable officer in a mainline game, up to Dynasty Warriors 9.",src:"The games",a:["Diaochan","Sun Shangxiang","Zhen Ji","Da Qiao","Xiao Qiao","Huang Yueying","Zhurong","Xingcai","Cai Wenji","Wang Yuanji","Zhang Chunhua","Bao Sanniang","Lianshi","Wang Yi","Guan Yinping","Lu Lingqi","Xin Xianying"]},
 {q:"Characters with the family name Zhang",sub:"Any faction, any role. Watch out for the two Zhang Baos.",src:"History and novel",a:["Zhang Fei","Zhang Liao","Zhang He","Zhang Jiao","Zhang Bao (son of Zhang Fei)","Zhang Bao (Yellow Turban)","Zhang Liang (Yellow Turban)","Zhang Zhao","Zhang Chunhua","Zhang Xiu","Zhang Lu","Zhang Yi","Zhang Hong","Zhang Ren","Zhang Song","Zhang Rang","Zhang Miao","Xingcai","Zhang Ji","Zhang Chao","Zhang Yun","Zhang Yan","Zhang Yang","Zhang Wen","Zhang Xun","Zhang Heng","Zhang Gong","Zhang Mancheng"]},
 {q:"Strategists and advisers",sub:"Officers remembered mainly for their minds rather than their spears, on any side.",src:"History",a:["Zhuge Liang","Pang Tong","Xu Shu","Fa Zheng","Guo Jia","Xun Yu","Xun You","Jia Xu","Sima Yi","Cheng Yu","Liu Ye","Zhou Yu","Lu Su","Lu Xun","Zhang Zhao","Zhuge Jin","Chen Gong","Tian Feng","Ju Shou","Guo Tu","Shen Pei","Xun Chen","Li Ru","Kuai Yue","Ma Su","Zhong Hui","Feng Ji","Xu You","Jia Chong","Kuai Liang","Huang Quan","Xin Pi","Zhang Hong","Yu Fan","Chen Qun","Zhang Song","Liu Ba","Jiang Wan","Fei Yi","Yang Xiu","Chen Gui","Chen Deng","Kan Ze","Bu Zhi","Zhong Yao","Wang Can","Yi Ji","Deng Zhi","Zhuge Ke"]},
@@ -231,12 +231,17 @@ let mode='daily',G=null,freeQueue=[],sel=-1,sugg=[],moved=false;
 function start(bi,m){
   const b=BOARDS[bi];
   G={bi,b,mode:m,lives:3,slots:Array(10).fill(null),found:new Set(),wrong:[],tried:new Set(),over:false};
-  if(m==='daily'){const saved=store.get('day'+today(),null);if(saved&&saved.bi===bi){G.lives=saved.lives;saved.found.forEach(n=>place(n,false));G.wrong=saved.wrong||[];G.tried=new Set([...saved.found,...G.wrong]);if(saved.over)G.over=true}}
+  if(m==='daily'){const saved=store.get('day'+today(),null);if(saved&&saved.bi===bi){G.lives=saved.lives;saved.found.forEach(n=>place(n,false));G.wrong=saved.wrong||[];G.tried=new Set([...saved.found,...G.wrong]);if(saved.over)G.over=true;
+    // If a board is corrected mid day, guesses that were wrongly marked wrong now count and the life comes back
+    const fixed=G.wrong.filter(n=>b.a.some(x=>(x.n||x)===n)&&!G.found.has(n));
+    if(fixed.length){fixed.forEach(n=>place(n,false));G.wrong=G.wrong.filter(n=>!fixed.includes(n));G.lives=Math.min(3,G.lives+fixed.length);
+      if(G.over&&saved.lives<=0&&G.found.size<10)G.over=false;if(G.found.size>=10)G.over=true;G.fixed=fixed;save()}}}
   $('qnum').textContent=m==='daily'?'Daily':'';
   $('qsrc').textContent=b.src+(b.ranked?' · Ranked':'');
   $('qtext').textContent=b.q;$('qsub').textContent=b.sub;
   $('fb').textContent='';$('fb').className='feedback';$('guess').value='';closeSugg();
   render();
+  if(G.fixed)fb('Sorry, '+G.fixed.join(' and ')+(G.fixed.length>1?' should have counted. They have':' should have counted. It has')+' been added and your life given back.','good');
   if(G.over)finish(true);else{$('end').hidden=true;$('entry').hidden=false;setTimeout(()=>$('guess').focus(),50)}
 }
 function place(n,anim){

@@ -242,6 +242,8 @@ const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),
 function seeded(s){return()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648}}
 const ORDER=(()=>{const r=seeded(8080),idx=BATTLES.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return idx})();
 // Five a day, walking through the shuffled pool, so no battle repeats until every one has been played
+// 26 Oct to 1 Nov 2026: swap the novel led Changsha and Xinye entries with Baima and Wuchao from the following days
+{const at=n=>ORDER.indexOf(BATTLES.findIndex(b=>b[0]===n));for(const [x,y] of [['Changsha','Baima'],['Xinye','Wuchao']]){const i=at(x),j=at(y);[ORDER[i],ORDER[j]]=[ORDER[j],ORDER[i]]}}
 function pick(day){const n=ORDER.length,d=((day%n)+n)%n;return [0,1,2,3,4].map(k=>ORDER[(d*5+k)%n])}
 const store={get(k,d){try{const v=localStorage.getItem('bm_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('bm_'+k,JSON.stringify(v))}catch(e){}}};
 

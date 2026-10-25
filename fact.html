@@ -468,7 +468,9 @@ const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),
 const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
 const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const N=FACTS.length;
-const idx=d=>((d%N)+N)%N;
+// 1 Nov 2026 (day 31) gets a history fact; the Romance fact moves to 2 Nov
+const SWAP={31:32,32:31};
+const idx=d=>{const i=((d%N)+N)%N;return SWAP[i]!=null?SWAP[i]:i};
 const $=id=>document.getElementById(id);
 const t=today();
 const f=FACTS[idx(t)];

@@ -298,7 +298,9 @@ const FIRST=15;
 const shuffleSeeded=(n,seed)=>{const r=seeded(seed),idx=[...Array(n).keys()];for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return idx};
 const ORDER=shuffleSeeded(FIRST,208);
 const CYCLE=shuffleSeeded(PUZZLES.length,4545);
-const dailyIdx=()=>{const t=today();if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<PUZZLES.length-FIRST?FIRST+k:CYCLE[(k-(PUZZLES.length-FIRST))%PUZZLES.length]};
+// 26 Oct to 1 Nov 2026 (days 25 to 31) reshuffled towards history; the displaced puzzles follow later
+const RESCHED={28:32,29:30,30:31,31:42,32:28,42:29};
+const dailyIdx=()=>{const t=today();if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<PUZZLES.length-FIRST?FIRST+k:CYCLE[(k-(PUZZLES.length-FIRST))%PUZZLES.length]};
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 
 let G=null,freeQ=[];

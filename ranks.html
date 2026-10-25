@@ -223,7 +223,9 @@ const CYCLE=shuffleSeeded(BOARDS.length,3108);
 const EPOCH=Date.UTC(2026,9,1);
 const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
 const dailyNo=()=>today()+1;
-const boardFor=t=>{if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<BOARDS.length-FIRST?FIRST+k:CYCLE[(k-(BOARDS.length-FIRST))%BOARDS.length]};
+// 26 Oct to 1 Nov 2026 (days 25 to 31) reshuffled to history boards; the displaced boards follow from 2 Nov
+const RESCHED={25:34,26:27,27:38,28:29,29:30,30:39,31:40,32:13,33:26,34:28,35:31,36:32,37:33,38:35,39:36,40:37};
+const boardFor=t=>{if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<BOARDS.length-FIRST?FIRST+k:CYCLE[(k-(BOARDS.length-FIRST))%BOARDS.length]};
 const dailyBoard=()=>boardFor(today());
 
 let mode='daily',G=null,freeQueue=[],sel=-1,sugg=[],moved=false;

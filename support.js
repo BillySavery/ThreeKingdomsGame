@@ -79,4 +79,16 @@ if(location.hash==='#kofi-test')setTimeout(showPop,400);
 document.querySelectorAll('[data-support-link]').forEach(el=>{
   el.innerHTML='<a class="kofilink" href="'+URL+'" target="_blank" rel="noopener">Support the site on Ko-fi</a>';
 });
+
+/* Report a problem: added to the footer on every page, linking to the subreddit */
+const REDDIT='https://www.reddit.com/r/ThreeKingdomsGames/';
+(()=>{
+  const a='<a class="kofilink" href="'+REDDIT+'" target="_blank" rel="noopener">Report a problem</a>';
+  let f=document.querySelector('footer');
+  if(f){const sp=document.createElement('span');sp.innerHTML=a;const k=f.querySelector('[data-support-link]');k?k.after(sp):f.appendChild(sp);return}
+  const host=document.querySelector('.wrap')||document.body;
+  f=document.createElement('footer');
+  f.style.cssText='border-top:1px solid var(--line,#4a3a2a);margin-top:24px;padding-top:16px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute,#a8987f)';
+  f.innerHTML='<span>'+a+'</span>';host.appendChild(f);
+})();
 })();

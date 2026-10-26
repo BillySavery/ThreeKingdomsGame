@@ -50,6 +50,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .lives{display:flex;justify-content:center;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
 .dot{width:12px;height:12px;border-radius:50%;background:var(--gold)}
 .dot.lost{background:var(--line)}
+.tile.hinted{box-shadow:inset 0 0 0 3px var(--gold)}
+.btn.hint{border-color:var(--gold);color:var(--gold)}
 .controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .feedback{min-height:22px;text-align:center;font-size:15px;font-weight:600;color:var(--paper)}
 .endcard{background:var(--panel);border:1px solid var(--gold);padding:16px 18px;display:grid;gap:10px;text-align:center}
@@ -83,6 +85,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="controls" id="controls">
     <button class="btn" id="shuffle">Shuffle</button>
     <button class="btn" id="clear">Deselect</button>
+    <button class="btn hint" id="hint" hidden>Hint</button>
     <button class="btn primary" id="submit" disabled>Submit</button>
   </div>
 
@@ -96,14 +99,14 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="stats" id="stats"></div>
 
   <div class="rules">
-    <b>How to play.</b> Pick four tiles that share a link and submit. Get a group right and its banner is raised. You can make seven mistakes. Watch for red herrings: some tiles look like they fit more than one group, but only one way solves the whole board. Colours run from easiest to trickiest.
+    <b>How to play.</b> Pick four tiles that share a link and submit. Get a group right and its banner is raised. You can make seven mistakes. After five mistakes you can take a hint, which shows three of the four tiles in the easiest banner you have left. Watch for red herrings: some tiles look like they fit more than one group, but only one way solves the whole board. Colours run from easiest to trickiest.
     <div class="legend"><span style="--c:var(--b1)">Straightforward</span><span style="--c:var(--b2)">Medium</span><span style="--c:var(--b3)">Tricky</span><span style="--c:var(--b4)">Devious</span></div>
     <p style="margin:10px 0 0">Fan made. Not affiliated with Koei Tecmo.</p>
   </div>
 </div>
 
 <script>
-const LIVES=7;
+const LIVES=7,HINT_AT=5;
 (()=>{
 // Each puzzle: four groups, easiest first. Every red herring has been checked so only one full solution works.
 const PUZZLES=[
@@ -307,9 +310,9 @@ const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math
 let G=null,freeQ=[];
 function start(mode,pi){
   const p=PUZZLES[pi];
-  G={mode,pi,groups:p.map(([label,items,note],lv)=>({label,items,note,lv})),solved:[],sel:new Set(),mistakes:0,history:[],tried:new Set(),over:false};
+  G={mode,pi,groups:p.map(([label,items,note],lv)=>({label,items,note,lv})),solved:[],sel:new Set(),mistakes:0,history:[],tried:new Set(),over:false,hint:null};
   G.order=shuffle(p.flatMap(g=>g[1]));
-  if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.pi===pi){G.solved=s.solved;G.mistakes=s.mistakes;G.history=s.history;G.tried=new Set(s.tried||[]);G.over=s.over}}
+  if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.pi===pi){G.solved=s.solved;G.mistakes=s.mistakes;G.history=s.history;G.tried=new Set(s.tried||[]);G.over=s.over;G.hint=s.hint!=null?s.hint:null}}
   $('pno').textContent=mode==='daily'?'Daily':'Puzzle '+(pi+1)+' of '+PUZZLES.length;
   $('fb').textContent='';
   render();
@@ -332,14 +335,25 @@ function render(newLv){
     d.innerHTML='<b></b><span></span><small></small>';d.children[0].textContent=g.label;d.children[1].textContent=g.items.join(', ');d.children[2].textContent=noteFor(g);sv.appendChild(d)});
   const solvedItems=new Set(G.solved.flatMap(lv=>G.groups[lv].items));
   const gr=$('grid');gr.innerHTML='';
-  G.order.filter(x=>!solvedItems.has(x)).forEach(x=>{const b=document.createElement('button');b.className='tile';b.textContent=x;b.setAttribute('aria-pressed',G.sel.has(x));
+  const hinted=G.hint!=null&&!G.solved.includes(G.hint)?hintTiles():[];
+  G.order.filter(x=>!solvedItems.has(x)).forEach(x=>{const b=document.createElement('button');b.className='tile'+(hinted.includes(x)?' hinted':'');b.textContent=x;b.setAttribute('aria-pressed',G.sel.has(x));
     b.onclick=()=>{if(G.over)return;if(G.sel.has(x))G.sel.delete(x);else if(G.sel.size<4)G.sel.add(x);render()};gr.appendChild(b)});
   $('lives').innerHTML='Mistakes left '+Array.from({length:LIVES},(_,i)=>`<span class="dot${i<LIVES-G.mistakes?'':' lost'}"></span>`).join('');
+  $('hint').hidden=G.over||G.hint!=null||G.mistakes<HINT_AT;
   $('submit').disabled=G.sel.size!==4;$('clear').disabled=!G.sel.size;
   const st=store.get('stats',{played:0,won:0,perfect:0});
   $('stats').innerHTML=`<div>Played<b>${st.played}</b></div><div>Solved<b>${st.won}</b></div><div>Perfect<b>${st.perfect}</b></div>`;
 }
-function save(){if(G.mode==='daily')store.set('day'+today(),{pi:G.pi,solved:G.solved,mistakes:G.mistakes,history:G.history,tried:[...G.tried],over:G.over})}
+function save(){if(G.mode==='daily')store.set('day'+today(),{pi:G.pi,solved:G.solved,mistakes:G.mistakes,history:G.history,tried:[...G.tried],over:G.over,hint:G.hint})}
+// Hint: once per game, after HINT_AT mistakes. Shows three of the four tiles in the easiest unsolved banner.
+function hintTiles(){return G.groups[G.hint].items.slice(0,3)}
+function useHint(){
+  if(G.over||G.hint!=null||G.mistakes<HINT_AT)return;
+  G.hint=[0,1,2,3].find(lv=>!G.solved.includes(lv));
+  G.sel=new Set(hintTiles());
+  $('fb').textContent='These three share a banner. Find the fourth.';
+  save();render();
+}
 function submit(){
   if(G.sel.size!==4||G.over)return;
   const pick=[...G.sel];const key=[...pick].sort().join('|');
@@ -368,7 +382,7 @@ function finish(restoring){
   G.sel.clear();render();
   $('controls').hidden=true;$('lives').hidden=true;$('end').hidden=false;
   $('endT').textContent=won?(G.mistakes===0?'Perfect':'Banners raised'):'The line broke';
-  if(won){$('endP').textContent=`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}.`;$('reveal').hidden=true}
+  if(won){$('endP').textContent=`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}${G.hint!=null?' and a hint':''}.`;$('reveal').hidden=true}
   else if(wasRevealed())revealRest();
   else{$('endP').textContent='Seven mistakes. The groups you missed stay hidden until you reveal them.';$('reveal').hidden=false}
   if(!restoring){const st=store.get('stats',{played:0,won:0,perfect:0});st.played++;if(won)st.won++;if(won&&!G.mistakes)st.perfect++;store.set('stats',st);render()}
@@ -377,12 +391,13 @@ function finish(restoring){
 function nextFree(){if(!freeQ.length)freeQ=shuffle(PUZZLES.map((_,i)=>i));let pi=freeQ.shift();if(G&&pi===G.pi&&freeQ.length){freeQ.push(pi);pi=freeQ.shift()}start('free',pi)}
 $('reveal').onclick=()=>{markRevealed();revealRest();$('share').focus()};
 $('submit').onclick=submit;
+$('hint').onclick=useHint;
 $('shuffle').onclick=()=>{G.order=shuffle(G.order);render()};
 $('clear').onclick=()=>{G.sel.clear();render()};
 $('home').onclick=()=>start('daily',dailyIdx());
 $('share').onclick=()=>{
   const sq=['🟨','🟩','🟥','🟪'];
-  const txt=`Four Banners ${G.mode==='daily'?new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}\n`+G.history.map(r=>r.map(l=>sq[l]).join('')).join('\n');
+  const txt=`Four Banners ${G.mode==='daily'?new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}\n`+G.history.map(r=>r.map(l=>sq[l]).join('')).join('\n')+(G.hint!=null?'\nHint used':'');
   const done=()=>{$('share').textContent='Copied';setTimeout(()=>$('share').textContent='Copy result',1800)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{fb2(txt);done()})}catch(e){fb2(txt);done()}
 };

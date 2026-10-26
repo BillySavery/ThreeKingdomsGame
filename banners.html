@@ -96,13 +96,14 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="stats" id="stats"></div>
 
   <div class="rules">
-    <b>How to play.</b> Pick four tiles that share a link and submit. Get a group right and its banner is raised. You can make four mistakes. Watch for red herrings: some tiles look like they fit more than one group, but only one way solves the whole board. Colours run from easiest to trickiest.
+    <b>How to play.</b> Pick four tiles that share a link and submit. Get a group right and its banner is raised. You can make seven mistakes. Watch for red herrings: some tiles look like they fit more than one group, but only one way solves the whole board. Colours run from easiest to trickiest.
     <div class="legend"><span style="--c:var(--b1)">Straightforward</span><span style="--c:var(--b2)">Medium</span><span style="--c:var(--b3)">Tricky</span><span style="--c:var(--b4)">Devious</span></div>
     <p style="margin:10px 0 0">Fan made. Not affiliated with Koei Tecmo.</p>
   </div>
 </div>
 
 <script>
+const LIVES=7;
 (()=>{
 // Each puzzle: four groups, easiest first. Every red herring has been checked so only one full solution works.
 const PUZZLES=[
@@ -333,7 +334,7 @@ function render(newLv){
   const gr=$('grid');gr.innerHTML='';
   G.order.filter(x=>!solvedItems.has(x)).forEach(x=>{const b=document.createElement('button');b.className='tile';b.textContent=x;b.setAttribute('aria-pressed',G.sel.has(x));
     b.onclick=()=>{if(G.over)return;if(G.sel.has(x))G.sel.delete(x);else if(G.sel.size<4)G.sel.add(x);render()};gr.appendChild(b)});
-  $('lives').innerHTML='Mistakes left '+[0,1,2,3].map(i=>`<span class="dot${i<4-G.mistakes?'':' lost'}"></span>`).join('');
+  $('lives').innerHTML='Mistakes left '+Array.from({length:LIVES},(_,i)=>`<span class="dot${i<LIVES-G.mistakes?'':' lost'}"></span>`).join('');
   $('submit').disabled=G.sel.size!==4;$('clear').disabled=!G.sel.size;
   const st=store.get('stats',{played:0,won:0,perfect:0});
   $('stats').innerHTML=`<div>Played<b>${st.played}</b></div><div>Solved<b>${st.won}</b></div><div>Perfect<b>${st.perfect}</b></div>`;
@@ -353,23 +354,23 @@ function submit(){
   G.mistakes++;
   $('fb').textContent=counts.includes(3)?'One away…':'Not a banner.';
   const grid=$('grid');grid.classList.remove('shake');void grid.offsetWidth;grid.classList.add('shake');
-  if(G.mistakes>=4){G.over=true;save();setTimeout(()=>{G.sel.clear();finish(false)},600);return}
+  if(G.mistakes>=LIVES){G.over=true;save();setTimeout(()=>{G.sel.clear();finish(false)},600);return}
   save();render();
 }
 // On a loss the unsolved groups stay hidden until the player taps Reveal answers
 function revealRest(){
   [0,1,2,3].forEach(lv=>{if(!G.solved.includes(lv))G.solved.push(lv)});
-  render();$('endP').textContent='Four mistakes. The full solution is shown above.';$('reveal').hidden=true;
+  render();$('endP').textContent='Seven mistakes. The full solution is shown above.';$('reveal').hidden=true;
 }
 const revKey=()=>'rev'+today();const wasRevealed=()=>G.mode==='daily'&&store.get(revKey(),false);const markRevealed=()=>{if(G.mode==='daily')store.set(revKey(),true)};
 function finish(restoring){
-  const won=G.solved.length===4&&G.mistakes<4;
+  const won=G.solved.length===4&&G.mistakes<LIVES;
   G.sel.clear();render();
   $('controls').hidden=true;$('lives').hidden=true;$('end').hidden=false;
   $('endT').textContent=won?(G.mistakes===0?'Perfect':'Banners raised'):'The line broke';
   if(won){$('endP').textContent=`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}.`;$('reveal').hidden=true}
   else if(wasRevealed())revealRest();
-  else{$('endP').textContent='Four mistakes. The groups you missed stay hidden until you reveal them.';$('reveal').hidden=false}
+  else{$('endP').textContent='Seven mistakes. The groups you missed stay hidden until you reveal them.';$('reveal').hidden=false}
   if(!restoring){const st=store.get('stats',{played:0,won:0,perfect:0});st.played++;if(won)st.won++;if(won&&!G.mistakes)st.perfect++;store.set('stats',st);render()}
   G.wonFlag=won;$('share').focus();
 }

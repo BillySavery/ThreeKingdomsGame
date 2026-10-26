@@ -47,6 +47,35 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 .community small{display:block;color:var(--mute);font-size:13px;margin-top:2px;line-height:1.4}
 .community .arrow{color:var(--gold);font-size:20px}
 .wrap{grid-template-columns:minmax(0,1fr)}.wrap>*{min-width:0}.logo small{white-space:normal}.homelink{display:inline-block;padding:12px 0}
+.gen{position:relative;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:center;padding:26px 26px 26px;border:1px solid var(--gold);background:linear-gradient(135deg,#3a110e 0%,#1f1813 55%,#14100d 100%);overflow:hidden}
+.gen:before{content:"將";position:absolute;right:-20px;bottom:-60px;font-family:var(--display);font-size:260px;line-height:1;color:rgba(217,164,65,.06);pointer-events:none}
+.gen .tag{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:5px 9px;background:var(--gold);color:var(--ink);font-weight:700}
+.gen .kick{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);margin-left:10px}
+.gen h2{font-family:var(--display);font-weight:400;font-size:clamp(30px,5.5vw,44px);line-height:1;margin:14px 0 10px;text-wrap:balance}
+.gen h2 em{font-style:normal;color:var(--gold)}
+.gen p{margin:0 0 16px;color:var(--paper);opacity:.85;line-height:1.55;max-width:46ch}
+.gen ul{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.gen li{font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--mute)}
+.gen li b{color:var(--gold2);font-weight:700}
+.gen .cta{display:inline-block;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:14px 22px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold)}
+.gen .cta:hover{background:#a8261f}
+.gen .cta:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.gen .sub{display:block;margin-top:10px;font-size:12px;color:var(--mute)}
+.fan{position:relative;height:220px}
+.fan .card{position:absolute;left:50%;top:50%;width:120px;height:170px;margin:-85px 0 0 -60px;border:2px solid var(--gold);background:linear-gradient(160deg,#2b211a,#14100d);box-shadow:0 10px 30px rgba(0,0,0,.6);display:grid;grid-template-rows:auto 1fr auto;justify-items:center;padding:10px 8px;transition:transform .3s}
+.fan .card .gem{justify-self:start;width:26px;height:26px;border-radius:50%;background:#2a5d8f;border:2px solid var(--gold2);display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff}
+.fan .card .glyph{align-self:center;font-family:var(--display);font-size:54px;color:var(--gold)}
+.fan .card .stats{width:100%;display:flex;justify-content:space-between}
+.fan .card .stats span{width:24px;height:24px;display:grid;place-items:center;font-weight:700;font-size:12px;border:2px solid var(--gold2);background:var(--lacquer);color:#fff}
+.fan .card .stats span+span{background:#3c6b2f}
+.fan .c1{transform:translateX(-70px) rotate(-14deg)}
+.fan .c2{transform:translateY(-10px);z-index:2}
+.fan .c3{transform:translateX(70px) rotate(14deg)}
+.gen:hover .c1{transform:translateX(-84px) rotate(-18deg)}
+.gen:hover .c3{transform:translateX(84px) rotate(18deg)}
+.gen:hover .c2{transform:translateY(-18px)}
+@media (max-width:640px){.gen{grid-template-columns:minmax(0,1fr);padding:22px 18px}.fan{height:190px;order:-1}.fan .card{transform-origin:center}.fan .card{width:104px;height:148px;margin:-74px 0 0 -52px}.fan .c1{transform:translateX(-60px) rotate(-14deg)}.fan .c3{transform:translateX(60px) rotate(14deg)}}
+@media (prefers-reduced-motion:reduce){.fan .card{transition:none}}
 </style>
 
 <div class="wrap">
@@ -131,6 +160,22 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       <a class="play" href="fact.html">Reveal</a>
     </article>
   </main>
+
+  <section class="gen" aria-labelledby="gen-title">
+    <div>
+      <span class="tag">New</span><span class="kick">Beyond the daily puzzles</span>
+      <h2 id="gen-title">Generals of the <em>Three Kingdoms</em></h2>
+      <p>Build a deck, pick your warlord and take the field. A turn based card battler packed with the real generals of the era. If you know Hearthstone, you already know how to play.</p>
+      <ul><li><b>450+</b> cards</li><li><b>9</b> factions</li><li>Play the AI or friends online</li></ul>
+      <a class="cta" href="https://generalsofttk.com/?utm_source=threekingdomsdaily&amp;utm_medium=home" target="_blank" rel="noopener">Raise your banner</a>
+      <span class="sub">Free to start. Plays in your browser, nothing to download.</span>
+    </div>
+    <div class="fan" aria-hidden="true">
+      <div class="card c1"><span class="gem">5</span><span class="glyph">蜀</span><span class="stats"><span>4</span><span>6</span></span></div>
+      <div class="card c2"><span class="gem">7</span><span class="glyph">魏</span><span class="stats"><span>6</span><span>7</span></span></div>
+      <div class="card c3"><span class="gem">4</span><span class="glyph">吳</span><span class="stats"><span>3</span><span>5</span></span></div>
+    </div>
+  </section>
 
   <a class="community" href="community.html"><span class="seal" aria-hidden="true">會</span><span><b>Meet the community</b><small>Watch the daily games played on YouTube and find your people on Reddit</small></span><span class="arrow" aria-hidden="true">&rarr;</span></a>
 

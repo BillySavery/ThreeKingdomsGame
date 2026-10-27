@@ -32,3 +32,6 @@ Cen Wei|?|?|?|?|?|General|Cao Wei|Romance of the Three Kingdoms VIII officer ros
 Chen Heng|?|?|?|?|?|General|Liu Yao|Romance of the Three Kingdoms VIII officer roster|https://kongming.net/8/officers/
 Ehe Shaoge|?|?|?|?|?|Tribal leader|Qiang|Romance of the Three Kingdoms VIII officer roster|https://kongming.net/8/officers/
 Yan You|?|?|?|?|?|General|Yellow Turban rebels|Romance of the Three Kingdoms VIII officer roster|https://kongming.net/8/officers/
+Yang Hong (Shu)|楊洪|Jixiu 季休|?|228|Wuyang, Qianwei|Official|Shu Han|Sanguozhi vol. 41|https://en.wikipedia.org/wiki/Yang_Hong_(Shu_Han)
+Zhao Wei|趙韙|?|?|?|?|Official|Liu Zhang|Sanguozhi vol. 31, Records of Heroes annotation|https://en.wikipedia.org/wiki/Liu_Zhang_(warlord)
+Jia Long|賈龍|Qiande 謙德|?|191|Shu County|General|Liu Yan|Rebelled against Liu Yan|https://en.wikipedia.org/wiki/Liu_Yan_(Han_dynasty_warlord)

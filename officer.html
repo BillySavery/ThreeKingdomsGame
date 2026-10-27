@@ -88,7 +88,7 @@ tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-del
 
   <div class="entry" id="entry">
     <div class="inrow">
-      <input id="guess" autocomplete="off" spellcheck="false" placeholder="Type an officer's name…" aria-label="Your guess" aria-controls="sugg">
+      <input id="guess" autocomplete="off" spellcheck="false" placeholder="Type an officer's full name…" aria-label="Your guess" aria-controls="sugg">
       <button class="btn primary" id="submit">Guess</button>
     </div>
     <ul class="sugg" id="sugg" role="listbox" hidden></ul>
@@ -237,8 +237,13 @@ function finish(restoring){
   $('share').focus();
 }
 // autocomplete
+// The list stays hidden until the player types at least two letters of the given name, so a family name hint alone never lists every officer of that family
+const SURS=[...new Set([...ALL.map(o=>norm(o.sur)),...DOUBLE.map(norm)])].filter(Boolean);
+function tooShort(q){if(q.length<3)return true;if(SURS.some(s=>s.startsWith(q)))return true;const s=SURS.filter(s=>q.startsWith(s)).sort((a,b)=>b.length-a.length)[0];return !!s&&q.length-s.length<2}
 function showSugg(){
-  const q=norm($('guess').value);if(q.length<2){closeSugg();return}
+  const q=norm($('guess').value);
+  if(tooShort(q)){closeSugg();$('fb').textContent=q.length>=2&&SURS.some(s=>q.startsWith(s)||s.startsWith(q))?'Keep typing: add at least two letters of the given name.':'';return}
+  if($('fb').textContent.startsWith('Keep typing'))$('fb').textContent='';
   const words=$('guess').value.toLowerCase().split(/[^a-z]+/).filter(Boolean);
   const scored=[];
   for(const o of ALL){if(G.guesses.includes(o))continue;let s=0;

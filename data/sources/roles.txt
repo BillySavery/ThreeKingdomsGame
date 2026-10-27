@@ -1,0 +1,447 @@
+雷銅|General
+雷緒|General, bandit
+泠苞|General
+李典|General
+李恢|General, politician
+李傕|General, politician, warlord
+李堪|General
+李儒|Advisor, politician
+李勝|Politician
+栗嵩|Eunuch
+李肅|General
+李歆|General
+李嚴|General, politician
+李異|General
+梁綱|General
+梁興|General
+梁緒|Politician
+廖化|General
+廖立|Politician
+凌操|General
+凌統|General
+劉巴|Advisor, politician
+劉豹|Tribal leader
+劉備|Emperor
+劉表|Noble, politician, warlord
+劉諶|Noble
+劉丞|General
+劉琮|Politician, warlord
+劉岱|Noble, politician, warlord
+劉度|Politician, warlord
+劉封|General
+劉璝|General
+劉理|Prince
+留略|General
+劉辟|General
+留平|General
+劉琦|Politician, warlord
+劉禪|Emperor
+劉劭|Politician
+劉先|Politician, advisor
+劉協|Emperor
+劉勛|General, warlord
+劉循|General
+劉焉|Noble, politician, warlord
+劉繇|Politician, warlord
+劉曄|Advisor, politician
+劉永|Prince
+劉虞|Noble, politician, warlord
+留贊|General
+劉璋|Noble, warlord
+劉楨|Scholar
+婁圭|Advisor, general
+樓玄|Politician
+陸績|Advisor, politician
+陸景|General
+陸凱|General, politician
+陸抗|General
+陸瑁|Politician
+魯肅|General, politician
+陸遜|General, politician
+盧毓|Politician
+盧植|General, politician, scholar
+倫直|General
+駱統|General
+呂布|General, warlord
+呂岱|General
+呂範|General
+呂据|General
+呂凱|Politician
+呂曠|General
+呂蒙|General
+呂虔|General
+呂威璜|General
+呂翔|General
+呂乂|Politician
+馬超|General
+馬岱|General
+馬鈞|Engineer, politician
+馬良|Advisor, general, politician
+馬邈|Politician
+馬日磾|Politician
+馬謖|Advisor, general, politician
+馬騰|General, warlord
+馬鐵|General
+馬玩|General
+馬休|General
+馬元義|General
+馬忠|General
+馬遵|General
+滿寵|General
+毛玠|Advisor, politician
+孟達|General
+孟獲|Local leader
+麋芳|General, politician
+禰衡|Scholar
+麋竺|Advisor, politician
+孟建|General, politician
+迷當|Tribal leader
+糜夫人|Noble lady
+潘濬|General, politician
+潘璋|General
+龐德|General
+龐德公|Scholar
+龐會|General
+龐統|Advisor, general, politician
+龐羲|General
+裴秀|Cartographer, politician
+濮陽興|Politician
+逢紀|Advisor
+牽弘|General
+橋瑁|Politician, warlord
+橋蕤|General
+譙周|Politician, scholar
+秦朗|General
+秦宓|Politician
+丘建|General
+丘力居|Tribal leader
+麴義|General
+全琮|General
+全端|General
+全紀|Politician
+全尚|Politician
+全禕|General
+沙摩柯|Tribal leader
+單經|General
+邵悌|Politician
+申耽|General
+審配|Advisor
+申儀|General
+沈瑩|General
+石苞|General, politician
+士仁|General
+施朔|General
+師纂|General
+士孫瑞|Politician
+石韜|Politician
+司馬防|Politician
+司馬孚|Politician
+司馬徽|Scholar
+司馬進|Politician
+司馬朗|Politician
+司馬亮|Noble, general, politician
+司馬倫|Noble, general, politician
+司馬敏|Politician
+司馬師|General, politician, regent
+司馬通|Politician
+司馬望|General, politician
+司馬恂|Politician
+司馬炎|Emperor
+司馬懿|General, politician, regent
+司馬攸|Politician
+司馬昭|General, politician, regent
+司馬伷|General, politician
+宋典|Eunuch
+宋建|Warlord, rebel leader
+宋謙|General
+宋憲|General
+蘇飛|General
+眭固|Bandit leader, general
+孫霸|Noble
+孫賁|General
+孫策|General, warlord
+孫綝|General, politician, regent
+孫登|Noble
+孫皓|Emperor
+孫和|Noble
+孫桓|General
+孫堅|General, warlord
+孫靜|General
+孫峻|General, regent
+孫匡|General
+孫朗|General
+孫禮|General
+孫亮|Emperor
+孫魯班|Noble lady
+孫魯育|Noble lady
+孫乾|Advisor, politician
+孫權|Emperor
+孫氏|Noble lady
+孫韶|General
+孫休|Emperor
+孫秀|General
+孫翊|General
+孫異|General
+孫瑜|General
+孫璋|Eunuch
+蹋頓|Tribal leader
+太史慈|General
+太史享|Politician
+唐彬|General
+唐咨|General
+陶濬|General
+陶謙|Politician, warlord
+滕修|Politician
+滕胤|Politician
+田疇|Advisor, politician
+田豐|Advisor
+田楷|General
+田續|General
+田豫|General, politician
+萬彧|Politician
+王粲|Advisor, politician, scholar
+王昶|General, politician
+王惇|General
+王甫|Advisor, politician
+王含|General
+王渾|General
+王基|General
+王經|General, politician
+王濬|General
+王伉|General
+王匡|Politician, warlord
+王朗|Politician, warlord
+王累|Advisor
+王凌|General, politician
+王平|General
+王頎|General
+王戎|Politician
+王雙|General
+王肅|Politician
+王威|General
+王修|Advisor, politician
+王異|Zhao Ang's wife
+王元姬|Empress dowager
+王允|Politician
+王直|General
+王忠|General
+王子服|General
+衛瓘|General, politician
+魏邈|General
+魏續|General
+魏延|General
+魏攸|Advisor, politician
+韋昭|Historian, politician
+文醜|General
+文虎|General
+文聘|General
+文欽|General
+文鴦|General
+吳氏|Noble lady
+吳班|General
+吳綱|Politician
+吳景|General
+吳巨|General
+吳蘭|General
+吾彥|General
+吳懿|General
+吳質|Advisor, general, politician
+吳子蘭|General
+郤正|Politician
+戲志才|Advisor, politician
+夏惲|Eunuch
+夏侯氏|Zhang Fei's wife
+夏侯霸|General
+夏侯稱|Noble
+夏侯充|Politician
+夏侯惇|General
+夏侯和|General, politician
+夏侯衡|Politician
+夏侯惠|General, politician
+夏侯蘭|General
+夏侯楙|General
+夏侯榮|Noble
+夏侯尚|General
+夏侯威|General, politician
+夏侯玄|Politician, scholar
+夏侯淵|General
+向寵|General, politician
+向朗|Advisor, politician
+謝旌|General
+辛毗|Politician
+辛評|Advisor
+辛憲英|Noble lady
+徐氏|Noble lady
+許褚|General
+徐幹|Scholar
+許貢|Politician
+徐晃|General
+許靖|Advisor, politician
+徐邈|Politician
+徐榮|General
+許劭|Commentator, politician
+徐盛|General
+徐庶|Advisor, politician
+許儀|General
+許攸|Advisor
+徐質|General
+薛禮|Advisor
+薛瑩|Politician
+薛綜|Advisor, politician, scholar
+荀諶|Advisor
+荀愷|General
+荀勖|Politician
+荀顗|Politician
+荀攸|Advisor, politician
+荀彧|Advisor, politician
+嚴白虎|Warlord
+嚴綱|General
+嚴畯|Advisor, politician, scholar
+顏良|General
+閻圃|Advisor
+閻柔|Advisor
+閻象|Politician
+嚴顏|General
+閻宇|General
+嚴輿|General
+楊昂|General
+楊彪|Politician
+楊帛|General
+楊醜|General
+楊奉|Bandit leader, general
+楊阜|Advisor, politician
+楊弘|Advisor
+羊祜|General, politician
+楊懷|General
+楊秋|General
+楊任|General
+楊欣|General
+楊修|Advisor, politician
+楊儀|General, politician
+楊祚|General
+伊籍|Advisor, politician
+尹大目|General
+尹默|Politician, scholar
+尹賞|Politician
+應瑒|Advisor, politician, scholar
+雍闓|General
+虞翻|Advisor, politician, scholar
+于禁|General
+于詮|General
+袁尚|General, warlord
+袁紹|General, politician, warlord
+袁術|General, emperor, warlord
+袁譚|General, warlord
+袁熙|General, politician
+袁耀|Noble
+袁遺|Politician
+袁胤|Politician
+樂綝|General
+樂進|General
+樂就|General
+於夫羅|Tribal leader
+臧霸|General
+笮融|Occultist, general
+張寶|Rebel leader
+張苞|General
+張布|General
+張超|Scholar, general
+張承|General, politician
+張純|General, rebel leader
+張春華|Noble lady
+張當|General
+張飛|General
+張恭|Eunuch
+張郃|General
+張橫|General
+張紘|Advisor, politician
+張虎|General
+張華|Poet, politician, scholar
+張緝|Politician
+張既|General, politician
+張濟|General, warlord
+張角|General, rebel leader
+張節|Rebel leader
+張闓|General
+張梁|Rebel leader
+張遼|General
+張魯|Politician, religious leader, warlord
+張曼成|General
+張邈|Politician
+張南|General
+張嶷|General
+張泉|Politician
+張讓|Eunuch
+張任|General
+張紹|Politician
+張松|Advisor, politician
+張特|General
+張悌|Politician
+張衛|General
+張溫|Advisor, politician
+張象|General
+張繡|General, warlord
+張休|General, politician
+張勛|General
+張燕|Bandit leader, general
+張楊|Politician, warlord
+張翼|General
+張裔|Advisor, politician
+張英|General
+張允|General
+張昭|Advisor, politician
+張遵|General, politician
+種輯|General
+張皇后|Empress
+趙昂|Politician
+趙娥|Noblewoman
+趙範|Politician, warlord
+趙廣|General
+趙弘|General
+趙累|General
+趙統|General
+趙儼|Politician
+趙雲|General
+趙直|Fortune teller, politician
+趙忠|Eunuch
+趙咨|Politician
+甄氏|Noble lady
+鄭度|Advisor
+鍾會|General, politician
+鍾繇|Calligrapher, politician
+周朝|Rebel leader
+周魴|General
+周泰|General
+周昕|General
+周宣|Diviner, politician
+周瑜|General, advisor
+周旨|General
+朱褒|General
+朱桓|General
+朱據|General
+朱儁|General, politician
+朱靈|General
+朱然|General
+朱異|General
+朱讚|General
+朱治|General
+諸葛誕|General
+諸葛珪|Politician
+諸葛瑾|General, politician
+諸葛靚|General
+諸葛均|General
+諸葛恪|General, politician, regent
+諸葛亮|Advisor, general, politician, regent
+諸葛喬|General
+諸葛融|General
+諸葛尚|General
+諸葛緒|General
+諸葛玄|Politician
+諸葛瞻|General
+卓膺|General
+鄒丹|General
+鄒靖|General
+祖郎|General
+祖茂|General
+左慈|Fangshi, Taoist
+崔鈞|Scholar

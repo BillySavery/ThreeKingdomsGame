@@ -2,7 +2,8 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
 .homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
-.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}.srcline{font-size:.8rem;opacity:.75;margin-top:.4rem}.srcline a{color:inherit}
+</style>
 </head><body>
 <title>Mystery Officer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,6 +99,7 @@ tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-del
   <div class="endcard" id="end" hidden>
     <h2 id="endT">Found!</h2>
     <p id="endP"></p>
+    <p id="endS" class="srcline" hidden></p>
     <div class="actions"><button class="btn primary" id="reveal" hidden>Reveal answer</button><button class="btn" id="share">Copy result</button><span class="nextin" id="next" aria-live="polite"></span></div>
     <div data-support></div>
   </div>
@@ -119,199 +121,24 @@ tr.new td:nth-child(2){animation-delay:.08s}tr.new td:nth-child(3){animation-del
   </div>
 </div>
 
+<script src="officers.js"></script>
 <script>
 (()=>{
 // Name | Faction (Wei Shu Wu Jin Other) | Gender | Role (no longer shown) | Year of death
-const RAW=`Cao Cao|Wei|M|Ruler|220
-Cao Pi|Wei|M|Ruler|226
-Cao Rui|Wei|M|Ruler|239
-Xiahou Dun|Wei|M|General|220
-Xiahou Yuan|Wei|M|General|219
-Cao Ren|Wei|M|General|223
-Cao Hong|Wei|M|General|232
-Dian Wei|Wei|M|General|197
-Zhang Liao|Wei|M|General|222
-Xu Huang|Wei|M|General|227
-Zhang He|Wei|M|General|231
-Yu Jin|Wei|M|General|221
-Yue Jin|Wei|M|General|218
-Pang De|Wei|M|General|219
-Jia Xu|Wei|M|Strategist|223
-Guo Jia|Wei|M|Strategist|207
-Xun Yu|Wei|M|Strategist|212
-Xun You|Wei|M|Strategist|214
-Man Chong|Wei|M|General|242
-Cao Xiu|Wei|M|General|228
-Cao Zhen|Wei|M|General|231
-Cao Zhi|Wei|M|Official|232
-Cao Zhang|Wei|M|General|223
-Zhen Ji|Wei|F|Consort|221
-Cao Shuang|Wei|M|Official|249
-Yang Xiu|Wei|M|Official|219
-Sima Yi|Jin|M|Strategist|251
-Sima Shi|Jin|M|General|255
-Sima Zhao|Jin|M|General|265
-Sima Yan|Jin|M|Ruler|290
-Zhang Chunhua|Jin|F|Consort|247
-Wang Yuanji|Jin|F|Consort|268
-Deng Ai|Jin|M|General|264
-Zhong Hui|Jin|M|General|264
-Guo Huai|Jin|M|General|255
-Zhuge Dan|Jin|M|General|258
-Jia Chong|Jin|M|Strategist|282
-Wen Yang|Jin|M|General|291
-Liu Bei|Shu|M|Ruler|223
-Liu Shan|Shu|M|Ruler|271
-Guan Yu|Shu|M|General|220
-Zhang Fei|Shu|M|General|221
-Zhao Yun|Shu|M|General|229
-Ma Chao|Shu|M|General|222
-Huang Zhong|Shu|M|General|220
-Zhuge Liang|Shu|M|Strategist|234
-Pang Tong|Shu|M|Strategist|214
-Fa Zheng|Shu|M|Strategist|220
-Wei Yan|Shu|M|General|234
-Jiang Wei|Shu|M|General|264
-Guan Ping|Shu|M|General|220
-Ma Su|Shu|M|Strategist|228
-Wang Ping|Shu|M|General|248
-Mi Zhu|Shu|M|Official|221
-Ma Liang|Shu|M|Official|222
-Fei Yi|Shu|M|Official|253
-Jiang Wan|Shu|M|Official|246
-Dong Yun|Shu|M|Official|246
-Li Yan|Shu|M|Official|234
-Liao Hua|Shu|M|General|264
-Huang Quan|Shu|M|General|240
-Meng Da|Shu|M|General|228
-Sun Jian|Wu|M|Ruler|191
-Sun Ce|Wu|M|Ruler|200
-Sun Quan|Wu|M|Ruler|252
-Sun Liang|Wu|M|Ruler|260
-Sun Xiu|Wu|M|Ruler|264
-Sun Hao|Wu|M|Ruler|284
-Zhou Yu|Wu|M|General|210
-Lu Su|Wu|M|Strategist|217
-Lu Meng|Wu|M|General|220
-Lu Xun|Wu|M|General|245
-Taishi Ci|Wu|M|General|206
-Ding Feng|Wu|M|General|271
-Pan Zhang|Wu|M|General|234
-Zhu Ran|Wu|M|General|249
-Zhu Huan|Wu|M|General|238
-Zhuge Jin|Wu|M|Official|241
-Zhang Zhao|Wu|M|Official|236
-Lu Kang|Wu|M|General|274
-Zhuge Ke|Wu|M|General|253
-Lianshi|Wu|F|Consort|238
-Lu Bu|Other|M|General|199
-Chen Gong|Other|M|Strategist|199
-Gao Shun|Other|M|General|199
-Dong Zhuo|Other|M|Ruler|192
-Wang Yun|Other|M|Official|192
-Hua Xiong|Other|M|General|191
-Yuan Shao|Other|M|Ruler|202
-Yuan Shu|Other|M|Ruler|199
-Gongsun Zan|Other|M|Ruler|199
-Liu Biao|Other|M|Ruler|208
-Kong Rong|Other|M|Official|208
-Ma Teng|Other|M|Ruler|212
-Han Sui|Other|M|Ruler|215
-Zhang Lu|Other|M|Ruler|216
-Zhang Xiu|Other|M|Ruler|207
-Tao Qian|Other|M|Ruler|194
-He Jin|Other|M|General|189
-Ding Yuan|Other|M|General|189
-Zhang Jiao|Other|M|Ruler|184
-Emperor Xian|Other|M|Ruler|234
-Yan Liang|Other|M|General|200
-Wen Chou|Other|M|General|200
-Tian Feng|Other|M|Strategist|200
-Ju Shou|Other|M|Strategist|200
-Li Dian|Wei|M|General|c217
-Xu Zhu|Wei|M|General|c230
-Xu Shu|Wei|M|Strategist|?
-Gan Ning|Wu|M|General|c220
-Zhou Tai|Wu|M|General|c223
-Ling Tong|Wu|M|General|217
-Huang Gai|Wu|M|General|?
-Sun Shangxiang|Wu|F|Consort|?
-Ma Dai|Shu|M|General|?
-Guan Xing|Shu|M|General|?
-Huang Yueying|Shu|F|Consort|?
-Meng Huo|Shu|M|Official|?
-Diaochan|Other|F|Consort|?
-Chen Qun|Wei|M|Official|237
-Hua Tuo|Other|M|Official|208
-Han Dang|Wu|M|General|227
-Xiao Qiao|Wu|F|Consort|?
-Zhang Bao|Other|M|General|184
-Gongsun Yuan|Other|M|Ruler|238
-Cao Chong|Wei|M|Official|208
-Yan Yan|Shu|M|General|?
-Cao Ang|Wei|M|General|197
-Sun Deng|Wu|M|Official|241
-Gu Yong|Wu|M|Official|243
-Wei Guan|Jin|M|Official|291
-Cao Fang|Wei|M|Ruler|274
-Da Qiao|Wu|F|Consort|?
-Zhang Ren|Other|M|General|213
-Deng Zhi|Shu|M|Official|251
-Xiahou Ba|Shu|M|General|?
-Xu Sheng|Wu|M|General|?
-Li Jue|Other|M|General|198
-Kan Ze|Wu|M|Official|243
-Liu Yan|Other|M|Ruler|194
-Shen Pei|Other|M|Strategist|204
-Cao Chun|Wei|M|General|210
-Jian Yong|Shu|M|Official|?
-Yuan Tan|Other|M|General|205
-Huang Zu|Other|M|General|208
-Du Yu|Jin|M|General|285
-Yang Hu|Jin|M|General|278
-Liu Zhang|Other|M|Ruler|c220
-Hua Xin|Wei|M|Official|232
-Zhurong|Shu|F|General|?
-Bu Zhi|Wu|M|Official|247
-Cao Huan|Wei|M|Ruler|302
-Cai Wenji|Wei|F|Official|?
-Zhang Song|Other|M|Strategist|212
-Liu Feng|Shu|M|General|220
-Liu Cong|Other|M|Ruler|?
-Li Ru|Other|M|Strategist|?
-Zhong Yao|Wei|M|Official|230
-Cao Mao|Wei|M|Ruler|260
-Zhang Liang|Other|M|General|184
-Cheng Pu|Wu|M|General|?
-Lady Bian|Wei|F|Consort|230
-Zhuge Zhan|Shu|M|General|263
-Wang Lang|Wei|M|Official|228
-Guo Si|Other|M|General|197
-Wang Jun|Jin|M|General|286
-Sima Lang|Wei|M|Official|217
-Wu Yi|Shu|M|General|237
-Zuo Ci|Other|M|Official|?
-Yuan Shang|Other|M|Ruler|207
-Yuan Xi|Other|M|General|207
-Cheng Yu|Wei|M|Strategist|220`;
-const ALIAS={"Xu Zhu":["Xu Chu"],"Sun Shangxiang":["Lady Sun","Sun Ren","Sun Shang Xiang"],"Huang Yueying":["Yueying","Lady Huang"],"Diaochan":["Diao Chan"],"Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Lianshi":["Bu Lianshi","Lady Bu"],"Zhuge Liang":["Kongming"],"Lu Bu":["Lv Bu"],"Emperor Xian":["Liu Xie"],"Sima Yi":["Zhongda"],"Liu Shan":["Adou"],"Taishi Ci":["Taishici"],"Wang Yuanji":["Yuanji"],"Cai Wenji":["Cai Yan","Wenji"],"Lady Bian":["Bian Shi","Empress Bian"],"Da Qiao":["Daqiao","Elder Qiao"],"Xiao Qiao":["Xiaoqiao","Younger Qiao"],"Zhurong":["Zhu Rong","Lady Zhurong"],"Liu Zhang":["Liu Jiyu"]};
 // Family names that take two characters
 const DOUBLE=["Xiahou","Sima","Zhuge","Taishi","Gongsun"];
-// Birth years from the Records of the Three Kingdoms as summarised on Wikipedia. Negative = approximate (c.), missing = not recorded.
-const BORN={"Cao Cao":155,"Ling Tong":189,"Li Dian":-180,"Cao Pi":187,"Cao Rui":-205,"Cao Ren":168,"Zhang Liao":169,"Jia Xu":147,"Guo Jia":170,"Xun Yu":163,"Xun You":157,"Cao Zhi":192,"Cao Zhang":-189,"Zhen Ji":183,"Yang Xiu":175,
-"Sima Yi":179,"Sima Shi":208,"Sima Zhao":211,"Sima Yan":236,"Zhang Chunhua":189,"Wang Yuanji":217,"Deng Ai":-197,"Zhong Hui":225,"Jia Chong":217,"Wen Yang":238,
-"Liu Bei":161,"Liu Shan":207,"Ma Chao":176,"Zhuge Liang":181,"Pang Tong":179,"Fa Zheng":176,"Jiang Wei":202,"Ma Su":190,"Ma Liang":187,
-"Sun Jian":155,"Sun Ce":175,"Sun Quan":182,"Sun Liang":243,"Sun Xiu":235,"Sun Hao":242,"Zhou Yu":175,"Lu Su":172,"Lu Meng":178,"Lu Xun":183,"Taishi Ci":166,"Zhu Ran":182,"Zhu Huan":177,"Zhuge Jin":174,"Zhang Zhao":156,"Lu Kang":226,"Zhuge Ke":203,
-"Wang Yun":137,"Liu Biao":142,"Kong Rong":153,"Tao Qian":132,"Emperor Xian":181,
-"Cheng Yu":141,"Hua Xin":157,"Zhong Yao":151,"Lady Bian":-160,"Cao Chong":196,"Sima Lang":171,"Zhuge Zhan":227,"Deng Zhi":178,"Hua Tuo":-140,"Gu Yong":168,"Sun Deng":209,"Yang Hu":221,"Du Yu":222,"Wang Jun":206,"Wei Guan":220,"Cao Huan":246,"Cao Mao":241,"Cao Fang":232,"Cao Chun":-170};
-// Home province: the Han province (of the 13 around 190) holding the home commandery the records give. ? = not recorded.
-const HOME={"Cao Cao": "Yu", "Cao Pi": "Yu", "Cao Rui": "Yu", "Xiahou Dun": "Yu", "Xiahou Yuan": "Yu", "Cao Ren": "Yu", "Cao Hong": "Yu", "Dian Wei": "Yan", "Zhang Liao": "Bing", "Xu Huang": "Sili", "Zhang He": "Ji", "Yu Jin": "Yan", "Yue Jin": "Yan", "Pang De": "Liang", "Jia Xu": "Liang", "Guo Jia": "Yu", "Xun Yu": "Yu", "Xun You": "Yu", "Man Chong": "Yan", "Cao Xiu": "Yu", "Cao Zhen": "Yu", "Cao Zhi": "Yu", "Cao Zhang": "Yu", "Zhen Ji": "Ji", "Cao Shuang": "Yu", "Yang Xiu": "Sili", "Li Dian": "Yan", "Xu Zhu": "Yu", "Xu Shu": "Yu", "Chen Qun": "Yu", "Cao Chong": "Yu", "Cao Ang": "Yu", "Cao Fang": "Yu", "Cao Chun": "Yu", "Hua Xin": "Qing", "Cao Huan": "Yu", "Cai Wenji": "Yan", "Zhong Yao": "Yu", "Cao Mao": "Yu", "Lady Bian": "Xu", "Wang Lang": "Xu", "Sima Lang": "Sili", "Cheng Yu": "Yan", "Sima Yi": "Sili", "Sima Shi": "Sili", "Sima Zhao": "Sili", "Sima Yan": "Sili", "Zhang Chunhua": "Sili", "Wang Yuanji": "Xu", "Deng Ai": "Jing", "Zhong Hui": "Yu", "Guo Huai": "Bing", "Zhuge Dan": "Xu", "Jia Chong": "Sili", "Wen Yang": "Yu", "Wei Guan": "Sili", "Du Yu": "Sili", "Yang Hu": "Yan", "Wang Jun": "Sili", "Liu Bei": "You", "Liu Shan": "You", "Guan Yu": "Sili", "Zhang Fei": "You", "Zhao Yun": "Ji", "Ma Chao": "Sili", "Huang Zhong": "Jing", "Zhuge Liang": "Xu", "Pang Tong": "Jing", "Fa Zheng": "Sili", "Wei Yan": "Jing", "Jiang Wei": "Liang", "Guan Ping": "Sili", "Ma Su": "Jing", "Wang Ping": "Yi", "Mi Zhu": "Xu", "Ma Liang": "Jing", "Fei Yi": "Jing", "Jiang Wan": "Jing", "Dong Yun": "Jing", "Li Yan": "Jing", "Liao Hua": "Jing", "Huang Quan": "Yi", "Meng Da": "Sili", "Ma Dai": "Sili", "Guan Xing": "Sili", "Huang Yueying": "Jing", "Meng Huo": "Yi", "Yan Yan": "Yi", "Deng Zhi": "Jing", "Xiahou Ba": "Yu", "Jian Yong": "You", "Zhurong": "Yi", "Liu Feng": "Jing", "Zhuge Zhan": "Xu", "Wu Yi": "Yan", "Sun Jian": "Yang", "Sun Ce": "Yang", "Sun Quan": "Yang", "Sun Liang": "Yang", "Sun Xiu": "Yang", "Sun Hao": "Yang", "Zhou Yu": "Yang", "Lu Su": "Xu", "Lu Meng": "Yu", "Lu Xun": "Yang", "Taishi Ci": "Qing", "Ding Feng": "Yang", "Pan Zhang": "Yan", "Zhu Ran": "Yang", "Zhu Huan": "Yang", "Zhuge Jin": "Xu", "Zhang Zhao": "Xu", "Lu Kang": "Yang", "Zhuge Ke": "Xu", "Lianshi": "Xu", "Gan Ning": "Yi", "Zhou Tai": "Yang", "Ling Tong": "Yang", "Huang Gai": "Jing", "Sun Shangxiang": "Yang", "Han Dang": "You", "Xiao Qiao": "Yang", "Da Qiao": "Yang", "Sun Deng": "Yang", "Gu Yong": "Yang", "Xu Sheng": "Xu", "Kan Ze": "Yang", "Bu Zhi": "Xu", "Cheng Pu": "You", "Lu Bu": "Bing", "Chen Gong": "Yan", "Gao Shun": "?", "Dong Zhuo": "Liang", "Wang Yun": "Bing", "Hua Xiong": "?", "Yuan Shao": "Yu", "Yuan Shu": "Yu", "Gongsun Zan": "You", "Liu Biao": "Yan", "Kong Rong": "Yu", "Ma Teng": "Sili", "Han Sui": "Liang", "Zhang Lu": "Yu", "Zhang Xiu": "Liang", "Tao Qian": "Yang", "He Jin": "Jing", "Ding Yuan": "?", "Zhang Jiao": "Ji", "Emperor Xian": "Sili", "Yan Liang": "?", "Wen Chou": "?", "Tian Feng": "Ji", "Ju Shou": "Ji", "Diaochan": "?", "Hua Tuo": "Yu", "Zhang Bao": "Ji", "Gongsun Yuan": "You", "Zhang Ren": "Yi", "Li Jue": "Liang", "Liu Yan": "Jing", "Shen Pei": "Ji", "Yuan Tan": "Yu", "Huang Zu": "Jing", "Liu Zhang": "Jing", "Zhang Song": "Yi", "Liu Cong": "Yan", "Li Ru": "?", "Zhang Liang": "Ji", "Guo Si": "Liang", "Zuo Ci": "Yang", "Yuan Shang": "Yu", "Yuan Xi": "Yu"};
 // Provinces that share a border, for the amber 'neighbouring' colour
 const NEAR={Sili:['Bing','Ji','Yan','Yu','Jing','Yi','Liang'],Yu:['Sili','Yan','Xu','Yang','Jing'],Yan:['Sili','Ji','Qing','Xu','Yu'],Xu:['Yan','Qing','Yu','Yang'],Qing:['Ji','Yan','Xu'],Ji:['You','Bing','Sili','Yan','Qing'],You:['Ji','Bing'],Bing:['You','Ji','Sili','Liang'],Liang:['Bing','Sili','Yi'],Yi:['Liang','Sili','Jing','Jiao'],Jing:['Sili','Yu','Yang','Yi','Jiao'],Yang:['Xu','Yu','Jing','Jiao'],Jiao:['Yi','Jing','Yang']};
-const OFF=RAW.trim().split('\n').map(l=>{const[n,f,g,r,d]=l.split('|');const sur=DOUBLE.find(s=>n.startsWith(s+' '))||(n==='Emperor Xian'?'Liu':n==='Lianshi'?'Bu':n==='Zhen Ji'?'Zhen':n==='Diaochan'||n==='Zhurong'?'None':n==='Lady Bian'?'Bian':n==='Da Qiao'||n==='Xiao Qiao'?'Qiao':n.split(' ')[0]);const by=BORN[n];return{n,f,g,r,d:d==='?'?null:+String(d).replace('c',''),dc:String(d).startsWith('c'),sur,b:by==null?null:Math.abs(by),bc:by<0,h:HOME[n]&&HOME[n]!=='?'?HOME[n]:null}});
+// Every officer comes from the shared database in officers.js, so any name in any game is a valid guess here.
+// Answers come only from the curated Mystery Officer list (entries with an "mo" position), in the same order as before, so no daily puzzle changes.
+const surOf=n0=>{const n=n0.replace(/\s*\(.*\)$/,'');const sp={'Emperor Xian':'Liu','Lianshi':'Bu','Zhen Ji':'Zhen','Diaochan':'None','Zhurong':'None','Lady Bian':'Bian','Da Qiao':'Qiao','Xiao Qiao':'Qiao','Xingcai':'Zhang','Ma Yunlu':'Ma','Bao Sanniang':'Bao','Guan Yinping':'Guan','Lu Lingqi':'Lu','Huang Yueying':'Huang','Cai Wenji':'Cai','Sun Shangxiang':'Sun','Wang Yuanji':'Wang','Zhang Chunhua':'Zhang'};if(sp[n])return sp[n];if(/^(King|Lady|Empress) /.test(n))return n.split(' ')[1];return DOUBLE.find(s=>n.startsWith(s+' '))||n.split(' ')[0]};
+const ALL=(window.TK_OFFICERS||[]).map(x=>({n:x.n,al:x.a||[],f:x.f,g:x.g,r:x.r,b:x.b==null?null:x.b,bc:!!x.bc,d:x.d==null?null:x.d,dc:!!x.dc,h:x.h||null,sur:surOf(x.n),src:x.src,url:(window.TK_URLS||[])[x.u],mo:x.mo}));
+const OFF=ALL.filter(o=>o.mo!=null).sort((a,b)=>a.mo-b.mo);
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
-OFF.forEach(o=>{o.keys=[o.n,...(ALIAS[o.n]||[])].map(norm)});
-const BY=new Map(OFF.map(o=>[o.n,o]));
+ALL.forEach(o=>{o.keys=[o.n,...o.al].map(norm)});
+const BY=new Map(ALL.map(o=>[o.n,o]));
+// Saved games from before a rename still load: look a stored name up by its spellings too
+const byName=n=>BY.get(n)||ALL.find(o=>o.keys.includes(norm(n)));
 const MAX=15,HINT_AT=[5,10];
 // Optional hints: each reveals one answer category the player hasn't matched or been given yet
 const nextHint=()=>{const a=G.ans,used=G.hints.map(h=>h.k);
@@ -335,7 +162,7 @@ let G=null,sugg=[],sel=-1;
 function start(mode){
   const ans=mode==='daily'?dailyAnswer():OFF[Math.floor(Math.random()*OFF.length)];
   G={mode,ans,guesses:[],over:false,win:false,hints:[]};
-  if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&s.ans===ans.n){G.guesses=s.guesses.map(n=>BY.get(n)).filter(Boolean);G.over=s.over;G.win=s.win;G.hints=Array.isArray(s.hints)?s.hints:[];
+  if(mode==='daily'){const s=store.get('day'+today(),null);if(s&&(s.ans===ans.n||ans.al.includes(s.ans))){G.guesses=s.guesses.map(byName).filter(Boolean);G.over=s.over;G.win=s.win;G.hints=Array.isArray(s.hints)?s.hints:[];
     // Guess limit raised: a game lost on the old limit reopens, unless the answer was already revealed
     if(G.over&&!G.win&&G.guesses.length<MAX&&!wasRevealed()){G.over=false;save()}}}
   $('modeLbl').textContent=mode==='daily'?'Daily':'';
@@ -384,7 +211,7 @@ function save(){if(G.mode==='daily')store.set('day'+today(),{ans:G.ans.n,guesses
 function submit(name){
   if(G.over)return;
   let o=name?BY.get(name):null;
-  if(!o){if(sel>=0&&sugg[sel])o=sugg[sel];else{const k=norm($('guess').value);o=OFF.find(x=>x.keys.includes(k))}}
+  if(!o){if(sel>=0&&sugg[sel])o=sugg[sel];else{const k=norm($('guess').value);const hits=ALL.filter(x=>x.keys.includes(k));if(hits.length>1){$('fb').textContent='More than one officer has that name. Pick one from the list.';showSugg();return}o=hits[0]}}
   if(!o){$('fb').textContent=$('guess').value.trim()?'Not in the list. Pick an officer from the dropdown.':'';return}
   $('guess').value='';closeSugg();
   if(G.guesses.includes(o)){$('fb').textContent=o.n+' has already been guessed.';return}
@@ -394,13 +221,15 @@ function submit(name){
   if(G.over)setTimeout(()=>finish(false),500);
 }
 // On a loss the answer stays hidden until the player taps Reveal answer
-function revealAns(){const a=G.ans;$('endP').textContent=`It was ${a.n}. ${a.f}, ${lifeTxt(a)}.`;$('reveal').hidden=true}
+function srcLine(a){const el=$('endS');el.innerHTML='';if(!a.src&&!a.url){el.hidden=true;return}el.append('Source: '+(a.src||'')+' ');if(a.url){const l=document.createElement('a');l.href=a.url;l.target='_blank';l.rel='noopener';l.textContent='read more';el.append(l)}el.hidden=false}
+function revealAns(){const a=G.ans;$('endP').textContent=`It was ${a.n}. ${a.f}, ${lifeTxt(a)}.`;srcLine(a);$('reveal').hidden=true}
 const revKey=()=>'rev'+today();const wasRevealed=()=>G.mode==='daily'&&store.get(revKey(),false);const markRevealed=()=>{if(G.mode==='daily')store.set(revKey(),true)};
 function finish(restoring){
   $('entry').hidden=true;$('end').hidden=false;
   const a=G.ans,n=G.guesses.length;
   $('endT').textContent=G.win?'Found!':'Out of guesses';
-  if(G.win){$('endP').textContent=`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. ${a.f}, ${lifeTxt(a)}.`;$('reveal').hidden=true}
+  $('endS').hidden=true;
+  if(G.win){$('endP').textContent=`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. ${a.f}, ${lifeTxt(a)}.`;srcLine(a);$('reveal').hidden=true}
   else if(wasRevealed())revealAns();
   else{$('endP').textContent="Today's officer stays hidden until you reveal them.";$('reveal').hidden=false}
   if(!restoring){const st=store.get('stats',{played:0,won:0,streak:0,lastDay:null});st.played++;if(G.win)st.won++;
@@ -412,8 +241,8 @@ function showSugg(){
   const q=norm($('guess').value);if(q.length<2){closeSugg();return}
   const words=$('guess').value.toLowerCase().split(/[^a-z]+/).filter(Boolean);
   const scored=[];
-  for(const o of OFF){if(G.guesses.includes(o))continue;let s=0;
-    if(o.keys.some(k=>k.startsWith(q)))s=2;else if(words.every(w=>[o.n,...(ALIAS[o.n]||[])].join(' ').toLowerCase().split(' ').some(x=>x.startsWith(w))))s=1;
+  for(const o of ALL){if(G.guesses.includes(o))continue;let s=0;
+    if(o.keys.some(k=>k.startsWith(q)))s=2;else if(words.every(w=>[o.n,...o.al].join(' ').toLowerCase().split(' ').some(x=>x.startsWith(w))))s=1;
     if(s)scored.push([s,o])}
   scored.sort((a,b)=>b[0]-a[0]||a[1].n.localeCompare(b[1].n));
   sugg=scored.slice(0,8).map(x=>x[1]);sel=sugg.length?0:-1;

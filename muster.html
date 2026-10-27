@@ -156,6 +156,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
 
+<script src="officers.js"></script>
 <script>
 /* Squares: code, type (F faction, B battle, E event), label */
 const SQ={
@@ -279,6 +280,9 @@ const OFF=[
 ['Liu Zhang',''],
 ['Lady Zhen','']
 ].map(([n,t])=>({n,t:t?t.split(' '):[]}));
+// Names come from the shared database (officers.js) so every game spells an officer the same way
+const TKN=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');const TKDB=(()=>{const m=new Map();(window.TK_OFFICERS||[]).forEach(o=>[o.n,...(o.a||[])].forEach(k=>{const n=TKN(k);if(!m.has(n))m.set(n,o)}));return n=>m.get(TKN(n))})();
+OFF.forEach(o=>{const d=TKDB(o.n);if(d)o.n=d.n});
 
 (()=>{
 const EPOCH=Date.UTC(2026,9,1);

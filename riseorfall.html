@@ -135,6 +135,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span></footer>
 </div>
 
+<script src="officers.js"></script>
 <script>
 (()=>{
 // Officers: name, faction, then Leadership, War, Intelligence, Politics, Charisma as rated in Romance of the Three Kingdoms XIV
@@ -257,6 +258,9 @@ const OFF=[
 ["Meng Huo","Shu",80,87,42,45,80],
 ["Diaochan","Other",20,26,81,65,95]
 ];
+// Name and faction come from the shared database (officers.js); the stats stay specific to this game
+const TKN=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');const TKDB=(()=>{const m=new Map();(window.TK_OFFICERS||[]).forEach(o=>[o.n,...(o.a||[])].forEach(k=>{const n=TKN(k);if(!m.has(n))m.set(n,o)}));return n=>m.get(TKN(n))})();
+OFF.forEach(o=>{const d=TKDB(o[0]);if(d){o[0]=d.n;o[1]=d.f}});
 const STATS=[
   ['Leadership','統','How well they command an army in the field.'],
   ['War','武','Personal fighting strength, the power to win a duel.'],

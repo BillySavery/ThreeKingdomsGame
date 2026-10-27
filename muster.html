@@ -150,7 +150,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <p><b>How to play.</b> Sixteen squares of factions, battles and events. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
     <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen.</p>
     <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
-    <p>Everything is based on the Romance of the Three Kingdoms. Factions count anyone who served that side at any point. Battles count anyone who fought there on either side.</p>
+    <p>An officer fits a battle or event if they were there on either side, in the Romance of the Three Kingdoms or in the historical records. Factions count anyone who served that side at any point.</p>
   </div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -165,101 +165,101 @@ DZ:['F','Served Dong Zhuo'],YS:['F','Served Yuan Shao'],LB:['F','Served Lü Bu']
 YT:['B','Yellow Turban Rebellion'],XP:['B','Siege of Xiapi'],GD:['B','Guandu'],CB:['B','Changban'],RC:['B','Red Cliffs'],TP:['B','Tong Pass'],HF:['B','Hefei'],DJ:['B','Mount Dingjun'],FC:['B','Fancheng'],YL:['B','Yiling'],JT:['B','Jieting'],WZ:['B','Wuzhang Plains'],
 CO:['E','Coalition against Dong Zhuo'],PG:['E','Peach Garden Oath'],FT:['E','Five Tiger Generals'],KG:['E','Killed by Guan Yu'],JF:['E','Fall of Jing Province'],FS:['E','Fall of Shu'],SC:['E','Southern campaign'],NE:['E','Northern Expeditions'],ST:['E','Famous strategist'],DB:['E','Died in battle']
 };
-/* Officers and the squares they fit, per the Romance */
+/* Officers and the squares they fit. From 28 Oct 2026 a battle or event counts anyone who was there on either side, in the Romance or the historical records (only additions were made, so nothing that counted before stops counting) */
 const OFF=[
-['Liu Bei','SHU YT CO PG XP CB RC YL'],
+['Liu Bei','SHU YT CO PG XP CB RC YL GD DJ'],
 ['Guan Yu','SHU WEI YT CO PG XP GD RC FC FT JF'],
 ['Zhang Fei','SHU YT CO PG XP CB RC FT'],
-['Zhao Yun','SHU CB RC FT SC NE'],
+['Zhao Yun','SHU CB RC FT SC NE YL'],
 ['Ma Chao','SHU MA TP FT'],
 ['Huang Zhong','SHU LBI DJ YL FT DB'],
-['Zhuge Liang','SHU RC SC NE JT WZ ST'],
+['Zhuge Liang','SHU RC SC NE JT WZ ST CB'],
 ['Pang Tong','SHU RC ST DB'],
-['Wei Yan','SHU LBI SC NE WZ'],
+['Wei Yan','SHU LBI SC NE WZ JT'],
 ['Jiang Wei','WEI SHU NE WZ FS'],
 ['Ma Su','SHU SC NE JT'],
 ['Wang Ping','WEI SHU SC NE JT'],
 ['Fa Zheng','LZ SHU DJ ST'],
 ['Huang Quan','LZ SHU WEI YL'],
-['Yan Yan','LZ SHU'],
+['Yan Yan','LZ SHU DJ'],
 ['Zhang Ren','LZ'],
 ['Zhang Song','LZ'],
 ['Meng Da','LZ SHU WEI'],
 ['Guan Ping','SHU FC JF'],
-['Zhou Cang','SHU FC JF'],
-['Liao Hua','SHU JF'],
-['Mi Fang','SHU WU JF'],
+['Zhou Cang','SHU FC JF YT'],
+['Liao Hua','SHU JF FC FS NE'],
+['Mi Fang','SHU WU JF YL'],
 ['Ma Dai','MA SHU TP SC NE WZ'],
 ['Guan Xing','SHU YL NE'],
 ['Liu Shan','SHU CB FS'],
 ['Zhuge Zhan','SHU FS DB'],
-['Xu Shu','SHU WEI ST'],
+['Xu Shu','SHU WEI ST CB RC'],
 ['Jian Yong','SHU CB'],
 ['Lady Mi','CB'],
 ['Meng Huo','SC'],
 ['Zhurong','SC'],
 ['Wutugu','SC'],
 ['Cao Cao','WEI YT CO XP GD CB RC TP'],
-['Xiahou Dun','WEI CO'],
-['Xiahou Yuan','WEI CO DJ DB'],
-['Cao Ren','WEI CO FC'],
-['Cao Hong','WEI CO TP'],
-['Xu Chu','WEI GD RC TP'],
-['Zhang Liao','WEI LB XP GD RC HF'],
-['Xu Huang','WEI GD TP FC'],
-['Yu Jin','WEI GD FC'],
+['Xiahou Dun','WEI CO CB'],
+['Xiahou Yuan','WEI CO DJ DB TP CB'],
+['Cao Ren','WEI CO FC GD CB TP'],
+['Cao Hong','WEI CO TP GD CB'],
+['Xu Chu','WEI GD RC TP CB'],
+['Zhang Liao','WEI LB XP GD RC HF DZ CB'],
+['Xu Huang','WEI GD TP FC XP RC'],
+['Yu Jin','WEI GD FC XP RC'],
 ['Pang De','MA WEI TP FC KG'],
 ['Dian Wei','WEI DB'],
 ['Guo Jia','WEI XP ST'],
 ['Xun Yu','YS WEI ST'],
 ['Xun You','WEI XP GD ST'],
-['Cheng Yu','WEI ST'],
-['Jia Xu','DZ WEI TP ST'],
+['Cheng Yu','WEI ST RC'],
+['Jia Xu','DZ WEI TP ST GD'],
 ['Sima Yi','WEI JT NE WZ ST'],
-['Zhang He','YS WEI GD DJ JT NE DB'],
+['Zhang He','YS WEI GD DJ JT NE DB CB TP'],
 ['Gao Lan','YS WEI GD'],
 ['Xu You','YS WEI GD'],
 ['Cao Zhen','WEI NE'],
-['Guo Huai','WEI NE WZ'],
+['Guo Huai','WEI NE WZ DJ JT'],
 ['Deng Ai','WEI FS'],
 ['Zhong Hui','WEI FS'],
-['Li Dian','WEI HF'],
-['Yue Jin','WEI HF'],
+['Li Dian','WEI HF GD CB'],
+['Yue Jin','WEI HF GD CB XP'],
 ['Cai Mao','LBI WEI RC'],
 ['Zhang Yun','LBI WEI RC'],
-['Wen Pin','LBI WEI'],
+['Wen Pin','LBI WEI CB RC FC'],
 ['Cao Pi','WEI'],
 ['Jiang Gan','WEI RC'],
 ['Cai Yang','WEI KG DB'],
 ['Kong Xiu','WEI KG DB'],
 ['Sun Jian','WU YT CO DB'],
 ['Sun Ce','WU'],
-['Sun Quan','WU HF'],
+['Sun Quan','WU HF JF'],
 ['Zhou Yu','WU RC ST'],
 ['Lu Su','WU RC ST'],
-['Lü Meng','WU HF JF'],
+['Lü Meng','WU HF JF RC'],
 ['Lu Xun','WU JF YL ST'],
-['Gan Ning','LBI WU RC HF'],
+['Gan Ning','LBI WU RC HF YL'],
 ['Taishi Ci','WU HF DB'],
 ['Huang Gai','WU CO RC'],
-['Cheng Pu','WU CO RC'],
+['Cheng Pu','WU CO RC YT'],
 ['Han Dang','WU CO RC YL'],
 ['Zhou Tai','WU RC YL'],
 ['Ling Tong','WU RC HF'],
 ['Ding Feng','WU RC'],
-['Xu Sheng','WU RC'],
-['Pan Zhang','WU JF YL DB'],
-['Zhuge Jin','WU'],
+['Xu Sheng','WU RC HF YL'],
+['Pan Zhang','WU JF YL DB HF'],
+['Zhuge Jin','WU JF'],
 ['Zhang Zhao','WU'],
 ['Sun Shangxiang','WU'],
-['Lü Bu','DZ XP'],
+['Lü Bu','DZ XP CO'],
 ['Chen Gong','LB XP ST'],
 ['Gao Shun','LB XP'],
-['Hua Xiong','DZ KG DB'],
-['Li Jue','DZ'],
-['Guo Si','DZ'],
-['Li Ru','DZ ST'],
-['Dong Zhuo','YT'],
+['Hua Xiong','DZ KG DB CO'],
+['Li Jue','DZ CO'],
+['Guo Si','DZ CO'],
+['Li Ru','DZ ST CO'],
+['Dong Zhuo','YT CO'],
 ['Yuan Shao','CO GD'],
 ['Yuan Shu','CO'],
 ['Gongsun Zan','CO'],
@@ -270,18 +270,22 @@ const OFF=[
 ['Wen Chou','YS GD KG DB'],
 ['Ju Shou','YS GD ST'],
 ['Tian Feng','YS ST'],
-['Shen Pei','YS'],
+['Shen Pei','YS GD'],
 ['Han Sui','TP'],
 ['Zhang Jiao','YT'],
-['Diaochan',''],
+['Diaochan','XP'],
 ['Wang Yun',''],
 ['Hua Tuo',''],
 ['Liu Biao',''],
 ['Liu Zhang',''],
 ['Lady Zhen','']
 ].map(([n,t])=>({n,t:t?t.split(' '):[]}));
+/* The board for every day up to 27 Oct 2026 is built from the earlier, novel only tags so those days stay exactly as they were */
+const OLD_T=[['Liu Bei','SHU YT CO PG XP CB RC YL'], ['Guan Yu','SHU WEI YT CO PG XP GD RC FC FT JF'], ['Zhang Fei','SHU YT CO PG XP CB RC FT'], ['Zhao Yun','SHU CB RC FT SC NE'], ['Ma Chao','SHU MA TP FT'], ['Huang Zhong','SHU LBI DJ YL FT DB'], ['Zhuge Liang','SHU RC SC NE JT WZ ST'], ['Pang Tong','SHU RC ST DB'], ['Wei Yan','SHU LBI SC NE WZ'], ['Jiang Wei','WEI SHU NE WZ FS'], ['Ma Su','SHU SC NE JT'], ['Wang Ping','WEI SHU SC NE JT'], ['Fa Zheng','LZ SHU DJ ST'], ['Huang Quan','LZ SHU WEI YL'], ['Yan Yan','LZ SHU'], ['Zhang Ren','LZ'], ['Zhang Song','LZ'], ['Meng Da','LZ SHU WEI'], ['Guan Ping','SHU FC JF'], ['Zhou Cang','SHU FC JF'], ['Liao Hua','SHU JF'], ['Mi Fang','SHU WU JF'], ['Ma Dai','MA SHU TP SC NE WZ'], ['Guan Xing','SHU YL NE'], ['Liu Shan','SHU CB FS'], ['Zhuge Zhan','SHU FS DB'], ['Xu Shu','SHU WEI ST'], ['Jian Yong','SHU CB'], ['Lady Mi','CB'], ['Meng Huo','SC'], ['Zhurong','SC'], ['Wutugu','SC'], ['Cao Cao','WEI YT CO XP GD CB RC TP'], ['Xiahou Dun','WEI CO'], ['Xiahou Yuan','WEI CO DJ DB'], ['Cao Ren','WEI CO FC'], ['Cao Hong','WEI CO TP'], ['Xu Chu','WEI GD RC TP'], ['Zhang Liao','WEI LB XP GD RC HF'], ['Xu Huang','WEI GD TP FC'], ['Yu Jin','WEI GD FC'], ['Pang De','MA WEI TP FC KG'], ['Dian Wei','WEI DB'], ['Guo Jia','WEI XP ST'], ['Xun Yu','YS WEI ST'], ['Xun You','WEI XP GD ST'], ['Cheng Yu','WEI ST'], ['Jia Xu','DZ WEI TP ST'], ['Sima Yi','WEI JT NE WZ ST'], ['Zhang He','YS WEI GD DJ JT NE DB'], ['Gao Lan','YS WEI GD'], ['Xu You','YS WEI GD'], ['Cao Zhen','WEI NE'], ['Guo Huai','WEI NE WZ'], ['Deng Ai','WEI FS'], ['Zhong Hui','WEI FS'], ['Li Dian','WEI HF'], ['Yue Jin','WEI HF'], ['Cai Mao','LBI WEI RC'], ['Zhang Yun','LBI WEI RC'], ['Wen Pin','LBI WEI'], ['Cao Pi','WEI'], ['Jiang Gan','WEI RC'], ['Cai Yang','WEI KG DB'], ['Kong Xiu','WEI KG DB'], ['Sun Jian','WU YT CO DB'], ['Sun Ce','WU'], ['Sun Quan','WU HF'], ['Zhou Yu','WU RC ST'], ['Lu Su','WU RC ST'], ['Lü Meng','WU HF JF'], ['Lu Xun','WU JF YL ST'], ['Gan Ning','LBI WU RC HF'], ['Taishi Ci','WU HF DB'], ['Huang Gai','WU CO RC'], ['Cheng Pu','WU CO RC'], ['Han Dang','WU CO RC YL'], ['Zhou Tai','WU RC YL'], ['Ling Tong','WU RC HF'], ['Ding Feng','WU RC'], ['Xu Sheng','WU RC'], ['Pan Zhang','WU JF YL DB'], ['Zhuge Jin','WU'], ['Zhang Zhao','WU'], ['Sun Shangxiang','WU'], ['Lü Bu','DZ XP'], ['Chen Gong','LB XP ST'], ['Gao Shun','LB XP'], ['Hua Xiong','DZ KG DB'], ['Li Jue','DZ'], ['Guo Si','DZ'], ['Li Ru','DZ ST'], ['Dong Zhuo','YT'], ['Yuan Shao','CO GD'], ['Yuan Shu','CO'], ['Gongsun Zan','CO'], ['Ma Teng','CO'], ['Kong Rong','CO'], ['Tao Qian','CO'], ['Yan Liang','YS GD KG DB'], ['Wen Chou','YS GD KG DB'], ['Ju Shou','YS GD ST'], ['Tian Feng','YS ST'], ['Shen Pei','YS'], ['Han Sui','TP'], ['Zhang Jiao','YT'], ['Diaochan',''], ['Wang Yun',''], ['Hua Tuo',''], ['Liu Biao',''], ['Liu Zhang',''], ['Lady Zhen','']].reduce((m,[n,t])=>(m[n]=t?t.split(' '):[],m),{});
+const SWITCH=27;
 // Names come from the shared database (officers.js) so every game spells an officer the same way
 const TKN=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');const TKDB=(()=>{const m=new Map();(window.TK_OFFICERS||[]).forEach(o=>[o.n,...(o.a||[])].forEach(k=>{const n=TKN(k);if(!m.has(n))m.set(n,o)}));return n=>m.get(TKN(n))})();
+const OFF0=OFF.map(o=>o.n);
 OFF.forEach(o=>{const d=TKDB(o.n);if(d)o.n=d.n});
 
 (()=>{
@@ -295,27 +299,30 @@ const t=today(),N=30,SIZE=16;
 function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
 function shuf(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 const fits=(o,sq)=>OFF[o].t.includes(sq);
+let buildTags=o=>OFF[o].t;
+const bfits=(o,sq)=>buildTags(o).includes(sq);
 
 /* Build the day: 5 factions, 6 battles, 5 events, then a set of 16 officers that fills the board one each,
    6 to 9 duds that fit nothing, and decoys that fit something. A full board is always possible. */
 function build(d){
+  buildTags=d<SWITCH?(o=>OLD_T[OFF0[o]]||OFF[o].t):(o=>OFF[o].t);
   const r=rng(d*7919+1234);
   for(let tries=0;tries<500;tries++){
     const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k),r);
     const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
     const used=new Set(),solve=[];let ok=true;
-    const order=squares.slice().sort((a,b)=>OFF.filter(o=>o.t.includes(a)).length-OFF.filter(o=>o.t.includes(b)).length);
+    const order=squares.slice().sort((a,b)=>OFF.filter((_,i)=>bfits(i,a)).length-OFF.filter((_,i)=>bfits(i,b)).length);
     for(const sq of order){
-      const c=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&fits(i,sq)),r);
+      const c=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&bfits(i,sq)),r);
       if(!c.length){ok=false;break}
       used.add(c[0]);solve.push(c[0]);
     }
     if(!ok) continue;
-    const duds=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&!squares.some(s=>fits(i,s))),r);
+    const duds=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&!squares.some(s=>bfits(i,s))),r);
     const nd=6+Math.floor(r()*4);
     if(duds.length<nd) continue;
     const pick=duds.slice(0,nd);pick.forEach(i=>used.add(i));
-    const decoys=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&squares.some(s=>fits(i,s))),r).slice(0,N-SIZE-nd);
+    const decoys=shuf(OFF.map((_,i)=>i).filter(i=>!used.has(i)&&squares.some(s=>bfits(i,s))),r).slice(0,N-SIZE-nd);
     if(decoys.length<N-SIZE-nd) continue;
     return {squares,officers:shuf(solve.concat(pick,decoys),r)};
   }

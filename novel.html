@@ -473,7 +473,7 @@ function renderQ(){
 function pick(k){
   if(showing||st.over) return;
   const i=st.picks.length,s=POOL[items[i]];
-  st.picks.push(k);put(KEY,st);showing=true;
+  st.picks.push(k);if(st.picks.length>=PER){st.over=true;st.score=score();updateStats()}put(KEY,st);showing=true;
   const ok=k===s[1];
   $('pickH').disabled=true;$('pickN').disabled=true;
   $(k==='H'?'pickH':'pickN').classList.add('picked');
@@ -520,7 +520,7 @@ $('share').addEventListener('click',()=>{
 });
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);
-document.addEventListener('keydown',e=>{if(st.over)return;if(!showing){if(e.key==='h'||e.key==='H'||e.key==='ArrowLeft')pick('H');else if(e.key==='n'||e.key==='N'||e.key==='ArrowRight')pick('N')}else if(e.key==='Enter'&&document.activeElement!==$('next'))renderQ()});
+document.addEventListener('keydown',e=>{if(st.over&&!showing)return;if(!showing){if(e.key==='h'||e.key==='H'||e.key==='ArrowLeft')pick('H');else if(e.key==='n'||e.key==='N'||e.key==='ArrowRight')pick('N')}else if(e.key==='Enter'&&document.activeElement!==$('next'))renderQ()});
 
 if(st.over||st.picks.length>=PER) finish(); else renderQ();
 })();

@@ -200,7 +200,7 @@ if(ban){const s=(ban.solved||[]).length;if(ban.over){set('banners',s+' / 4 banne
 const bm=get('bm_day'+t);
 if(bm){const n=(bm.guesses||[]).length,p=(bm.guesses||[]).reduce((a,g)=>a+g.p,0);if(bm.done){set('map',p.toLocaleString('en-GB')+' points','done');done++}else if(n)set('map',n+' of 5 so far','live')}
 const nh=get('nh_day'+t);
-if(nh){const s=(nh.picks||[]).length;if(nh.over){set('novel',(nh.score!=null?nh.score:'?')+' / 10','done');done++}else if(s)set('novel',s+' of 10 so far','live')}
+if(nh){const s=(nh.picks||[]).length;if(nh.over||s>=10){set('novel',(nh.score!=null?nh.score:'?')+' / 10','done');done++}else if(s)set('novel',s+' of 10 so far','live')}
 const rf=get('hl_day'+t);
 if(rf&&rf.picks&&rf.picks.length){if(rf.counted){set('rise',(rf.score!=null?rf.score:'?')+' / 10','done');done++}else set('rise',rf.picks.length+' of 10 so far','live')}
 const mu=get('mu_day'+t);
@@ -210,6 +210,8 @@ if(get('fd_day'+t)){const s=document.getElementById('s-fact');s.textContent='Rev
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);
 })();
+/* refresh statuses when the browser restores this page from its back/forward cache */
+window.addEventListener('pageshow',e=>{if(e.persisted)location.reload()});
 </script>
 
 <script>

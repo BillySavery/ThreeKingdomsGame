@@ -233,7 +233,7 @@ function finish(restoring){
   if(G.win){$('endP').textContent=`You named ${a.n} in ${n} ${n===1?'guess':'guesses'}. ${a.f}, ${lifeTxt(a)}.`;srcLine(a);$('reveal').hidden=true}
   else if(wasRevealed())revealAns();
   else{$('endP').textContent="Today's officer stays hidden until you reveal them.";$('reveal').hidden=false}
-  if(!restoring&&G.mode==='daily')window.tkReport&&tkReport('mystery-officer',{score:G.win?1:0,max:1,mistakes:n-(G.win?1:0),hint:G.hints.length>0,perfect:!!G.win});
+  if(!restoring&&G.mode==='daily')window.tkReport&&tkReport('mystery-officer',{score:G.win?1:0,max:1,mistakes:n-(G.win?1:0),hint:G.hints.length>0,perfect:!!G.win&&n<=3});
   if(!restoring){const st=store.get('stats',{played:0,won:0,streak:0,lastDay:null});st.played++;if(G.win)st.won++;
     if(G.mode==='daily'){st.streak=G.win?((st.lastDay===today()-1?st.streak:0)+1):0;st.lastDay=today()}store.set('stats',st);render(false)}
   $('share').focus();

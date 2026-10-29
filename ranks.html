@@ -125,6 +125,7 @@ ol.tower{list-style:none;margin:0;padding:0;display:grid;gap:5px}
   </div>
 </div>
 
+<script src="tk-stats.js"></script>
 <script src="officers.js"></script>
 <script>
 (()=>{
@@ -339,6 +340,7 @@ function finish(restoring){
   if(got>=10){$('endP').textContent=`All ten found with ${G.lives} ${G.lives===1?'life':'lives'} to spare.`;$('reveal').hidden=true}
   else if(wasRevealed())revealMissed();
   else{$('endP').textContent=`You found ${got} of 10. The rest stay hidden until you reveal them.`;$('reveal').hidden=false}
+  if(!restoring&&G.mode==='daily')window.tkReport&&tkReport('full-ranks',{score:got,max:10,mistakes:3-G.lives,perfect:got>=10});
   if(!restoring){
     const st=store.get('stats',{played:0,full:0,total:0,streak:0,lastDay:null});
     st.played++;st.total+=got;if(got>=10)st.full++;

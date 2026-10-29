@@ -152,6 +152,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
+<script src="tk-stats.js"></script>
 <script src="officers.js"></script>
 <script>
 (()=>{
@@ -288,6 +289,7 @@ function updateStats(){
 function finish(){
   const n=score();
   if(!st.over||st.score!==n){st.over=true;st.score=n;put(KEY,st)}
+  {const rr=st.r.map(r=>r||{g:[],ok:false});window.tkReport&&tkReport('courtesy-call',{score:rr.filter(r=>r.ok).length,max:PER,mistakes:rr.reduce((a,r)=>a+(r.ok?r.g.length-1:r.g.length),0),perfect:rr.length===PER&&rr.every(r=>r.ok&&r.g.length===1)})}
   const s=updateStats();
   $('play').hidden=true;$('end').hidden=false;paintPips();
   $('final').firstChild.nodeValue=fmt(n);

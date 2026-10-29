@@ -156,6 +156,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
 
+<script src="tk-stats.js"></script>
 <script src="officers.js"></script>
 <script>
 /* Squares: code, type (F faction, B battle, E event), label */
@@ -424,6 +425,7 @@ function finish(){
   const n=filled();
   if(!st.over||st.score!==n){st.over=true;st.score=n;put(KEY,st)}
   paint();
+  window.tkReport&&tkReport('muster',{score:n,max:SIZE,mistakes:st.wrong||0,perfect:n>=SIZE});
   const s=updateStats(n);
   $('play').hidden=true;$('end').hidden=false;
   $('final').firstChild.nodeValue=n;

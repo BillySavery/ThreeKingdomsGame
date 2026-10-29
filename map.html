@@ -102,6 +102,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   </div>
 </div>
 
+<script src="tk-stats.js"></script>
 <script>
 (()=>{
 // ---------- geography (lon, lat) ----------
@@ -396,6 +397,7 @@ function finish(){
   $('bname').textContent='Today’s campaign';$('bhint').textContent='Every pin, and where each battle really was.';$('rnd').textContent='Done';
   S.guesses.forEach((g,i)=>{const b=BATTLES[S.ids[i]];el('line',{x1:X(g.lon),y1:Y(g.lat),x2:X(b[2]),y2:Y(b[3]),stroke:'#14100d','stroke-width':1.5,'stroke-dasharray':'5 4','vector-effect':'non-scaling-stroke'},layer);pin(g.lon,g.lat,'guess');pin(b[2],b[3],'answer')});
   const tot=S.guesses.reduce((a,g)=>a+g.p,0);
+  window.tkReport&&tkReport('battle-map',{score:tot,max:5000,mistakes:S.guesses.filter(g=>band(g.p)!=='g').length,hint:S.guesses.some(g=>g.t),perfect:S.guesses.every(g=>band(g.p)==='g')});
   $('endT').textContent=tot>=4000?'Master strategist':tot>=2500?'Seasoned general':tot>=1200?'Field officer':'Lost in the passes';
   $('summary').innerHTML='';
   S.guesses.forEach((g,i)=>{const li=document.createElement('li');li.innerHTML='<span></span><span></span><span></span>';

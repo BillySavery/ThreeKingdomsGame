@@ -135,6 +135,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span></footer>
 </div>
 
+<script src="tk-stats.js"></script>
 <script src="officers.js"></script>
 <script>
 (()=>{
@@ -340,7 +341,7 @@ function end(){
   $('endLine').textContent=sc===10?'A clean sweep. Not even Zhuge Liang saw that coming.':sc>=7?'A fine campaign. The court will hear of this.':sc>=4?'A respectable showing. Regroup and march again tomorrow.':'A short campaign. Even Liu Bei lost plenty of battles before Chengdu.';
   const st=store.get('stats',{played:0,total:0,best:0,lastDay:null});
   if(S.score!==sc){S.score=sc;save()}
-  if(!S.counted){st.played++;st.total+=sc;st.best=Math.max(st.best,sc);st.lastDay=t;store.set('stats',st);S.counted=true;save()}
+  if(!S.counted){window.tkReport&&tkReport('rise-or-fall',{score:sc,max:ROUNDS,mistakes:ROUNDS-sc,perfect:sc===ROUNDS});st.played++;st.total+=sc;st.best=Math.max(st.best,sc);st.lastDay=t;store.set('stats',st);S.counted=true;save()}
   $('stats').innerHTML='<div><b>'+st.played+'</b>Played</div><div><b>'+(st.played?(st.total/st.played).toFixed(1):0)+'</b>Average</div><div><b>'+st.best+'</b>Best</div>';
   const list=$('rlist');list.innerHTML='';
   const left=ROUNDS-S.picks.length;

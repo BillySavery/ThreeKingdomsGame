@@ -105,6 +105,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   </div>
 </div>
 
+<script src="tk-stats.js"></script>
 <script>
 const LIVES=7,HINT_AT=5;
 (()=>{
@@ -385,6 +386,7 @@ function finish(restoring){
   if(won){$('endP').textContent=`Solved with ${G.mistakes} ${G.mistakes===1?'mistake':'mistakes'}${G.hint!=null?' and a hint':''}.`;$('reveal').hidden=true}
   else if(wasRevealed())revealRest();
   else{$('endP').textContent='Seven mistakes. The groups you missed stay hidden until you reveal them.';$('reveal').hidden=false}
+  if(!restoring&&G.mode==='daily')window.tkReport&&tkReport('four-banners',{score:G.solved.length,max:4,mistakes:G.mistakes,hint:G.hint!=null,perfect:won&&!G.mistakes});
   if(!restoring){const st=store.get('stats',{played:0,won:0,perfect:0});st.played++;if(won)st.won++;if(won&&!G.mistakes)st.perfect++;store.set('stats',st);render()}
   G.wonFlag=won;$('share').focus();
 }

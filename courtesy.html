@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Courtesy Call</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Progress pips, a name card with the guess box, the verdict, then the end card and a review list */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --miss:#9b3a2c; --jade:#1f4a40;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.chip{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--mute);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold2)}
+.pips{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.pip{height:8px;background:var(--miss);opacity:1;background:#3a2e25}
+.pip.cur{background:var(--gold)}
+.pip.ok{background:var(--hit)}.pip.bad{background:var(--miss)}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold)}
+.card .head{padding:14px 18px 0;display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);font-variant-numeric:tabular-nums}
+.card .head b{color:var(--gold)}
+.stmt{font-family:var(--display);font-weight:400;font-size:clamp(23px,5.4vw,30px);line-height:1.25;margin:0;padding:14px 18px 22px;text-wrap:balance;min-height:7.5em;display:flex;align-items:center}
+.choices{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--gold)}
+.choice{display:grid;justify-items:center;gap:8px;padding:16px 10px;background:transparent;color:var(--paper);border:0;cursor:pointer;font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+.choice + .choice{border-left:1px solid var(--line)}
+.choice .s{width:54px;height:54px;border:2px solid var(--gold);background:var(--lacquer);display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--gold);font-weight:400;letter-spacing:0;transition:transform .15s ease}
+.choice small{font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:none;color:var(--mute)}
+.choice:hover .s{transform:translateY(-2px)}
+.choice:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+.choice[disabled]{cursor:default;opacity:.45}
+.choice.picked{opacity:1;background:rgba(217,164,65,.08)}
+.verdict{border-top:1px solid var(--line);padding:16px 18px 18px;display:grid;gap:8px;animation:in .35s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.vtag{font-family:var(--display);font-size:26px;line-height:1.1;margin:0}
+.vtag.ok{color:#6fd0b0}.vtag.bad{color:#f08a72}
+.vtag span{display:block;font-family:var(--ui);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin-top:4px}
+.why{margin:0;line-height:1.55;font-size:16px;max-width:62ch}
+.btn{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:13px 16px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold);cursor:pointer;justify-self:start}
+.btn:hover{background:#a8261f}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:20px 18px;display:grid;gap:12px;text-align:center;justify-items:center}
+.score{font-family:var(--display);font-size:64px;line-height:1;color:var(--gold2);font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--mute)}
+.rank{font-family:var(--display);font-size:24px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.5;color:var(--mute);max-width:44ch}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.nextin b{color:var(--gold2);font-variant-numeric:tabular-nums}
+.copied{font-size:13px;color:var(--gold2);min-height:18px}
+.review{display:grid;gap:6px}
+.review h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 4px;color:var(--gold)}
+.ritem{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);padding:12px 14px;display:grid;gap:4px}
+.ritem .rh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ritem .rh b{color:var(--paper)}
+.ritem .rs{font-size:15px;line-height:1.4}
+.ritem .rw{font-size:13.5px;color:var(--mute);line-height:1.5}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+.pip.half{background:var(--gold2)}
+.cname{padding:18px 18px 10px;text-align:center;display:grid;gap:4px;justify-items:center}
+.cname .zh{font-family:var(--display);font-size:clamp(54px,15vw,76px);line-height:1.05;color:var(--gold2)}
+.cname .py{font-family:var(--display);font-size:24px}
+.clues{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 18px 16px;min-height:30px}
+.clue{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--gold);color:var(--gold)}
+.clue.miss{border-color:var(--line);color:var(--mute);text-transform:none;letter-spacing:.04em;font-size:12.5px}
+.guessrow{border-top:1px solid var(--gold);padding:14px 18px 16px;display:grid;gap:8px;position:relative}
+.guessrow label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.gbox{display:flex;gap:8px;min-width:0}
+.gbox .btn{flex:0 0 auto;padding:12px 14px;letter-spacing:.08em}
+#guess{flex:1;min-width:0;font:inherit;font-size:16px;padding:12px 12px;background:var(--ink);color:var(--paper);border:1px solid var(--line)}
+#guess:focus{outline:none;border-color:var(--gold)}
+#sugg{list-style:none;margin:0;padding:0;position:absolute;left:18px;right:18px;top:calc(100% - 14px);background:var(--panel);border:1px solid var(--gold);z-index:5;max-height:300px;overflow:auto}
+#sugg li{padding:10px 12px;cursor:pointer;border-top:1px solid var(--line)}
+#sugg li:first-child{border-top:0}
+#sugg li[aria-selected="true"],#sugg li:hover{background:rgba(217,164,65,.14);color:var(--gold2)}
+.fb{font-size:13px;color:var(--mute);min-height:18px}
+.who{font-family:var(--display);font-size:30px;line-height:1.1;margin:0;color:var(--gold2)}
+.who small{display:block;font-family:var(--ui);font-size:13px;color:var(--mute);margin-top:6px;letter-spacing:.02em}
+.src{font-size:12.5px;color:var(--mute);margin:0}
+.src a{color:var(--gold)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.verdict{animation:none}.choice .s{transition:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Courtesy Call<small>THREE KINGDOMS DAILY &middot; 字</small></div>
+  </header>
+
+  <div class="pips" id="pips" aria-hidden="true"></div>
+
+  <section id="play">
+    <article class="card" aria-live="polite">
+      <div class="head"><span>Name <b id="qn">1</b> of 5</span><span id="left">2 guesses left</span></div>
+      <div class="cname"><div class="zh" id="zh" lang="zh-Hant"></div><div class="py" id="py"></div></div>
+      <div class="clues" id="clues"></div>
+      <div class="guessrow" id="guessrow">
+        <label for="guess">Who went by this name?</label>
+        <div class="gbox"><input id="guess" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Type an officer" role="combobox" aria-autocomplete="list" aria-controls="sugg" aria-expanded="false"><button class="btn" id="submit" type="button">Guess</button></div>
+        <ul id="sugg" role="listbox" hidden></ul>
+        <div class="fb" id="fb" aria-live="polite"></div>
+      </div>
+      <div class="verdict" id="verdict" hidden>
+        <p class="vtag" id="vtag"></p>
+        <p class="who" id="who"></p>
+        <p class="why" id="why" hidden></p>
+        <p class="src" id="src"></p>
+        <button class="btn" id="next" type="button">Next name</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="endcard" id="end" hidden>
+    <div class="score" id="final">0<small>/5</small></div>
+    <p class="rank" id="rank"></p>
+    <p id="rankline"></p>
+    <div class="actions"><button class="btn" id="share" type="button">Copy result</button></div>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="stats">
+      <div><b id="stPlayed">0</b>Played</div>
+      <div><b id="stAvg">0</b>Average</div>
+      <div><b id="stStreak">0</b>Streak</div>
+    </div>
+    <div class="nextin">Five new names in <b id="cd">0h 0m</b></div>
+    <div data-support></div>
+  </section>
+
+  <section class="review" id="review" hidden>
+    <h2>Today's five</h2>
+    <div id="rlist" class="review"></div>
+  </section>
+
+  <div class="rules"><b>How to play.</b> Officers of the era were known by a courtesy name as well as their given name. Each day shows five courtesy names. Name the officer behind each one, with two guesses a name; a miss reveals their faction. The first three are well known figures, the last two go deeper. Every name is checked against Wikipedia, which cites the historical records, and courtesy names shared by more than one person are left out.</div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+<script src="officers.js"></script>
+<script>
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=id=>document.getElementById(id);
+const t=today(),PER=5,TRIES=2;
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const CJK=/[\u3400-\u9fff]/;
+
+/* Every officer from the shared database is a valid guess */
+const ALL=(window.TK_OFFICERS||[]).map(o=>({n:o.n,al:o.a||[],zh:o.zh||'',f:o.f,r:o.r,b:o.b,d:o.d,cn:o.cn,k:o.k,mo:o.mo,src:o.src,url:(window.TK_URLS||[])[o.u]}));
+ALL.forEach(o=>{o.keys=[o.n,...o.al].map(norm)});
+const BY=new Map(ALL.map(o=>[o.n,o]));
+const split=cn=>{const cz=cn.split(/\s+/).filter(w=>CJK.test(w)||w==='/').join(' ').replace(/\s*\/\s*/g,' / ').trim();const py=cn.split(/\s+/).filter(w=>!CJK.test(w)).join(' ').replace(/\s*\/\s*$/,'').replace(/\s*\/\s*/g,' / ').trim();return{cz,cp:py}};
+
+/* Answers: historical officers with a checked courtesy name. Names shared by more than one person (TK_CC_EXCLUDE), or written with the same characters, never appear */
+const EX=new Set(window.TK_CC_EXCLUDE||[]);
+const cands=ALL.filter(o=>o.cn&&o.k==='H').map(o=>Object.assign(o,split(o.cn)));
+const zhCount={};cands.forEach(o=>{zhCount[o.cz]=(zhCount[o.cz]||0)+1});
+const POOL=cands.filter(o=>!EX.has(o.cn.split(/\s+/)[0])&&zhCount[o.cz]===1).sort((a,b)=>a.n.localeCompare(b.n));
+const WELL=POOL.filter(o=>o.mo!=null),DEEP=POOL.filter(o=>o.mo==null);
+
+/* Short notes on a name, each from the officer's own Wikipedia article */
+const NOTE={
+ 'Sima Yi':'He and his seven brothers were known as the Eight Das, because all their courtesy names ended in 達.',
+ 'Zhang Fei':'The histories write it 益德. The Romance writes 翼德, which sounds the same.',
+ 'Guan Yu':'His original courtesy name was Changsheng 長生.'
+};
+
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+function shuffled(arr,seed){const r=rng(seed),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+/* each list cycles through every name before any repeats */
+function take(list,count,d,salt){const span=Math.floor(list.length/count),pos=((d%span)+span)%span;return shuffled(list,salt).slice(pos*count,pos*count+count)}
+const items=take(WELL,3,t,5501).concat(take(DEEP,2,t,7703));
+
+const KEY='cc_day'+t;
+let st=get(KEY);
+if(!st||!Array.isArray(st.r)||st.ans&&st.ans.join()!==items.map(o=>o.n).join())st={ans:items.map(o=>o.n),r:[],over:false};
+const cur=()=>st.r.length?st.r[st.r.length-1]:null;
+const roundDone=r=>!!r&&(r.ok||r.g.length>=TRIES);
+const pts=r=>r.ok?(r.g.length===1?1:0.5):0;
+const score=()=>st.r.reduce((a,r)=>a+(roundDone(r)?pts(r):0),0);
+const fmt=n=>Number.isInteger(n)?String(n):n.toFixed(1);
+
+const pips=$('pips');
+for(let i=0;i<PER;i++){const p=document.createElement('div');p.className='pip';pips.append(p)}
+function paintPips(){[...pips.children].forEach((p,i)=>{const r=st.r[i];let c='pip';if(roundDone(r))c+=r.ok?(r.g.length===1?' ok':' half'):' bad';else if(i===st.r.length-(cur()&&!roundDone(cur())?1:0)&&!st.over)c+=' cur';p.className=c})}
+
+function idx(){const r=cur();return r&&!roundDone(r)?st.r.length-1:st.r.length}
+function life(o){if(o.b&&o.d)return o.b+' to '+o.d;if(o.d)return 'died '+o.d;return ''}
+function roleTxt(o){return [o.f==='Other'?'':o.f,o.r].filter(Boolean).join(' ')}
+
+let showing=false;
+function renderQ(){
+  const i=idx();
+  if(i>=PER){finish();return}
+  if(!st.r[i]){st.r.push({g:[],ok:false});put(KEY,st)}
+  const o=items[i],r=st.r[i];
+  $('qn').textContent=i+1;
+  $('zh').textContent=o.cz;$('py').textContent=o.cp;
+  $('left').textContent=(TRIES-r.g.length)+(TRIES-r.g.length===1?' guess left':' guesses left');
+  const cl=$('clues');cl.innerHTML='';
+  if(r.g.length){const f=document.createElement('span');f.className='clue';f.textContent='Faction: '+(o.f==='Other'?'none of the three':o.f);cl.append(f);
+    r.g.forEach(n=>{const m=document.createElement('span');m.className='clue miss';m.textContent='Not '+n;cl.append(m)})}
+  $('verdict').hidden=true;$('guessrow').hidden=false;$('guess').value='';$('fb').textContent='';closeSugg();
+  showing=false;paintPips();
+}
+function verdict(){
+  const i=st.r.length-1,o=items[i],r=st.r[i];showing=true;
+  $('guessrow').hidden=true;
+  const v=$('vtag');v.className='vtag '+(r.ok?'ok':'bad');v.innerHTML='';
+  v.append(document.createTextNode(r.ok?(r.g.length===1?'First guess':'Second guess'):'Not this time'));
+  const sp=document.createElement('span');sp.textContent=r.ok?(r.g.length===1?'One point':'Half a point'):'No points';v.append(sp);
+  const w=$('who');w.innerHTML='';w.append(document.createTextNode(o.n+(o.zh?' '+o.zh:'')));
+  const sm=document.createElement('small');sm.textContent=['Courtesy name '+o.cp+' '+o.cz,roleTxt(o),life(o)].filter(Boolean).join(' \u00b7 ');w.append(sm);
+  const why=$('why');if(NOTE[o.n]){why.textContent=NOTE[o.n];why.hidden=false}else why.hidden=true;
+  srcLine($('src'),o);
+  $('next').textContent=st.r.length>=PER?'See your score':'Next name';
+  $('clues').innerHTML='';
+  $('verdict').hidden=false;paintPips();$('next').focus({preventScroll:true});
+}
+function srcLine(el,o){el.innerHTML='';el.append('Source: '+(o.src?o.src+' ':'')+'via ');const a=document.createElement('a');a.href=o.url||'https://en.wikipedia.org/wiki/Lists_of_people_of_the_Three_Kingdoms';a.target='_blank';a.rel='noopener';a.textContent='Wikipedia';el.append(a)}
+
+function submit(name){
+  if(showing||st.over)return;
+  const typed=$('guess').value,exact=ALL.find(o=>o.keys.includes(norm(typed)));
+  const q=name||(exact&&exact.n)||(sugg[sel]&&sugg[sel].n)||typed;
+  const k=norm(q||'');
+  if(!k){$('fb').textContent='Type an officer first.';return}
+  const g=BY.get(q)||ALL.find(o=>o.keys.includes(k));
+  if(!g){$('fb').textContent='That name isn\u2019t in the officer list. Pick one from the suggestions.';return}
+  const i=st.r.length-1,r=st.r[i],o=items[i];
+  if(r.g.includes(g.n)){$('fb').textContent='You already tried '+g.n+'.';return}
+  r.g.push(g.n);
+  if(g.n===o.n)r.ok=true;
+  if(roundDone(r)){if(st.r.length>=PER){st.over=true;st.score=score();updateStats()}put(KEY,st);verdict()}
+  else{put(KEY,st);renderQ();$('fb').textContent='Not '+g.n+'. Their faction is now showing.';$('guess').focus()}
+}
+
+let sugg=[],sel=-1;
+function showSugg(){
+  const raw=$('guess').value,q=norm(raw);
+  if(q.length<2){closeSugg();return}
+  const r=st.r[st.r.length-1]||{g:[]};
+  const words=raw.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  const scored=[];
+  for(const o of ALL){if(r.g.includes(o.n))continue;let s=0;
+    if(o.keys.some(k=>k.startsWith(q)))s=2;else if(words.length&&words.every(w=>[o.n,...o.al].join(' ').toLowerCase().split(/\s+/).some(x=>norm(x).startsWith(norm(w)))))s=1;
+    if(s)scored.push([s,o])}
+  scored.sort((a,b)=>b[0]-a[0]||a[1].n.localeCompare(b[1].n));
+  sugg=scored.slice(0,8).map(x=>x[1]);sel=sugg.length?0:-1;
+  const box=$('sugg');if(!sugg.length){closeSugg();return}
+  box.innerHTML='';sugg.forEach((o,i)=>{const li=document.createElement('li');li.setAttribute('role','option');li.setAttribute('aria-selected',i===sel);li.textContent=o.n;li.addEventListener('mousedown',e=>{e.preventDefault();submit(o.n)});box.appendChild(li)});
+  box.hidden=false;$('guess').setAttribute('aria-expanded','true');
+}
+function closeSugg(){$('sugg').hidden=true;sugg=[];sel=-1;$('guess').setAttribute('aria-expanded','false')}
+function moveSel(d){if(!sugg.length)return;sel=(sel+d+sugg.length)%sugg.length;[...$('sugg').children].forEach((li,i)=>li.setAttribute('aria-selected',i===sel))}
+$('guess').addEventListener('input',()=>{$('fb').textContent='';showSugg()});
+$('guess').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();moveSel(1)}else if(e.key==='ArrowUp'){e.preventDefault();moveSel(-1)}else if(e.key==='Enter'){e.preventDefault();submit()}else if(e.key==='Escape')closeSugg()});
+$('guess').addEventListener('blur',()=>setTimeout(closeSugg,120));
+$('submit').addEventListener('click',()=>submit());
+$('next').addEventListener('click',()=>renderQ());
+document.addEventListener('keydown',e=>{if(showing&&e.key==='Enter'&&e.target!==$('guess')&&document.activeElement!==$('next')){e.preventDefault();renderQ()}});
+
+const RANKS=[[5,'Master of rites','Every name answered on the first try.'],[4,'Court chamberlain','You know who is who across the realm.'],[3,'Trusted retainer','The famous names hold no secrets from you.'],[1.5,'Junior clerk','A few names slipped past you today.'],[0,'Newly arrived at court','Courtesy names take time. Come back tomorrow.']];
+function updateStats(){
+  const s=get('cc_stats')||{played:0,total:0,streak:0,last:null};
+  if(s.last!==t){s.played++;s.total+=score();s.streak=(s.last===t-1)?s.streak+1:1;s.last=t;put('cc_stats',s)}
+  return s;
+}
+function finish(){
+  const n=score();
+  if(!st.over||st.score!==n){st.over=true;st.score=n;put(KEY,st)}
+  const s=updateStats();
+  $('play').hidden=true;$('end').hidden=false;paintPips();
+  $('final').firstChild.nodeValue=fmt(n);
+  const rk=RANKS.find(x=>n>=x[0]);$('rank').textContent=rk[1];$('rankline').textContent=rk[2];
+  $('stPlayed').textContent=s.played;$('stAvg').textContent=(s.total/s.played).toFixed(1);$('stStreak').textContent=s.streak;
+  const list=$('rlist');list.innerHTML='';
+  items.forEach((o,i)=>{const r=st.r[i]||{g:[],ok:false};
+    const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',r.ok?(r.g.length===1?'var(--hit)':'var(--gold2)'):'var(--miss)');
+    const h=document.createElement('div');h.className='rh';h.append(document.createTextNode((i+1)+' \u00b7 '));const b=document.createElement('b');b.textContent=o.cp+' '+o.cz;h.append(b);
+    h.append(document.createTextNode(r.ok?(r.g.length===1?' \u00b7 first guess':' \u00b7 second guess'):' \u00b7 missed'));
+    const s1=document.createElement('div');s1.className='rs';s1.textContent=o.n+(o.zh?' '+o.zh:'')+(roleTxt(o)?', '+roleTxt(o):'');
+    const s2=document.createElement('div');s2.className='rw';
+    if(NOTE[o.n]){s2.append(NOTE[o.n]+' ')}
+    const sl=document.createElement('span');srcLine(sl,o);s2.append(sl);
+    d.append(h,s1,s2);list.append(d)});
+  $('review').hidden=false;
+}
+$('share').addEventListener('click',()=>{
+  const line=items.map((_,i)=>{const r=st.r[i];return r&&r.ok?(r.g.length===1?'\u{1F7E9}':'\u{1F7E8}'):'\u{1F7E5}'}).join('');
+  const text='Courtesy Call \u00b7 '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'\n'+fmt(score())+'/5 '+line+'\nthreekingdomsgame.co.uk';
+  const done=()=>$('copied').textContent='Copied. Paste it anywhere.';
+  try{navigator.clipboard.writeText(text).then(done,()=>{$('copied').textContent=text})}catch(e){$('copied').textContent=text}
+});
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+
+if(st.over)finish();
+else{const r=cur();if(r&&roundDone(r))verdict();else renderQ()}
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+<script src="support.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d0d6d441d802490a8896d4f5249225a0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

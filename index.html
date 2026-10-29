@@ -82,8 +82,8 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   <header class="mast">
     <div class="han" aria-hidden="true">三國</div>
     <h1>Three Kingdoms <em>Daily</em></h1>
-    <p>Seven puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
-    <div class="today"><span>Done today <b id="doneCount">0/7</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
+    <p>Eight puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
+    <div class="today"><span>Done today <b id="doneCount">0/8</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
   </header>
 
   <main class="games">
@@ -150,6 +150,15 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       </div>
       <a class="play" href="muster.html">Play</a>
     </article>
+    <article class="game" id="g-courtesy">
+      <div class="top"><div class="seal" aria-hidden="true">字</div><span class="status" id="s-courtesy">Not played</span></div>
+      <div class="body">
+        <h2>Courtesy Call</h2>
+        <p class="what">Five courtesy names a day. Name the officer behind each one, with two guesses and a faction clue after a miss.</p>
+        <p class="how">About 3 minutes</p>
+      </div>
+      <a class="play" href="courtesy.html">Play</a>
+    </article>
     <article class="game" id="g-fact">
       <div class="top"><div class="seal" aria-hidden="true">史</div><span class="status" id="s-fact">Not revealed</span></div>
       <div class="body">
@@ -205,7 +214,9 @@ const rf=get('hl_day'+t);
 if(rf&&rf.picks&&rf.picks.length){if(rf.counted){set('rise',(rf.score!=null?rf.score:'?')+' / 10','done');done++}else set('rise',rf.picks.length+' of 10 so far','live')}
 const mu=get('mu_day'+t);
 if(mu){const f=Object.keys(mu.board||{}).length;if(mu.over){set('muster',f+' / 16 squares','done');done++}else if(mu.i)set('muster',f+' / 16 so far','live')}
-document.getElementById('doneCount').textContent=done+'/7';
+const cc=get('cc_day'+t);
+if(cc&&cc.r&&cc.r.length){const ok=cc.r.filter(r=>r.ok).length;if(cc.over){set('courtesy',(cc.score!=null?cc.score:ok)+' / 5','done');done++}else set('courtesy',cc.r.filter(r=>r.ok||r.g.length>=2).length+' of 5 so far','live')}
+document.getElementById('doneCount').textContent=done+'/8';
 if(get('fd_day'+t)){const s=document.getElementById('s-fact');s.textContent='Revealed';s.className='status done';const c=document.getElementById('g-fact');c.classList.add('finished');c.querySelector('.play').textContent='Read again'}
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);

@@ -304,6 +304,10 @@ const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}ca
 const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const $=id=>document.getElementById(id);
 const t=today(),N=30,SIZE=16;
+/* Tags added on 30 Oct 2026, used from 31 Oct so boards already in play stay the same.
+   Died in battle: Wutugu burned with his rattan armour troops at Panshe Valley (Romance ch. 90); Gan Ning shot by Shamoke at Yiling (Romance ch. 83) */
+const ADD_DAY=30,ADD_TAGS={'Wutugu':['DB'],'Gan Ning':['DB']};
+if(t>=ADD_DAY)OFF.forEach((o,i)=>{(ADD_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.includes(c))o.t.push(c)})});
 
 function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
 function shuf(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}

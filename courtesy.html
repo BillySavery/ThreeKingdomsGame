@@ -148,7 +148,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <div id="rlist" class="review"></div>
   </section>
 
-  <div class="rules"><b>How to play.</b> Officers of the era were known by a courtesy name as well as their given name. Each day shows five courtesy names. Name the officer behind each one, with three guesses a name. A first guess scores a point, a second half a point and a third a quarter. Your first miss reveals their faction, and your second reveals their family name, the name that went with the courtesy name, so Cao Mengde for Cao Cao. The first three are well known figures, the last two go deeper. Every name is checked against Wikipedia, which cites the historical records, and courtesy names shared by more than one person are left out.<br><br><b>Reading the names.</b> The game is written in English. Courtesy names are spelled in pinyin, and the Chinese characters read left to right, the way modern Chinese is printed across a page. Older Chinese texts, including the original records and the novel, run in columns from top to bottom and right to left.</div>
+  <div class="rules"><b>How to play.</b> Officers of the era were known by a courtesy name as well as their given name. Each day shows five courtesy names. Name the officer behind each one, with three guesses a name. A first guess scores a point, a second half a point and a third a quarter. Your first miss reveals their faction, and your second reveals their family name, the name that went with the courtesy name, so Cao Mengde for Cao Cao. If only one or two officers share that family name, you get their role and year of death instead, so the hint never gives the answer away. The first three are well known figures, the last two go deeper. Every name is checked against Wikipedia, which cites the historical records, and courtesy names shared by more than one person are left out.<br><br><b>Reading the names.</b> The game is written in English. Courtesy names are spelled in pinyin, and the Chinese characters read left to right, the way modern Chinese is printed across a page. Older Chinese texts, including the original records and the novel, run in columns from top to bottom and right to left.</div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
@@ -174,6 +174,8 @@ const split=cn=>{const cz=cn.split(/\s+/).filter(w=>CJK.test(w)||w==='/').join('
 /* Family name for the third hint. Two syllable family names take two characters */
 const DOUBLE_SUR=['Xiahou','Sima','Zhuge','Taishi','Gongsun','Chunyu','Huangfu','Puyang','Shisun','Guanqiu'];
 const SUR_SP={'Emperor Xian':['Liu','\u5289']};
+/* How many officers in the whole database share each family name. A rare one would give the answer away, so it is swapped for role and year of death */
+const SUR_N={};ALL.forEach(x=>{const p=SUR_SP[x.n]?SUR_SP[x.n][0]:x.n.replace(/\s*\(.*\)$/,'').split(' ')[0];SUR_N[p]=(SUR_N[p]||0)+1});
 function surOf(o){if(SUR_SP[o.n])return SUR_SP[o.n];const p=o.n.replace(/\s*\(.*\)$/,'').split(' ')[0];return [p,(o.zh||'').slice(0,DOUBLE_SUR.includes(p)?2:1)]}
 
 /* Answers: historical officers with a checked courtesy name. Names shared by more than one person (TK_CC_EXCLUDE), or written with the same characters, never appear */
@@ -225,7 +227,7 @@ function renderQ(){
   $('left').textContent=(TRIES-r.g.length)+(TRIES-r.g.length===1?' guess left':' guesses left');
   const cl=$('clues');cl.innerHTML='';
   if(r.g.length){const f=document.createElement('span');f.className='clue';f.textContent='Faction: '+(o.f==='Other'?'none of the three':o.f);cl.append(f);
-    if(r.g.length>=2){const [sp,sz]=surOf(o);const fs=document.createElement('span');fs.className='clue';fs.textContent='Family name: '+sp+(sz?' '+sz:'');cl.append(fs)}
+    if(r.g.length>=2){const [sp,sz]=surOf(o);const fs=document.createElement('span');fs.className='clue';fs.textContent=(SUR_N[sp]||0)>=3?'Family name: '+sp+(sz?' '+sz:''):[o.r,o.d?'died '+o.d:''].filter(Boolean).join(', ')||'Rare family name';cl.append(fs)}
     r.g.forEach(n=>{const m=document.createElement('span');m.className='clue miss';m.textContent='Not '+n;cl.append(m)})}
   $('verdict').hidden=true;$('guessrow').hidden=false;$('guess').value='';$('fb').textContent='';closeSugg();
   showing=false;paintPips();
@@ -259,7 +261,7 @@ function submit(name){
   r.g.push(g.n);
   if(g.n===o.n)r.ok=true;
   if(roundDone(r)){if(st.r.length>=PER){st.over=true;st.score=score();updateStats()}put(KEY,st);verdict()}
-  else{put(KEY,st);renderQ();$('fb').textContent='Not '+g.n+'. '+(r.g.length>=2?'Their family name is now showing.':'Their faction is now showing.');$('guess').focus()}
+  else{put(KEY,st);renderQ();$('fb').textContent='Not '+g.n+'. '+(r.g.length>=2?((SUR_N[surOf(o)[0]]||0)>=3?'Their family name is now showing.':'Their family name is too rare to give away, so here is their role instead.'):'Their faction is now showing.');$('guess').focus()}
 }
 
 let sugg=[],sel=-1;

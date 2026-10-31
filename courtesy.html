@@ -95,6 +95,32 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;fl
 .who small{display:block;font-family:var(--ui);font-size:13px;color:var(--mute);margin-top:6px;letter-spacing:.02em}
 .src{font-size:12.5px;color:var(--mute);margin:0}
 .src a{color:var(--gold)}
+.mhead{display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);padding:14px 18px 0;font-variant-numeric:tabular-nums}
+.mhead b{color:var(--gold)}
+.mtip{margin:0;padding:8px 18px 0;font-size:13.5px;color:var(--mute);line-height:1.45}
+.board{display:grid;gap:8px;padding:14px 12px 16px}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);align-items:stretch;gap:6px}
+.mrow .tie{display:grid;place-items:center;color:var(--line);font-size:16px}
+.mrow.ok .tie{color:var(--hit)}.mrow.miss .tie{color:var(--miss)}
+.cn,.of{min-height:68px;border:1px solid var(--line);background:var(--ink);display:grid;align-content:center;justify-items:center;gap:2px;padding:8px 6px;text-align:center;min-width:0}
+.cn .z{font-family:var(--display);font-size:26px;line-height:1.05;color:var(--gold2)}
+.cn .p{font-family:var(--display);font-size:15px}
+.of{font:inherit;color:var(--paper);cursor:grab;font-family:var(--display);font-size:17px;line-height:1.2;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .12s ease,border-color .12s ease,background .12s ease;overflow-wrap:anywhere}
+.of:hover{border-color:var(--gold)}
+.of:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.of.sel{border-color:var(--gold);background:rgba(217,164,65,.16);transform:translateY(-2px)}
+.of.over{border-color:var(--gold2);border-style:dashed}
+.of.drag{opacity:.5}
+.mrow.ok .cn,.mrow.ok .of{border-color:var(--hit);background:rgba(47,138,111,.16);cursor:default}
+.mrow.miss .cn,.mrow.miss .of{border-color:var(--miss);background:rgba(155,58,44,.16);cursor:default}
+.mrow.bad .of{animation:shake .4s ease}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.of small{display:block;font-family:var(--ui);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:3px}
+.mfoot{border-top:1px solid var(--gold);padding:14px 18px 16px;display:grid;gap:8px}
+.mfoot .btn{justify-self:stretch}
+.mfb{font-size:13.5px;color:var(--mute);min-height:18px;margin:0}
+.mfb b{color:var(--gold2)}
+@media (prefers-reduced-motion:reduce){.of{transition:none}.mrow.bad .of{animation:none}}
 footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.verdict{animation:none}.choice .s{transition:none}}
 </style>
@@ -128,6 +154,15 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     </article>
   </section>
 
+  <section id="match" hidden>
+    <article class="card">
+      <div class="mhead"><span>Match the names</span><span id="mleft">3 checks left</span></div>
+      <p class="mtip" id="mtip">Line each officer up with their courtesy name. Drag an officer onto another to swap them, or tap two officers.</p>
+      <div class="board" id="board" aria-live="polite"></div>
+      <div class="mfoot"><button class="btn" id="check" type="button">Check my answers</button><p class="mfb" id="mfb" aria-live="polite"></p></div>
+    </article>
+  </section>
+
   <section class="endcard" id="end" hidden>
     <div class="score" id="final">0<small>/5</small></div>
     <p class="rank" id="rank"></p>
@@ -148,7 +183,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <div id="rlist" class="review"></div>
   </section>
 
-  <div class="rules"><b>How to play.</b> Officers of the era were known by a courtesy name as well as their given name. Each day shows five courtesy names. Name the officer behind each one, with three guesses a name. A first guess scores a point, a second half a point and a third a quarter. Your first miss reveals their faction, and your second reveals their family name, the name that went with the courtesy name, so Cao Mengde for Cao Cao. If only one or two officers share that family name, you get their role and year of death instead, so the hint never gives the answer away. The first three are well known figures, the last two go deeper. Every name is checked against Wikipedia, which cites the historical records, and courtesy names shared by more than one person are left out.<br><br><b>Reading the names.</b> The game is written in English. Courtesy names are spelled in pinyin, and the Chinese characters read left to right, the way modern Chinese is printed across a page. Older Chinese texts, including the original records and the novel, run in columns from top to bottom and right to left.</div>
+  <div class="rules"><span id="rulesMatch"><b>How to play.</b> Officers of the era were known by a courtesy name as well as their given name. Each day shows five courtesy names and the five officers who went by them, in a jumbled order. Drag the officers (or tap two to swap them) so each one sits next to their courtesy name, then check your answers. Right matches lock in, and you get three checks in all. A match found on the first check scores a point, on the second half a point and on the third a quarter. Every name is checked against Wikipedia, which cites the historical records, and courtesy names shared by more than one person are left out.</span><span id="rulesGuess" hidden><b>How to play.</b> Officers of the era were known by a courtesy name as well as their given name. Each day shows five courtesy names. Name the officer behind each one, with three guesses a name. A first guess scores a point, a second half a point and a third a quarter. Your first miss reveals their faction, and your second reveals their family name, the name that went with the courtesy name, so Cao Mengde for Cao Cao. If only one or two officers share that family name, you get their role and year of death instead, so the hint never gives the answer away. The first three are well known figures, the last two go deeper. Every name is checked against Wikipedia, which cites the historical records, and courtesy names shared by more than one person are left out.</span><br><br><b>Reading the names.</b> The game is written in English. Courtesy names are spelled in pinyin, and the Chinese characters read left to right, the way modern Chinese is printed across a page. Older Chinese texts, including the original records and the novel, run in columns from top to bottom and right to left.</div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
 </div>
@@ -199,8 +234,10 @@ function take(list,count,d,salt){const span=Math.floor(list.length/count),pos=((
 const items=take(WELL,3,t,5501).concat(take(DEEP,2,t,7703));
 
 const KEY='cc_day'+t;
+/* From 1 Nov 2026 (day 31) the five names are a matching puzzle: line each officer up with their courtesy name. Earlier days keep the guessing game */
+const MATCH_DAY=31,MATCH=t>=MATCH_DAY,CHECKS=3;
 let st=get(KEY);
-if(!st||!Array.isArray(st.r)||st.ans&&st.ans.join()!==items.map(o=>o.n).join())st={ans:items.map(o=>o.n),r:[],over:false,v:3};
+if(!st||!Array.isArray(st.r)||st.ans&&st.ans.join()!==items.map(o=>o.n).join()||MATCH&&st.v!=='m')st={ans:items.map(o=>o.n),r:[],over:false,v:MATCH?'m':3};
 const TRIES=st.v===3?3:2;
 const cur=()=>st.r.length?st.r[st.r.length-1]:null;
 const roundDone=r=>!!r&&(r.ok||r.g.length>=TRIES);
@@ -298,17 +335,18 @@ function updateStats(){
 function finish(){
   const n=score();
   if(!st.over||st.score!==n){st.over=true;st.score=n;put(KEY,st)}
-  {const rr=st.r.map(r=>r||{g:[],ok:false});window.tkReport&&tkReport('courtesy-call',{score:rr.filter(r=>r.ok).length,max:PER,mistakes:rr.reduce((a,r)=>a+(r.ok?r.g.length-1:r.g.length),0),perfect:rr.length===PER&&rr.every(r=>r.ok&&r.g.length===1)})}
+  if(MATCH){window.tkReport&&tkReport('courtesy-call',{score:st.r.filter(r=>r.ok).length,max:PER,mistakes:st.wrong||0,perfect:st.r.every(r=>r.ok&&r.g.length===1),mode:'match'})}
+  else{const rr=st.r.map(r=>r||{g:[],ok:false});window.tkReport&&tkReport('courtesy-call',{score:rr.filter(r=>r.ok).length,max:PER,mistakes:rr.reduce((a,r)=>a+(r.ok?r.g.length-1:r.g.length),0),perfect:rr.length===PER&&rr.every(r=>r.ok&&r.g.length===1)})}
   const s=updateStats();
-  $('play').hidden=true;$('end').hidden=false;paintPips();
+  $('play').hidden=true;$('end').hidden=false;if(MATCH)mPaint();else paintPips();
   $('final').firstChild.nodeValue=fmt(n);
   const rk=RANKS.find(x=>n>=x[0]);$('rank').textContent=rk[1];$('rankline').textContent=rk[2];
   $('stPlayed').textContent=s.played;$('stAvg').textContent=(s.total/s.played).toFixed(1);$('stStreak').textContent=s.streak;
   const list=$('rlist');list.innerHTML='';
-  items.forEach((o,i)=>{const r=st.r[i]||{g:[],ok:false};
+  (MATCH?st.L:items.map((_,i)=>i)).forEach((i,n)=>{const o=items[i],r=st.r[i]||{g:[],ok:false};
     const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',r.ok?(r.g.length===1?'var(--hit)':'var(--gold2)'):'var(--miss)');
-    const h=document.createElement('div');h.className='rh';h.append(document.createTextNode((i+1)+' \u00b7 '));const b=document.createElement('b');b.textContent=o.cp+' '+o.cz;h.append(b);
-    h.append(document.createTextNode(r.ok?['',' \u00b7 first guess',' \u00b7 second guess',' \u00b7 third guess'][r.g.length]:' \u00b7 missed'));
+    const h=document.createElement('div');h.className='rh';h.append(document.createTextNode((n+1)+' \u00b7 '));const b=document.createElement('b');b.textContent=o.cp+' '+o.cz;h.append(b);
+    h.append(document.createTextNode(r.ok?(MATCH?['',' \u00b7 first check',' \u00b7 second check',' \u00b7 third check']:['',' \u00b7 first guess',' \u00b7 second guess',' \u00b7 third guess'])[r.g.length]:' \u00b7 missed'));
     const s1=document.createElement('div');s1.className='rs';s1.textContent=o.n+(o.zh?' '+o.zh:'')+(roleTxt(o)?', '+roleTxt(o):'');
     const s2=document.createElement('div');s2.className='rw';
     if(NOTE[o.n]){s2.append(NOTE[o.n]+' ')}
@@ -325,7 +363,62 @@ $('share').addEventListener('click',()=>{
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);
 
-if(st.over)finish();
+
+/* ---------- Matching mode ---------- */
+/* Rows: courtesy names on the left in a fixed daily order; officers on the right start shuffled so no row begins correct.
+   st.ord[k] is the item shown on the right of row k, st.lock[k] the check that row was solved on (0 = open) */
+let msel=-1;
+function mInit(){
+  if(!st.L){st.L=shuffled([0,1,2,3,4],t*31+9);
+    const r=rng(t*577+41);let o;do{o=st.L.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[o[i],o[j]]=[o[j],o[i]]}}while(o.some((x,k)=>x===st.L[k]));
+    st.ord=o;st.lock=[0,0,0,0,0];st.checks=0;st.wrong=0;put(KEY,st)}
+}
+function mPaint(){[...pips.children].forEach((p,k)=>{const c=st.lock[k];p.className='pip'+(c?[,' ok',' half',' third'][c]:st.over?' bad':'')})}
+function mRender(bad){
+  const b=$('board');b.innerHTML='';
+  st.L.forEach((li,k)=>{const o=items[li],c=st.lock[k],row=document.createElement('div');
+    row.className='mrow'+(c?' ok':st.over?' miss':'')+(bad&&bad.includes(k)?' bad':'');
+    const cn=document.createElement('div');cn.className='cn';cn.lang='zh-Hant';
+    const z=document.createElement('span');z.className='z';z.textContent=o.cz;const py=document.createElement('span');py.className='p';py.lang='en';py.textContent=o.cp;cn.append(z,py);
+    const tie=document.createElement('span');tie.className='tie';tie.setAttribute('aria-hidden','true');tie.textContent=c?'✓':st.over?'✗':'↔';
+    const ob=document.createElement('button');ob.type='button';ob.className='of'+(msel===k?' sel':'');ob.dataset.k=k;
+    const off=items[st.ord[k]];ob.textContent=off.n;
+    if(c||st.over){ob.disabled=true;const sm=document.createElement('small');sm.textContent=c?['','first check','second check','third check'][c]:'answer';ob.append(sm)}
+    ob.setAttribute('aria-label',(c?'Matched: ':st.over?'Answer: ':'')+off.n+' with '+o.cp+(msel===k?', selected':''));
+    row.append(cn,tie,ob);b.append(row)});
+  const left=CHECKS-st.checks;$('mleft').textContent=st.over?'Finished':left+(left===1?' check left':' checks left');
+  $('check').hidden=st.over;$('mtip').hidden=st.over;mPaint();
+}
+function swap(a,b){if(a===b||st.lock[a]||st.lock[b]||st.over)return;[st.ord[a],st.ord[b]]=[st.ord[b],st.ord[a]];st.mv=1;msel=-1;$('mfb').textContent='';put(KEY,st);mRender()}
+function tap(k){if(st.lock[k]||st.over)return;if(msel<0){msel=k;mRender();$('board').querySelector('[data-k="'+k+'"]').focus({preventScroll:true})}else if(msel===k){msel=-1;mRender()}else swap(msel,k)}
+/* drag one officer onto another to swap; a press that ends where it started counts as a tap */
+let drag=null;
+$('board').addEventListener('pointerdown',e=>{const el=e.target.closest('.of');if(!el||el.disabled)return;e.preventDefault();drag={k:+el.dataset.k,el,x:e.clientX,y:e.clientY,moved:false,over:null};el.setPointerCapture(e.pointerId)});
+$('board').addEventListener('pointermove',e=>{if(!drag)return;if(!drag.moved&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){drag.moved=true;drag.el.classList.add('drag')}
+  if(!drag.moved)return;const t2=document.elementFromPoint(e.clientX,e.clientY),el=t2&&t2.closest('.of');const k=el&&!el.disabled?+el.dataset.k:null;
+  if(drag.over!==k){$('board').querySelectorAll('.of.over').forEach(x=>x.classList.remove('over'));if(k!=null&&k!==drag.k)el.classList.add('over');drag.over=k}});
+const endDrag=e=>{if(!drag)return;const d=drag;drag=null;d.el.classList.remove('drag');$('board').querySelectorAll('.of.over').forEach(x=>x.classList.remove('over'));
+  if(!d.moved){tap(d.k);return}if(d.over!=null&&d.over!==d.k)swap(d.k,d.over)};
+$('board').addEventListener('pointerup',endDrag);$('board').addEventListener('pointercancel',()=>{if(drag){drag.el.classList.remove('drag');drag=null}});
+$('board').addEventListener('keydown',e=>{const el=e.target.closest('.of');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();tap(+el.dataset.k)}});
+$('check').addEventListener('click',()=>{
+  if(st.over)return;if(!st.mv){$('mfb').textContent=st.checks?'Swap some of the unmatched officers before checking again.':'Line the officers up first. Drag one onto another, or tap two to swap them.';return}
+  st.mv=0;st.checks++;const bad=[];
+  st.L.forEach((li,k)=>{if(st.lock[k])return;if(st.ord[k]===li)st.lock[k]=st.checks;else bad.push(k)});
+  st.wrong+=bad.length;msel=-1;
+  const right=st.lock.filter(Boolean).length,left=CHECKS-st.checks;
+  if(!bad.length||!left){
+    st.L.forEach((li,k)=>{st.ord[k]=li});
+    st.r=items.map((o,i)=>{const c=st.lock[st.L.indexOf(i)];return{ok:!!c,g:c?Array(c).fill(o.n):Array(CHECKS).fill('')}});
+    st.over=true;st.score=score();updateStats();put(KEY,st);mRender();
+    $('mfb').textContent=bad.length?'Out of checks. The right answers are lined up above.':'All five matched.';finish();return}
+  put(KEY,st);mRender(bad);
+  $('mfb').innerHTML='';const b1=document.createElement('b');b1.textContent=right+' of 5 right.';$('mfb').append(b1,' The matched names are locked in. '+left+(left===1?' check left':' checks left')+' for the rest.');
+});
+
+if(!MATCH){$('rulesMatch').hidden=true;$('rulesGuess').hidden=false}
+if(MATCH){$('play').hidden=true;$('match').hidden=false;mInit();mRender();if(st.over)finish()}
+else if(st.over)finish();
 else{const r=cur();if(r&&roundDone(r))verdict();else renderQ()}
 })();
 </script>

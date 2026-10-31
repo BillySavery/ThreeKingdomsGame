@@ -76,6 +76,23 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 .gen:hover .c2{transform:translateY(-18px)}
 @media (max-width:640px){.gen{grid-template-columns:minmax(0,1fr);padding:22px 18px}.fan{height:190px;order:-1}.fan .card{transform-origin:center}.fan .card{width:104px;height:148px;margin:-74px 0 0 -52px}.fan .c1{transform:translateX(-60px) rotate(-14deg)}.fan .c3{transform:translateX(60px) rotate(14deg)}}
 @media (prefers-reduced-motion:reduce){.fan .card{transition:none}}
+.gen.war{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);background:linear-gradient(225deg,#3a110e 0%,#1f1813 55%,#14100d 100%)}
+.gen.war:before{content:"霸";right:auto;left:-24px}
+.realm{position:relative;height:220px;display:grid;place-items:center}
+.realm svg{width:100%;max-width:300px;height:100%;overflow:visible}
+.realm .land{fill:#241b14;stroke:var(--line);stroke-width:1.5}
+.realm .river{fill:none;stroke:#2a5d8f;stroke-width:3;stroke-linecap:round;opacity:.7}
+.realm .road{fill:none;stroke:var(--mute);stroke-width:1.2;stroke-dasharray:3 4;opacity:.6}
+.realm .city{stroke:var(--gold2);stroke-width:1.5}
+.realm .wei{fill:#2a5d8f}.realm .shu{fill:#3c6b2f}.realm .wu{fill:var(--lacquer)}.realm .free{fill:#5a4a3a}
+.realm .seal{font-family:var(--display);font-size:22px;fill:var(--gold);text-anchor:middle}
+.realm .flag{transform-box:fill-box;transform-origin:left bottom;transition:transform .4s}
+.gen.war:hover .flag{transform:rotate(-6deg) scale(1.08)}
+.realm .march{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 6;animation:march 1.6s linear infinite}
+@keyframes march{to{stroke-dashoffset:-24}}
+@media (max-width:640px){.gen.war{grid-template-columns:minmax(0,1fr);padding:22px 18px}.realm{height:190px}}
+@media (prefers-reduced-motion:reduce){.realm .march{animation:none}.realm .flag{transition:none}}
+
 </style>
 
 <div class="wrap">
@@ -183,6 +200,32 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
       <div class="card c1"><span class="gem">5</span><span class="glyph">蜀</span><span class="stats"><span>4</span><span>6</span></span></div>
       <div class="card c2"><span class="gem">7</span><span class="glyph">魏</span><span class="stats"><span>6</span><span>7</span></span></div>
       <div class="card c3"><span class="gem">4</span><span class="glyph">吳</span><span class="stats"><span>3</span><span>5</span></span></div>
+    </div>
+  </section>
+
+  <section class="gen war" aria-labelledby="war-title">
+    <div class="realm" aria-hidden="true">
+      <svg viewBox="0 0 300 220" role="presentation">
+        <path class="land" d="M30 60 Q70 18 140 26 Q210 14 262 50 Q292 96 270 150 Q240 200 160 198 Q80 206 42 166 Q12 118 30 60Z"/>
+        <path class="river" d="M40 92 Q90 80 120 100 T200 96 T268 112"/>
+        <path class="river" d="M52 150 Q110 136 150 156 T262 150" opacity=".5"/>
+        <path class="road" d="M78 66 L150 60 L222 70 M150 60 L140 128 L210 140 M78 66 L84 132 L140 128 M84 132 L118 180 L190 178 L210 140"/>
+        <path class="march" d="M84 132 Q110 120 140 128"/>
+        <circle class="city wei" cx="78" cy="66" r="7"/><circle class="city wei" cx="150" cy="60" r="9"/><circle class="city wei" cx="222" cy="70" r="7"/>
+        <circle class="city free" cx="140" cy="128" r="7"/>
+        <circle class="city shu" cx="84" cy="132" r="9"/><circle class="city shu" cx="118" cy="180" r="7"/>
+        <circle class="city wu" cx="210" cy="140" r="9"/><circle class="city wu" cx="190" cy="178" r="7"/>
+        <text class="seal" x="150" y="44">魏</text><text class="seal" x="58" y="122">蜀</text><text class="seal" x="244" y="138">吳</text>
+        <g class="flag"><line x1="140" y1="128" x2="140" y2="98" stroke="#f2cf7c" stroke-width="2"/><path d="M140 98 L162 103 L140 110Z" fill="#d9a441"/></g>
+      </svg>
+    </div>
+    <div>
+      <span class="tag">New</span><span class="kick">Grand strategy</span>
+      <h2 id="war-title">Warlords of the <em>Three Kingdoms</em></h2>
+      <p>Pick a warlord and unite the land. A turn based campaign built from the historical records: run your cities, recruit officers, forge alliances and settle old feuds. Think Dynasty Warriors Empires meets Total War: Three Kingdoms, right in your browser.</p>
+      <ul><li><b>87</b> cities</li><li><b>Nearly 300</b> officers</li><li>Card battles</li></ul>
+      <a class="cta" href="https://warlordsofttk.com/?utm_source=threekingdomsdaily&amp;utm_medium=home" target="_blank" rel="noopener">Unite the land</a>
+      <span class="sub">Free trial. Plays in your browser, nothing to download.</span>
     </div>
   </section>
 

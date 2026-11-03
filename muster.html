@@ -150,7 +150,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <p><b>How to play.</b> Sixteen squares of factions, battles and events. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
     <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen.</p>
     <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
-    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
+    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. A square marked (novel) or (history) only counts that source. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
   </div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -164,7 +164,7 @@ const SQ={
 WEI:['F','Wei'],SHU:['F','Shu'],WU:['F','Wu'],
 DZ:['F','Served Dong Zhuo'],YS:['F','Served Yuan Shao'],LB:['F','Served Lü Bu'],LBI:['F','Served Liu Biao'],LZ:['F','Served Liu Zhang'],MA:['F','Served the Ma clan'],
 YT:['B','Yellow Turban Rebellion (184)'],XP:['B','Siege of Xiapi (198)'],GD:['B','Guandu (200)'],CB:['B','Changban (208)'],RC:['B','Red Cliffs (208)'],TP:['B','Tong Pass (211)'],HF:['B','Hefei (215)'],DJ:['B','Mount Dingjun (219)'],FC:['B','Fancheng (219)'],YL:['B','Yiling (222)'],JT:['B','Jieting (228)'],WZ:['B','Wuzhang Plains (234)'],
-CO:['E','Coalition against Dong Zhuo'],PG:['E','Peach Garden Oath'],FT:['E','Five Tiger Generals'],KG:['E','Killed by Guan Yu'],JF:['E','Fall of Jing Province'],FS:['E','Fall of Shu'],SC:['E','Southern campaign'],NE:['E','Northern Expeditions'],ST:['E','Famous strategist'],DB:['E','Died in battle'],
+CO:['E','Coalition against Dong Zhuo'],PG:['E','Peach Garden Oath'],FT:['E','Five Tiger Generals'],KG:['E','Killed by Guan Yu (novel)'],KH:['E','Killed by Guan Yu (history)'],JF:['E','Lü Meng takes Jing Province (219)'],FS:['E','Fall of Shu'],SC:['E','Southern campaign'],NE:['E','Northern Expeditions'],ST:['E','Famous strategist'],DB:['E','Died in battle (novel)'],DH:['E','Died in battle (history)'],
 WC:['B','Wancheng (197)'],WW:['B','White Wolf Mountain (207)'],JL:['B','Jiangling (208)'],XY:['B','Xiangyang (191)'],JX:['B','Jiangxia (208)'],YP:['B','Yan Province (194)'],XU:['B','Invasion of Xu Province (193)'],
 YI:['E','Liu Bei takes Yi Province'],JD:['E','Sun Ce conquers Jiangdong'],CY:['E','Campaign against Yuan Shu']
 };
@@ -174,6 +174,10 @@ YI:['E','Liu Bei takes Yi Province'],JD:['E','Sun Ce conquers Jiangdong'],CY:['E
    JX Battle of Jiangxia · YP Battle of Yan Province · XU Cao Cao's invasion of Xu Province · YI Liu Bei's takeover of Yi Province
    JD Sun Ce's conquests in Jiangdong · CY Campaign against Yuan Shu */
 const NEW_SQ=new Set(['WC','WW','JL','XY','JX','YP','XU','YI','JD','CY']),NEW_DAY=29;
+/* Squares added on 3 Nov 2026, used from 4 Nov. The old Killed by Guan Yu and Died in battle squares were always novel based, so they are now labelled (novel), and these are their history twins.
+   KH Killed by Guan Yu (history): Yan Liang at Baima (Sanguozhi vol. 36), Pang De executed after Fancheng (vol. 18). Hua Xiong was killed by Sun Jian's army in the records, so he is novel only.
+   DH Died in battle (history): only people the records say were killed fighting. Huang Zhong, Taishi Ci, Gan Ning and Pan Zhang died of illness or old age in the records, and Kong Xiu and Wutugu are novel only, so they stay on the novel square. */
+const NEW2_SQ=new Set(['KH','DH']),NEW2_DAY=34;
 /* Officers and the squares they fit. From 28 Oct 2026 a battle or event counts anyone who was there on either side, in the Romance or the historical records (only additions were made, so nothing that counted before stops counting) */
 const OFF=[
 ['Liu Bei','SHU YT CO PG XP CB RC YL GD DJ XU YI CY'],
@@ -183,7 +187,7 @@ const OFF=[
 ['Ma Chao','SHU MA TP FT YI'],
 ['Huang Zhong','SHU LBI DJ YL FT DB YI'],
 ['Zhuge Liang','SHU RC SC NE JT WZ ST CB YI'],
-['Pang Tong','SHU RC ST DB YI'],
+['Pang Tong','SHU RC ST DB YI DH'],
 ['Wei Yan','SHU LBI SC NE WZ JT YI'],
 ['Jiang Wei','WEI SHU NE WZ FS'],
 ['Ma Su','SHU SC NE JT'],
@@ -201,7 +205,7 @@ const OFF=[
 ['Ma Dai','MA SHU TP SC NE WZ'],
 ['Guan Xing','SHU YL NE'],
 ['Liu Shan','SHU CB FS'],
-['Zhuge Zhan','SHU FS DB'],
+['Zhuge Zhan','SHU FS DB DH'],
 ['Xu Shu','SHU WEI ST CB RC'],
 ['Jian Yong','SHU CB YI'],
 ['Lady Mi','CB'],
@@ -210,22 +214,22 @@ const OFF=[
 ['Wutugu','SC'],
 ['Cao Cao','WEI YT CO XP GD CB RC TP WC WW YP XU CY'],
 ['Xiahou Dun','WEI CO CB YP'],
-['Xiahou Yuan','WEI CO DJ DB TP CB'],
+['Xiahou Yuan','WEI CO DJ DB TP CB DH'],
 ['Cao Ren','WEI CO FC GD CB TP JL YP XU'],
 ['Cao Hong','WEI CO TP GD CB YP'],
 ['Xu Chu','WEI GD RC TP CB'],
 ['Zhang Liao','WEI LB XP GD RC HF DZ CB WW'],
 ['Xu Huang','WEI GD TP FC XP RC JL'],
 ['Yu Jin','WEI GD FC XP RC WC'],
-['Pang De','MA WEI TP FC KG'],
-['Dian Wei','WEI DB WC YP'],
+['Pang De','MA WEI TP FC KG KH'],
+['Dian Wei','WEI DB WC YP DH'],
 ['Guo Jia','WEI XP ST'],
 ['Xun Yu','YS WEI ST YP'],
 ['Xun You','WEI XP GD ST'],
 ['Cheng Yu','WEI ST RC YP'],
 ['Jia Xu','DZ WEI TP ST GD WC'],
 ['Sima Yi','WEI JT NE WZ ST'],
-['Zhang He','YS WEI GD DJ JT NE DB CB TP'],
+['Zhang He','YS WEI GD DJ JT NE DB CB TP DH'],
 ['Gao Lan','YS WEI GD'],
 ['Xu You','YS WEI GD'],
 ['Cao Zhen','WEI NE'],
@@ -239,9 +243,9 @@ const OFF=[
 ['Wen Pin','LBI WEI CB RC FC JL'],
 ['Cao Pi','WEI'],
 ['Jiang Gan','WEI RC'],
-['Cai Yang','WEI KG DB'],
+['Cai Yang','WEI KG DB DH'],
 ['Kong Xiu','WEI KG DB'],
-['Sun Jian','WU YT CO DB XY'],
+['Sun Jian','WU YT CO DB XY DH'],
 ['Sun Ce','WU XY JD CY'],
 ['Sun Quan','WU HF JF JX'],
 ['Zhou Yu','WU RC ST JL JX JD'],
@@ -264,7 +268,7 @@ const OFF=[
 ['Lü Bu','DZ XP CO YP CY'],
 ['Chen Gong','LB XP ST YP'],
 ['Gao Shun','LB XP'],
-['Hua Xiong','DZ KG DB CO'],
+['Hua Xiong','DZ KG DB CO DH'],
 ['Li Jue','DZ CO'],
 ['Guo Si','DZ CO'],
 ['Li Ru','DZ ST CO'],
@@ -275,8 +279,8 @@ const OFF=[
 ['Ma Teng','CO'],
 ['Kong Rong','CO'],
 ['Tao Qian','CO XU'],
-['Yan Liang','YS GD KG DB'],
-['Wen Chou','YS GD KG DB'],
+['Yan Liang','YS GD KG DB KH DH'],
+['Wen Chou','YS GD KG DB DH'],
 ['Ju Shou','YS GD ST'],
 ['Tian Feng','YS ST'],
 ['Shen Pei','YS GD'],
@@ -324,7 +328,7 @@ function build(d){
   buildTags=d<SWITCH?(o=>OLD_T[OFF0[o]]||OFF[o].t):(o=>OFF[o].t);
   const r=rng(d*7919+1234);
   for(let tries=0;tries<500;tries++){
-    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&(d>=NEW_DAY||!NEW_SQ.has(c))),r);
+    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&(d>=NEW_DAY||!NEW_SQ.has(c))&&(d>=NEW2_DAY||!NEW2_SQ.has(c))),r);
     const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
     const used=new Set(),solve=[];let ok=true;
     const order=squares.slice().sort((a,b)=>OFF.filter((_,i)=>bfits(i,a)).length-OFF.filter((_,i)=>bfits(i,b)).length);

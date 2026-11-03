@@ -150,7 +150,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <p><b>How to play.</b> Sixteen squares of factions, battles and events. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
     <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen.</p>
     <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
-    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Factions count anyone who served that side at any point. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
+    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
   </div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -163,9 +163,9 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 const SQ={
 WEI:['F','Wei'],SHU:['F','Shu'],WU:['F','Wu'],
 DZ:['F','Served Dong Zhuo'],YS:['F','Served Yuan Shao'],LB:['F','Served Lü Bu'],LBI:['F','Served Liu Biao'],LZ:['F','Served Liu Zhang'],MA:['F','Served the Ma clan'],
-YT:['B','Yellow Turban Rebellion'],XP:['B','Siege of Xiapi'],GD:['B','Guandu'],CB:['B','Changban'],RC:['B','Red Cliffs'],TP:['B','Tong Pass'],HF:['B','Hefei'],DJ:['B','Mount Dingjun'],FC:['B','Fancheng'],YL:['B','Yiling'],JT:['B','Jieting'],WZ:['B','Wuzhang Plains'],
+YT:['B','Yellow Turban Rebellion (184)'],XP:['B','Siege of Xiapi (198)'],GD:['B','Guandu (200)'],CB:['B','Changban (208)'],RC:['B','Red Cliffs (208)'],TP:['B','Tong Pass (211)'],HF:['B','Hefei (215)'],DJ:['B','Mount Dingjun (219)'],FC:['B','Fancheng (219)'],YL:['B','Yiling (222)'],JT:['B','Jieting (228)'],WZ:['B','Wuzhang Plains (234)'],
 CO:['E','Coalition against Dong Zhuo'],PG:['E','Peach Garden Oath'],FT:['E','Five Tiger Generals'],KG:['E','Killed by Guan Yu'],JF:['E','Fall of Jing Province'],FS:['E','Fall of Shu'],SC:['E','Southern campaign'],NE:['E','Northern Expeditions'],ST:['E','Famous strategist'],DB:['E','Died in battle'],
-WC:['B','Wancheng'],WW:['B','White Wolf Mountain'],JL:['B','Jiangling'],XY:['B','Xiangyang'],JX:['B','Jiangxia'],YP:['B','Yan Province'],XU:['B','Invasion of Xu Province'],
+WC:['B','Wancheng (197)'],WW:['B','White Wolf Mountain (207)'],JL:['B','Jiangling (208)'],XY:['B','Xiangyang (191)'],JX:['B','Jiangxia (208)'],YP:['B','Yan Province (194)'],XU:['B','Invasion of Xu Province (193)'],
 YI:['E','Liu Bei takes Yi Province'],JD:['E','Sun Ce conquers Jiangdong'],CY:['E','Campaign against Yuan Shu']
 };
 /* Squares added on 29 Oct 2026. They only appear from 30 Oct, so today's and past boards stay exactly as they were.
@@ -308,6 +308,9 @@ const t=today(),N=30,SIZE=16;
    Died in battle: Wutugu burned with his rattan armour troops at Panshe Valley (Romance ch. 90); Gan Ning shot by Shamoke at Yiling (Romance ch. 83) */
 const ADD_DAY=30,ADD_TAGS={'Wutugu':['DB'],'Gan Ning':['DB']};
 if(t>=ADD_DAY)OFF.forEach((o,i)=>{(ADD_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.includes(c))o.t.push(c)})});
+/* From 4 Nov 2026 the Wei, Shu and Wu squares count only the side an officer is best remembered for, so a defector or a short stay elsewhere no longer fits two factions (Guan Yu is Shu, not Wei). Earlier boards are unchanged. */
+const MAIN_DAY=34,MAIN={'Guan Yu':'SHU','Jiang Wei':'SHU','Wang Ping':'SHU','Huang Quan':'SHU','Meng Da':'SHU','Mi Fang':'SHU','Xu Shu':'SHU'};
+if(t>=MAIN_DAY)OFF.forEach((o,i)=>{const m=MAIN[OFF0[i]];if(m)o.t=o.t.filter(x=>!['WEI','SHU','WU'].includes(x)||x===m)});
 
 function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
 function shuf(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}

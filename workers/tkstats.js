@@ -85,15 +85,18 @@ export default {
          FROM plays WHERE game = ?1 AND puzzle_date = ?2`
       ).bind(game, date, score ?? -1).first();
 
-      const rows = (await env.DB.prepare(
-        `SELECT score, COUNT(*) AS n FROM plays
-         WHERE game = ?1 AND puzzle_date = ?2 AND score IS NOT NULL
-         GROUP BY score ORDER BY score LIMIT 50`
-      ).bind(game, date).all()).results;
+      // Chart data. Up to 20 points: one bar per score. Bigger scores (Battle Map): ten bands.
+      // One point games (Mystery Officer, 15 guesses): guesses taken by solvers, in bands of three.
+      const max = int(url.searchParams.get("max")) || 0;
+      let sql;
+      if (max === 1) sql = `SELECT MIN(CAST(mistakes / 3 AS INTEGER), 4) AS k, COUNT(*) AS n FROM plays WHERE game = ?1 AND puzzle_date = ?2 AND score = 1 AND mistakes IS NOT NULL GROUP BY k`;
+      else if (max > 20) sql = `SELECT MIN(CAST(score * 10 / ${max} AS INTEGER), 9) AS k, COUNT(*) AS n FROM plays WHERE game = ?1 AND puzzle_date = ?2 AND score IS NOT NULL GROUP BY k`;
+      else sql = `SELECT score AS k, COUNT(*) AS n FROM plays WHERE game = ?1 AND puzzle_date = ?2 AND score IS NOT NULL GROUP BY k LIMIT 50`;
+      const rows = (await env.DB.prepare(sql).bind(game, date).all()).results;
 
       const plays = sum?.plays || 0;
       const dist = {};
-      for (const r of rows) dist[r.score] = r.n;
+      for (const r of rows) dist[r.k] = r.n;
       const body = {
         game, date, plays,
         perfect: sum?.perfect || 0,

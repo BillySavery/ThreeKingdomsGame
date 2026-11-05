@@ -12,7 +12,7 @@
 :root{
   --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
   --hit:#2f8a6f; --miss:#9b3a2c; --jade:#1f4a40;
-  --t-fac:#c07a3a; --t-bat:#b0453a; --t-evt:#5a9a86;
+  --t-fac:#c07a3a; --t-bat:#b0453a; --t-evt:#5a9a86; --t-per:#8f7fc4;
   --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
   --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
   color-scheme:dark;
@@ -130,7 +130,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   </section>
 
   <div class="board" id="board" role="grid" aria-label="Muster board"></div>
-  <div class="key"><span style="--c:var(--t-fac)">Faction</span><span style="--c:var(--t-bat)">Battle</span><span style="--c:var(--t-evt)">Event</span></div>
+  <div class="key"><span style="--c:var(--t-fac)">Faction</span><span style="--c:var(--t-bat)">Battle</span><span style="--c:var(--t-evt)">Event</span><span style="--c:var(--t-per)">Person</span></div>
 
   <section class="endcard" id="end" hidden>
     <div class="score" id="final">0<small>/16</small></div>
@@ -153,11 +153,11 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
   </section>
 
   <div class="rules">
-    <p><b>How to play.</b> Sixteen squares of factions, battles and events. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
+    <p><b>How to play.</b> Sixteen squares of factions, battles, events and people. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
     <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen, and every square has at least three officers in today's thirty who fit it.</p>
     <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
     <p><b>Reserve.</b> Once per game you can hold the officer in front of you in reserve and move on. Bring them back whenever you like, or keep them until the end, when they are called up after the thirtieth officer.</p>
-    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. A square marked (novel) or (history) only counts that source. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
+    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. A square marked (novel) or (history) only counts that source. Person squares (home province, family name, when they were born or died, how long they lived) use the dates and places in the historical records, and a date the records only give roughly does not count. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
   </div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -185,6 +185,25 @@ const NEW_SQ=new Set(['WC','WW','JL','XY','JX','YP','XU','YI','JD','CY']),NEW_DA
    KH Killed by Guan Yu (history): Yan Liang at Baima (Sanguozhi vol. 36), Pang De executed after Fancheng (vol. 18). Hua Xiong was killed by Sun Jian's army in the records, so he is novel only.
    DH Died in battle (history): only people the records say were killed fighting. Huang Zhong, Taishi Ci, Gan Ning and Pan Zhang died of illness or old age in the records, and Kong Xiu and Wutugu are novel only, so they stay on the novel square. */
 const NEW2_SQ=new Set(['KH','DH']),NEW2_DAY=34;
+/* Squares added on 5 Nov 2026, used from 6 Nov. The Person squares are worked out from the shared officer database (officers.js),
+   which takes home province, birth and death years from Wikipedia's lists of people of the Three Kingdoms (citing the Sanguozhi).
+   Years marked approximate in the database never count, so a date square only uses dates the records give.
+   Ages are death year minus birth year. Served Gongsun Zan: Liu Bei, Guan Yu, Zhang Fei (Sanguozhi vol. 32, 36) and Zhao Yun (vol. 36).
+   Served Zhang Lu: Ma Chao, Ma Dai (vol. 36) and Pang De (vol. 18). */
+const PROVS=['Yu','Jing','Yang','Sili','Yi','Yan','You','Ji','Xu','Liang','Bing'];
+const FAMS=['Liu','Zhang','Ma','Cao','Xu','Sun','Guan','Huang','Zhuge','Zhou','Guo','Li'];
+const PER=[];
+PROVS.forEach(h=>{SQ['H_'+h]=['P',h==='Sili'?'From Sili, the capital province':'From '+h+' Province'];PER.push(['H_'+h,o=>o.h===h])});
+FAMS.forEach(f=>{SQ['N_'+f]=['P','Family name '+f];PER.push(['N_'+f,(o,n)=>n.split(' ')[0]===f])});
+const exD=o=>o.d!=null&&!o.dc,exB=o=>o.b!=null&&!o.bc;
+[['D1','Died before 200',o=>exD(o)&&o.d<200],['D2','Died 200 to 219',o=>exD(o)&&o.d>=200&&o.d<220],['D3','Died 220 to 234',o=>exD(o)&&o.d>=220&&o.d<235],['D4','Died after 234',o=>exD(o)&&o.d>234],
+ ['B1','Born before 160',o=>exB(o)&&o.b<160],['B2','Born in the 160s',o=>exB(o)&&o.b>=160&&o.b<170],['B3','Born in the 170s',o=>exB(o)&&o.b>=170&&o.b<180],['B4','Born 180 or later',o=>exB(o)&&o.b>=180],
+ ['A1','Died before 40',o=>exB(o)&&exD(o)&&o.d-o.b<40],['A2','Died aged 40 to 59',o=>exB(o)&&exD(o)&&o.d-o.b>=40&&o.d-o.b<60],['A3','Lived to 60 or more',o=>exB(o)&&exD(o)&&o.d-o.b>=60],
+ ['WM','A woman',o=>o.g==='F'],['NO','Only in the novel',o=>o.k==='N']
+].forEach(([c,l,f])=>{SQ[c]=['P',l];PER.push([c,f])});
+SQ.GZ=['F','Served Gongsun Zan'];SQ.ZL=['F','Served Zhang Lu'];
+const HAND3={'Liu Bei':['GZ'],'Guan Yu':['GZ'],'Zhang Fei':['GZ'],'Zhao Yun':['GZ'],'Ma Chao':['ZL'],'Ma Dai':['ZL'],'Pang De':['ZL']};
+const NEW3_SQ=new Set(PER.map(x=>x[0]).concat(['GZ','ZL']));
 /* Officers and the squares they fit. From 28 Oct 2026 a battle or event counts anyone who was there on either side, in the Romance or the historical records (only additions were made, so nothing that counted before stops counting) */
 const OFF=[
 ['Liu Bei','SHU YT CO PG XP CB RC YL GD DJ XU YI CY'],
@@ -321,6 +340,7 @@ const ADD_DAY=30,ADD_TAGS={'Wutugu':['DB'],'Gan Ning':['DB']};
 if(t>=ADD_DAY)OFF.forEach((o,i)=>{(ADD_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.includes(c))o.t.push(c)})});
 /* From 4 Nov 2026 the Wei, Shu and Wu squares count only the side an officer is best remembered for, so a defector or a short stay elsewhere no longer fits two factions (Guan Yu is Shu, not Wei). Earlier boards are unchanged. */
 const MAIN_DAY=34,MAIN={'Guan Yu':'SHU','Jiang Wei':'SHU','Wang Ping':'SHU','Huang Quan':'SHU','Meng Da':'SHU','Mi Fang':'SHU','Xu Shu':'SHU'};
+if(t>=36)OFF.forEach((o,i)=>{const db=TKDB(o.n);(HAND3[OFF0[i]]||[]).forEach(c=>o.t.push(c));if(db)PER.forEach(([c,f])=>{if(f(db,OFF0[i]))o.t.push(c)})});
 if(t>=MAIN_DAY)OFF.forEach((o,i)=>{const m=MAIN[OFF0[i]];if(m)o.t=o.t.filter(x=>!['WEI','SHU','WU'].includes(x)||x===m)});
 
 function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
@@ -341,7 +361,7 @@ function buildFair(d){
   const pool=c=>all.filter(i=>bfits(i,c)).length;
   for(let tries=0;tries<2000;tries++){
     const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&pool(c)>=MIN_COVER),r);
-    const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
+    const squares=shuf(by('F').slice(0,4).concat(by('B').slice(0,5),by('E').slice(0,4),by('P').slice(0,3)),r);
     const used=new Set(),solve=[];let ok=true;
     const order=squares.slice().sort((a,b)=>pool(a)-pool(b));
     for(const sq of order){
@@ -372,7 +392,7 @@ function build(d){
   buildTags=d<SWITCH?(o=>OLD_T[OFF0[o]]||OFF[o].t):(o=>OFF[o].t);
   const r=rng(d*7919+1234);
   for(let tries=0;tries<500;tries++){
-    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&(d>=NEW_DAY||!NEW_SQ.has(c))&&(d>=NEW2_DAY||!NEW2_SQ.has(c))),r);
+    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&(d>=NEW_DAY||!NEW_SQ.has(c))&&(d>=NEW2_DAY||!NEW2_SQ.has(c))&&!NEW3_SQ.has(c)),r);
     const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
     const used=new Set(),solve=[];let ok=true;
     const order=squares.slice().sort((a,b)=>OFF.filter((_,i)=>bfits(i,a)).length-OFF.filter((_,i)=>bfits(i,b)).length);
@@ -401,7 +421,7 @@ const fromBank=()=>st.bank!=null&&(st.act==='bank'||st.i>=N);
 const cur=()=>fromBank()?st.bank:day.officers[st.i];
 
 const boardEl=$('board');
-const tcol={F:'var(--t-fac)',B:'var(--t-bat)',E:'var(--t-evt)'},tname={F:'Faction',B:'Battle',E:'Event'};
+const tcol={F:'var(--t-fac)',B:'var(--t-bat)',E:'var(--t-evt)',P:'var(--t-per)'},tname={F:'Faction',B:'Battle',E:'Event',P:'Person'};
 day.squares.forEach(code=>{
   const b=document.createElement('button');b.type='button';b.className='sq';b.dataset.sq=code;
   b.style.setProperty('--tc',tcol[SQ[code][0]]);

@@ -47,6 +47,11 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;fl
 .tally.used{background:transparent;color:var(--mute);border-color:var(--line)}
 .sq.tallied{border-color:var(--gold2)}
 .sq.tallied .who::before{content:"虎 ";color:var(--gold2)}
+.reserve{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--panel);border:1px dashed var(--line);padding:9px 12px}
+.reserve .rl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.reserve .rn{font-family:var(--display);font-size:18px;color:var(--paper);margin-left:6px;letter-spacing:0;text-transform:none}
+.reserve.held{border-style:solid;border-color:var(--gold)}
+.reserve.active{background:#2a2216;border-color:var(--gold2)}
 .msg{min-height:22px;font-size:14px;line-height:1.45;color:var(--mute);margin:-6px 2px 0}
 .msg.ok{color:#6fd0b0}.msg.bad{color:#f08a72}
 
@@ -119,6 +124,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
           <button class="skip" id="skip" type="button">Send away</button>
         </div>
       </div>
+      <div class="reserve" id="reserve"><div class="rl">Reserve <span class="rn" id="rName">empty</span></div><button class="skip" id="hold" type="button">Hold this officer</button></div>
       <p class="msg" id="msg" aria-live="polite">Tap a square that fits this officer, or send them away.</p>
     </div>
   </section>
@@ -148,8 +154,9 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
 
   <div class="rules">
     <p><b>How to play.</b> Sixteen squares of factions, battles and events. Thirty officers are called up one at a time. Put each one on a square they belong to, or send them away. Fill the board before the thirty run out.</p>
-    <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen.</p>
+    <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen, and every square has at least three officers in today's thirty who fit it.</p>
     <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
+    <p><b>Reserve.</b> Once per game you can hold the officer in front of you in reserve and move on. Bring them back whenever you like, or keep them until the end, when they are called up after the thirtieth officer.</p>
     <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. A square marked (novel) or (history) only counts that source. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
   </div>
 
@@ -324,7 +331,44 @@ const bfits=(o,sq)=>buildTags(o).includes(sq);
 
 /* Build the day: 5 factions, 6 battles, 5 events, then a set of 16 officers that fills the board one each,
    6 to 9 duds that fit nothing, and decoys that fit something. A full board is always possible. */
+/* From 6 Nov 2026 boards are fairer: every square has at least three officers in the day's thirty who fit it,
+   squares with fewer than three possible officers in the whole pool are left out, and there are 4 to 6 duds instead of 6 to 9.
+   Earlier boards are built the old way so they stay exactly as they were. */
+const FAIR_DAY=36,MIN_COVER=3;
+function buildFair(d){
+  buildTags=o=>OFF[o].t;
+  const r=rng(d*7919+1234),all=OFF.map((_,i)=>i);
+  const pool=c=>all.filter(i=>bfits(i,c)).length;
+  for(let tries=0;tries<2000;tries++){
+    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&pool(c)>=MIN_COVER),r);
+    const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
+    const used=new Set(),solve=[];let ok=true;
+    const order=squares.slice().sort((a,b)=>pool(a)-pool(b));
+    for(const sq of order){
+      const c=shuf(all.filter(i=>!used.has(i)&&bfits(i,sq)),r);
+      if(!c.length){ok=false;break}
+      used.add(c[0]);solve.push(c[0]);
+    }
+    if(!ok) continue;
+    const duds=shuf(all.filter(i=>!used.has(i)&&!squares.some(s=>bfits(i,s))),r);
+    const nd=4+Math.floor(r()*3);
+    if(duds.length<nd) continue;
+    duds.slice(0,nd).forEach(i=>used.add(i));
+    const cover=c=>[...used].filter(i=>bfits(i,c)).length;
+    const decoys=[];
+    while(decoys.length<N-SIZE-nd){
+      const low=squares.slice().sort((a,b)=>cover(a)-cover(b))[0];
+      let c=shuf(all.filter(i=>!used.has(i)&&bfits(i,low)),r);
+      if(!c.length||cover(low)>=MIN_COVER) c=shuf(all.filter(i=>!used.has(i)&&squares.some(s=>bfits(i,s))),r);
+      if(!c.length) break;
+      used.add(c[0]);decoys.push(c[0]);
+    }
+    if(decoys.length<N-SIZE-nd||squares.some(c=>cover(c)<MIN_COVER)) continue;
+    return {squares,officers:shuf(solve.concat(duds.slice(0,nd),decoys),r)};
+  }
+}
 function build(d){
+  if(d>=FAIR_DAY) return buildFair(d);
   buildTags=d<SWITCH?(o=>OLD_T[OFF0[o]]||OFF[o].t):(o=>OFF[o].t);
   const r=rng(d*7919+1234);
   for(let tries=0;tries<500;tries++){
@@ -351,6 +395,10 @@ const day=build(t);
 const KEY='mu_day'+t;
 let st=get(KEY)||{i:0,board:{},wrong:0,log:[],over:false};
 let busy=false;
+if(st.bank===undefined)st.bank=null;
+/* The officer in front of the player: the held one when they bring them back, or once the thirty have run out */
+const fromBank=()=>st.bank!=null&&(st.act==='bank'||st.i>=N);
+const cur=()=>fromBank()?st.bank:day.officers[st.i];
 
 const boardEl=$('board');
 const tcol={F:'var(--t-fac)',B:'var(--t-bat)',E:'var(--t-evt)'},tname={F:'Faction',B:'Battle',E:'Event'};
@@ -375,22 +423,31 @@ function paint(){
     b.setAttribute('aria-label',SQ[code][1]+(o!=null?', filled by '+OFF[o].n:''));
     b.classList.toggle('tallied',!!(st.tally&&st.tally[1].includes(code)));
   });
+  const rv=$('reserve'),hb=$('hold'),act=fromBank();
+  $('rName').textContent=st.bank!=null?OFF[st.bank].n:(st.banked?'used':'empty');
+  rv.classList.toggle('held',st.bank!=null);rv.classList.toggle('active',act);
+  if(st.bank!=null){hb.textContent=act?(st.i>=N?'Last call':'Back to the line'):'Bring back';hb.disabled=st.over||st.i>=N}
+  else{hb.textContent='Hold this officer';hb.disabled=!!st.banked||st.over||st.i>=N-1}
+  rv.hidden=st.over;
   const tb=$('tally');tb.disabled=!!st.tally||st.over;tb.classList.toggle('used',!!st.tally);
   tb.lastChild.nodeValue=st.tally?' Tally used':' Tiger Tally';
   $('cFill').textContent=filled();$('cWrong').textContent=st.wrong;
 }
 function showOfficer(){
-  if(st.i>=N||filled()>=SIZE){finish();return}
-  const n=$('oName');n.textContent=OFF[day.officers[st.i]].n;
+  if((st.i>=N&&st.bank==null)||filled()>=SIZE){finish();return}
+  const n=$('oName');n.textContent=OFF[cur()].n;
   n.classList.remove('pop');void n.offsetWidth;n.classList.add('pop');
-  $('oNum').textContent=st.i+1;
+  $('oNum').parentNode.firstChild.nodeValue=fromBank()?'From reserve':'Officer ';
+  $('oNum').textContent=fromBank()?'':st.i+1;
+  $('oNum').nextSibling.nodeValue=fromBank()?'':' of 30';
+  if(st.i>=N&&st.bank!=null)setTimeout(()=>say('Last call. Your reserve '+OFF[st.bank].n+' steps forward.'),busy?0:10);
 }
 function say(text,cls){const m=$('msg');m.textContent=text;m.className='msg'+(cls?' '+cls:'')}
-function advance(){st.i++;put(KEY,st);paint();busy=false;showOfficer()}
+function advance(){if(fromBank()){st.bank=null;st.act=null}else st.i++;put(KEY,st);paint();busy=false;showOfficer()}
 
 function place(code){
   if(busy||st.over||st.board[code]!=null) return;
-  const o=day.officers[st.i],b=sqEl(code);
+  const o=cur(),b=sqEl(code);
   busy=true;
   if(fits(o,code)){
     st.board[code]=o;st.log.push([o,code,1]);
@@ -405,7 +462,7 @@ function place(code){
 }
 $('tally').addEventListener('click',()=>{
   if(busy||st.over||st.tally) return;
-  const o=day.officers[st.i];busy=true;
+  const o=cur();busy=true;
   const got=day.squares.filter(c=>st.board[c]==null&&fits(o,c));
   st.tally=[o,got];
   if(got.length){
@@ -418,9 +475,21 @@ $('tally').addEventListener('click',()=>{
   }
   setTimeout(advance,got.length?700:450);
 });
+$('hold').addEventListener('click',()=>{
+  if(busy||st.over) return;
+  if(st.bank==null){
+    if(st.banked) return;
+    const o=day.officers[st.i];busy=true;st.banked=true;st.bank=o;st.log.push([o,null,4]);
+    say(OFF[o].n+' is held in reserve. Bring them back whenever you like.','ok');
+    st.i++;put(KEY,st);paint();busy=false;showOfficer();return;
+  }
+  if(st.i>=N) return;
+  st.act=st.act==='bank'?null:'bank';put(KEY,st);paint();showOfficer();
+  say(st.act?'Your reserve steps forward. Place them or send them away.':'Back to the line.');
+});
 $('skip').addEventListener('click',()=>{
   if(busy||st.over) return;
-  const o=day.officers[st.i];busy=true;
+  const o=cur();busy=true;
   st.log.push([o,null,2]);
   say(OFF[o].n+' is sent away.');
   setTimeout(advance,200);
@@ -446,9 +515,10 @@ function finish(){
   day.squares.forEach(c=>{if(st.board[c]==null)sqEl(c).classList.add('miss')});
   const list=$('rlist');list.innerHTML='';
   day.officers.forEach((o,i)=>{
-    const lg=st.log.find(x=>x[0]===o),could=day.squares.filter(c=>fits(o,c)).map(c=>SQ[c][1]);
+    const lg=st.log.filter(x=>x[0]===o&&x[2]!==4).pop()||st.log.find(x=>x[0]===o),could=day.squares.filter(c=>fits(o,c)).map(c=>SQ[c][1]);
     let col,what;
     if(!lg){col='var(--line)';what='not called up'}
+    else if(lg[2]===4){col='var(--gold)';what='held in reserve, never played'}
     else if(lg[2]===3){col=lg[1].length?'var(--gold2)':'var(--miss)';what=lg[1].length?'Tiger Tally on '+lg[1].map(c=>SQ[c][1]).join(', '):'Tiger Tally wasted'}
     else if(lg[2]===1){col='var(--hit)';what='placed on '+SQ[lg[1]][1]}
     else if(lg[2]===0){col='var(--miss)';what='wrong on '+SQ[lg[1]][1]}
@@ -471,7 +541,7 @@ $('share').addEventListener('click',()=>{
 });
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);
-document.addEventListener('keydown',e=>{if(st.over||busy)return;if(e.metaKey||e.ctrlKey)return;if(e.key==='s'||e.key==='S')$('skip').click();else if(e.key==='t'||e.key==='T')$('tally').click()});
+document.addEventListener('keydown',e=>{if(st.over||busy)return;if(e.metaKey||e.ctrlKey)return;if(e.key==='s'||e.key==='S')$('skip').click();else if(e.key==='t'||e.key==='T')$('tally').click();else if(e.key==='h'||e.key==='H')$('hold').click()});
 
 paint();
 if(st.over||st.i>=N||filled()>=SIZE) finish(); else showOfficer();

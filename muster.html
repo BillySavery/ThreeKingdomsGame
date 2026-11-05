@@ -332,7 +332,7 @@ const bfits=(o,sq)=>buildTags(o).includes(sq);
 /* Build the day: 5 factions, 6 battles, 5 events, then a set of 16 officers that fills the board one each,
    6 to 9 duds that fit nothing, and decoys that fit something. A full board is always possible. */
 /* From 6 Nov 2026 boards are fairer: every square has at least three officers in the day's thirty who fit it,
-   squares with fewer than three possible officers in the whole pool are left out, and there are 4 to 6 duds instead of 6 to 9.
+   squares with fewer than three possible officers in the whole pool are left out, and there are 5 to 7 duds instead of 6 to 9.
    Earlier boards are built the old way so they stay exactly as they were. */
 const FAIR_DAY=36,MIN_COVER=3;
 function buildFair(d){
@@ -351,7 +351,7 @@ function buildFair(d){
     }
     if(!ok) continue;
     const duds=shuf(all.filter(i=>!used.has(i)&&!squares.some(s=>bfits(i,s))),r);
-    const nd=4+Math.floor(r()*3);
+    const nd=5+Math.floor(r()*3);
     if(duds.length<nd) continue;
     duds.slice(0,nd).forEach(i=>used.add(i));
     const cover=c=>[...used].filter(i=>bfits(i,c)).length;

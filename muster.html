@@ -338,6 +338,12 @@ const t=today(),N=30,SIZE=16;
    Died in battle: Wutugu burned with his rattan armour troops at Panshe Valley (Romance ch. 90); Gan Ning shot by Shamoke at Yiling (Romance ch. 83) */
 const ADD_DAY=30,ADD_TAGS={'Wutugu':['DB'],'Gan Ning':['DB']};
 if(t>=ADD_DAY)OFF.forEach((o,i)=>{(ADD_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.includes(c))o.t.push(c)})});
+/* Tags added on 15 Nov 2026 after player feedback, used from 16 Nov so boards already in play stay the same.
+   Zhang Song: gave Liu Bei the maps of Yi Province and plotted to hand it over (Romance ch. 60; Sanguozhi vol. 31, 32).
+   Lady Mi: Liu Bei's wife, so Shu is the side she is remembered for (Sanguozhi vol. 38, under Mi Zhu).
+   Guo Jia: went north to Yuan Shao and left him before joining Cao Cao (Sanguozhi vol. 14), the same short stay that already counts for Xun Yu. */
+const ADD2_DAY=46,ADD2_TAGS={'Zhang Song':['YI'],'Lady Mi':['SHU'],'Guo Jia':['YS']};
+if(t>=ADD2_DAY)OFF.forEach((o,i)=>{(ADD2_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.includes(c))o.t.push(c)})});
 /* From 4 Nov 2026 the Wei, Shu and Wu squares count only the side an officer is best remembered for, so a defector or a short stay elsewhere no longer fits two factions (Guan Yu is Shu, not Wei). Earlier boards are unchanged. */
 const MAIN_DAY=34,MAIN={'Guan Yu':'SHU','Jiang Wei':'SHU','Wang Ping':'SHU','Huang Quan':'SHU','Meng Da':'SHU','Mi Fang':'SHU','Xu Shu':'SHU'};
 if(t>=36)OFF.forEach((o,i)=>{const db=TKDB(o.n);(HAND3[OFF0[i]]||[]).forEach(c=>o.t.push(c));if(db)PER.forEach(([c,f])=>{if(f(db,OFF0[i]))o.t.push(c)})});

@@ -157,7 +157,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <p>Every officer can only be used once and every square takes one officer. Some officers fit nothing on today's board, so watch for the duds. A wrong square loses you that officer. There is always a way to fill all sixteen, and every square has at least three officers in today's thirty who fit it.</p>
     <p><b>Tiger Tally.</b> Once per game you can play the Tiger Tally on the officer in front of you. They fill every open square they fit in one go. Play it on a dud and it is wasted, and the officer is lost.</p>
     <p><b>Reserve.</b> Once per game you can hold the officer in front of you in reserve and move on. Bring them back whenever you like, or keep them until the end, when they are called up after the thirtieth officer.</p>
-    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord. Battles show their year so you know which one is meant. A square marked (novel) or (history) only counts that source. Person squares (home province, family name, when they were born or died, how long they lived) use the dates and places in the historical records, and a date the records only give roughly does not count. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
+    <p><b>Where the answers come from.</b> Muster is based on both the novel, Romance of the Three Kingdoms, and the historical records, such as the Records of the Three Kingdoms. An officer fits a battle or event if they were there on either side, in the novel or in the records. Wei, Shu and Wu count the side each officer is best remembered for; the Served squares count anyone who served that lord at any point, so Pang Tong fits Served Sun Quan (he worked under Zhou Yu) as well as Shu. Battles show their year so you know which one is meant. A square marked (novel) or (history) only counts that source. Person squares (home province, family name, when they were born or died, how long they lived) use the dates and places in the historical records, and a date the records only give roughly does not count. Who was at each battle is checked against its Wikipedia article, which cites the records and the novel.</p>
   </div>
 
   <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
@@ -343,6 +343,21 @@ if(t>=ADD_DAY)OFF.forEach((o,i)=>{(ADD_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.in
    Lady Mi: Liu Bei's wife, so Shu is the side she is remembered for (Sanguozhi vol. 38, under Mi Zhu).
    Guo Jia: went north to Yuan Shao and left him before joining Cao Cao (Sanguozhi vol. 14), the same short stay that already counts for Xun Yu. */
 const ADD2_DAY=46,ADD2_TAGS={'Zhang Song':['YI'],'Lady Mi':['SHU'],'Guo Jia':['YS']};
+/* Squares added on 15 Nov 2026, used from 16 Nov. Wei, Shu and Wu still count only the side an officer is best remembered for;
+   these count anyone who served that lord at any point, so defectors and short stays get credit without breaking that rule.
+   The lords themselves, their wives, sons and siblings are left out.
+   Served Cao Cao (died 220): includes Liu Bei and Guan Yu (196 to 200, Sanguozhi vol. 32, 36), Chen Gong (before he went over to Lü Bu, vol. 7),
+   Xu Shu (from 208), Wang Ping (until 219), Pang De (from 215). Huang Quan and Meng Da joined Wei under Cao Pi, so they do not count.
+   Served Liu Bei (died 223): includes Ma Chao, Huang Zhong, Wei Yan, the Liu Zhang officers who came over in 214, Mi Fang (until 219),
+   Xu Shu (until 208), Huang Quan and Meng Da (until they went to Wei). Jiang Wei joined Shu in 228, after Liu Bei died.
+   Served Sun Quan (ruled from 200): includes Mi Fang (from 219) and Pang Tong, Officer of Merit under Zhou Yu as Sun Quan's Administrator of Nan (vol. 37). */
+SQ.SCC=['F','Served Cao Cao'];SQ.SLB=['F','Served Liu Bei'];SQ.SSQ=['F','Served Sun Quan'];
+const LORD_SQ=new Set(['SCC','SLB','SSQ']);
+const LORDS={
+ SCC:'Liu Bei,Guan Yu,Chen Gong,Xu Shu,Wang Ping,Pang De,Xiahou Dun,Xiahou Yuan,Cao Ren,Cao Hong,Xu Chu,Zhang Liao,Xu Huang,Yu Jin,Dian Wei,Guo Jia,Xun Yu,Xun You,Cheng Yu,Jia Xu,Sima Yi,Zhang He,Gao Lan,Xu You,Cao Zhen,Guo Huai,Li Dian,Yue Jin,Cai Mao,Zhang Yun,Wen Pin,Jiang Gan,Cai Yang,Kong Xiu',
+ SLB:'Guan Yu,Zhang Fei,Zhao Yun,Ma Chao,Huang Zhong,Zhuge Liang,Pang Tong,Wei Yan,Ma Su,Wang Ping,Fa Zheng,Huang Quan,Yan Yan,Meng Da,Guan Ping,Zhou Cang,Liao Hua,Mi Fang,Ma Dai,Guan Xing,Xu Shu,Jian Yong',
+ SSQ:'Zhou Yu,Lu Su,Lü Meng,Lu Xun,Gan Ning,Taishi Ci,Huang Gai,Cheng Pu,Han Dang,Zhou Tai,Ling Tong,Ding Feng,Xu Sheng,Pan Zhang,Zhuge Jin,Zhang Zhao,Mi Fang,Pang Tong'};
+if(t>=ADD2_DAY)Object.entries(LORDS).forEach(([c,l])=>l.split(',').forEach(n=>{const i=OFF0.indexOf(n);if(i<0)throw 'Muster: '+n;OFF[i].t.push(c)}));
 if(t>=ADD2_DAY)OFF.forEach((o,i)=>{(ADD2_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.includes(c))o.t.push(c)})});
 /* From 4 Nov 2026 the Wei, Shu and Wu squares count only the side an officer is best remembered for, so a defector or a short stay elsewhere no longer fits two factions (Guan Yu is Shu, not Wei). Earlier boards are unchanged. */
 const MAIN_DAY=34,MAIN={'Guan Yu':'SHU','Jiang Wei':'SHU','Wang Ping':'SHU','Huang Quan':'SHU','Meng Da':'SHU','Mi Fang':'SHU','Xu Shu':'SHU'};
@@ -398,7 +413,7 @@ function build(d){
   buildTags=d<SWITCH?(o=>OLD_T[OFF0[o]]||OFF[o].t):(o=>OFF[o].t);
   const r=rng(d*7919+1234);
   for(let tries=0;tries<500;tries++){
-    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&(d>=NEW_DAY||!NEW_SQ.has(c))&&(d>=NEW2_DAY||!NEW2_SQ.has(c))&&!NEW3_SQ.has(c)),r);
+    const by=k=>shuf(Object.keys(SQ).filter(c=>SQ[c][0]===k&&(d>=NEW_DAY||!NEW_SQ.has(c))&&(d>=NEW2_DAY||!NEW2_SQ.has(c))&&!NEW3_SQ.has(c)&&!LORD_SQ.has(c)),r);
     const squares=shuf(by('F').slice(0,5).concat(by('B').slice(0,6),by('E').slice(0,5)),r);
     const used=new Set(),solve=[];let ok=true;
     const order=squares.slice().sort((a,b)=>OFF.filter((_,i)=>bfits(i,a)).length-OFF.filter((_,i)=>bfits(i,b)).length);

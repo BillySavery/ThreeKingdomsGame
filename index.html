@@ -100,7 +100,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
     <div class="han" aria-hidden="true">三國</div>
     <h1>Three Kingdoms <em>Daily</em></h1>
     <p>Ten puzzles and a fact every day from the age of heroes: the history, the Romance and the games.</p>
-    <div class="today"><span>Done today <b id="doneCount">0/10</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
+    <div class="today"><span>Done today <b id="doneCount">0/11</b></span><span>New puzzles in <b id="cd">0h 0m</b></span></div>
   </header>
 
   <main class="games">
@@ -184,6 +184,15 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-co
         <p class="how">About 2 minutes</p>
       </div>
       <a class="play" href="annals.html">Play</a>
+    </article>
+    <article class="game" id="g-whosaid">
+      <div class="top"><div class="seal" aria-hidden="true">曰</div><span class="status" id="s-whosaid">Not played</span></div>
+      <div class="body">
+        <h2>Who Said It</h2>
+        <p class="what">Three lines from the Romance a day, easy, medium and hard. Pick who said each one from four names.</p>
+        <p class="how">About 1 minute</p>
+      </div>
+      <a class="play" href="whosaid.html">Play</a>
     </article>
     <article class="game" id="g-provinces">
       <div class="top"><div class="seal" aria-hidden="true">州</div><span class="status" id="s-provinces">Not played</span></div>
@@ -281,7 +290,9 @@ const an=get('an_day'+t);
 if(an&&an.checks){if(an.over){set('annals',(an.score!=null?an.score:0)+' / 5','done');done++}else set('annals',(an.lock||[]).filter(Boolean).length+' of 5 placed','live')}
 const np=get('np_day'+t);
 if(np&&np.tries&&np.tries.length){const f=(np.cells||[]).filter(Boolean).length;if(np.over){set('provinces',f+' / 9','done');done++}else set('provinces',f+' of 9 so far','live')}
-document.getElementById('doneCount').textContent=done+'/10';
+const ws=get('ws_day'+t);
+if(ws&&ws.picks&&ws.picks.length){if(ws.over){set('whosaid',(ws.score!=null?ws.score:'?')+' / 3','done');done++}else set('whosaid',ws.picks.length+' of 3 so far','live')}
+document.getElementById('doneCount').textContent=done+'/11';
 if(get('fd_day'+t)){const s=document.getElementById('s-fact');s.textContent='Revealed';s.className='status done';const c=document.getElementById('g-fact');c.classList.add('finished');c.querySelector('.play').textContent='Read again'}
 function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;document.getElementById('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
 cd();setInterval(cd,30000);

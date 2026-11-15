@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Who Said It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Progress pips, one quote card at a time with four names, then the end card and a review of all three */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --miss:#9b3a2c;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.pips{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.pip{height:8px;background:#3a2e25}
+.pip.ok{background:var(--hit)}.pip.bad{background:var(--miss)}.pip.now{background:var(--gold)}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold)}
+.mhead{display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);padding:14px 18px 0;font-variant-numeric:tabular-nums}
+.mhead b{color:var(--gold)}
+.lvl.easy{color:var(--hit)}.lvl.medium{color:var(--gold2)}.lvl.hard{color:#d0644f}
+blockquote{margin:0;padding:18px 22px 6px;font-family:var(--display);font-size:22px;line-height:1.4;color:var(--paper);position:relative;overflow-wrap:anywhere}
+blockquote::before{content:"\201C";position:absolute;left:6px;top:4px;font-size:40px;color:var(--gold);opacity:.6;line-height:1}
+.ask{margin:0;padding:6px 22px 0;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 14px 16px}
+.opt{font:inherit;font-family:var(--display);font-size:18px;color:var(--paper);background:var(--ink);border:1px solid var(--line);padding:14px 10px;cursor:pointer;min-height:58px;line-height:1.2;transition:border-color .12s ease,background .12s ease}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--hit);background:rgba(47,138,111,.22)}
+.opt.wrong{border-color:var(--miss);background:rgba(155,58,44,.22)}
+.opt.fade{opacity:.45}
+.reveal{border-top:1px solid var(--gold);padding:14px 18px 16px;display:grid;gap:8px}
+.verdict{margin:0;font-family:var(--display);font-size:20px}
+.verdict.ok{color:#5fc4a1}.verdict.no{color:#e07a66}
+.who{margin:0;font-size:15px;line-height:1.45}
+.who b{color:var(--gold2);font-weight:600}
+.zh{margin:0;font-family:var(--display);font-size:16px;line-height:1.6;color:var(--mute);border-left:2px solid var(--line);padding-left:10px}
+.scene{margin:0;font-size:13.5px;color:var(--mute);line-height:1.5}
+.btn{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:13px 16px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold);cursor:pointer;justify-self:stretch}
+.btn:hover{background:#a8261f}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:20px 18px;display:grid;gap:12px;text-align:center;justify-items:center}
+.endcard .btn{justify-self:center}
+.score{font-family:var(--display);font-size:64px;line-height:1;color:var(--gold2);font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--mute)}
+.rank{font-family:var(--display);font-size:24px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.5;color:var(--mute);max-width:44ch}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.nextin b{color:var(--gold2);font-variant-numeric:tabular-nums}
+.copied{font-size:13px;color:var(--gold2);min-height:18px}
+.review{display:grid;gap:6px}
+.review h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 4px;color:var(--gold)}
+.ritem{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);padding:12px 14px;display:grid;gap:5px}
+.ritem .rh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ritem .rh b{color:var(--gold2)}
+.ritem .rs{font-family:var(--display);font-size:16px;line-height:1.45}
+.ritem .rz{font-family:var(--display);font-size:14.5px;color:var(--mute);line-height:1.6}
+.ritem .rw{font-size:13.5px;color:var(--mute);line-height:1.5}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (max-width:420px){blockquote{font-size:19px}.opt{font-size:16px}}
+@media (prefers-reduced-motion:reduce){.opt{transition:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Who Said It<small>THREE KINGDOMS DAILY &middot; 曰</small></div>
+  </header>
+
+  <div class="pips" id="pips" aria-hidden="true"></div>
+
+  <section id="play">
+    <article class="card">
+      <div class="mhead"><span id="qnum">Quote 1 of 3</span><span class="lvl" id="lvl"></span></div>
+      <blockquote id="quote"></blockquote>
+      <p class="ask" id="ask">Who said it?</p>
+      <div class="opts" id="opts"></div>
+      <div class="reveal" id="reveal" hidden aria-live="polite">
+        <p class="verdict" id="verdict"></p>
+        <p class="who" id="who"></p>
+        <p class="zh" id="zh" lang="zh-Hant"></p>
+        <p class="scene" id="scene"></p>
+        <button class="btn" id="next" type="button">Next quote</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="endcard" id="end" hidden>
+    <div class="score" id="final">0<small>/3</small></div>
+    <p class="rank" id="rank"></p>
+    <p id="rankline"></p>
+    <div class="actions"><button class="btn" id="share" type="button">Copy result</button></div>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="stats">
+      <div><b id="stPlayed">0</b>Played</div>
+      <div><b id="stAvg">0</b>Average</div>
+      <div><b id="stStreak">0</b>Streak</div>
+    </div>
+    <div class="nextin">Three new quotes in <b id="cd">0h 0m</b></div>
+    <div data-support></div>
+  </section>
+
+  <section class="review" id="review" hidden>
+    <h2>Today's quotes</h2>
+    <div id="rlist" class="review"></div>
+  </section>
+
+  <div class="rules"><b>How to play.</b> Each day brings three lines spoken in the Romance of the Three Kingdoms: one easy, one medium and one hard. Pick who said each one from four names. You get one guess per quote, and the answer comes with the original Chinese line, the chapter and the scene.<br><br><b>Where the quotes come from.</b> Every line is taken from the Chinese text of the novel (the Mao Zonggang edition of 120 chapters), and the speaker is the one the novel names. The English translations were written for this game, so they may read a little differently from the version on your shelf.</div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+<script src="tk-stats.js"></script>
+<script src="whosaid.js"></script>
+<script>
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=id=>document.getElementById(id);
+const t=today(),PER=3,LEVELS=['easy','medium','hard'];
+/* Who Said It launched on 15 Nov 2026 (day 45). Days run in order from launch and loop round after the last one */
+const LAUNCH=45,DAYS=window.WS_DAYS||[];
+const n=DAYS.length,idx=((t-LAUNCH)%n+n)%n;
+const Q=DAYS[idx].map(([en,zh,sp,spzh,f,ch,ctx,o])=>({en,zh,sp,spzh,f,ch,ctx,o}));
+
+const KEY='ws_day'+t;
+let st=get(KEY);
+if(!st||!Array.isArray(st.picks))st={picks:[],cur:0,over:false};
+const right=k=>st.picks[k]===Q[k].sp;
+const score=()=>st.picks.filter((p,k)=>p===Q[k].sp).length;
+
+const pips=$('pips');
+for(let i=0;i<PER;i++){const p=document.createElement('div');p.className='pip';pips.append(p)}
+function paint(){[...pips.children].forEach((p,k)=>{p.className='pip'+(k<st.picks.length?(right(k)?' ok':' bad'):(!st.over&&k===st.cur?' now':''))})}
+
+function whoLine(q){
+  const w=$('who');w.innerHTML='';
+  const b=document.createElement('b');b.textContent=q.sp+(q.spzh?' '+q.spzh:'');
+  w.append(b,' · '+q.f+' · Chapter '+q.ch);
+}
+function show(){
+  const k=st.cur,q=Q[k],picked=st.picks[k];
+  $('qnum').textContent='Quote '+(k+1)+' of '+PER;
+  const lv=$('lvl');lv.textContent=LEVELS[k];lv.className='lvl '+LEVELS[k];
+  $('quote').textContent=q.en+'”';
+  const box=$('opts');box.innerHTML='';
+  q.o.forEach(name=>{
+    const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=name;
+    if(picked!=null){b.disabled=true;if(name===q.sp)b.classList.add('right');else if(name===picked)b.classList.add('wrong');else b.classList.add('fade')}
+    b.addEventListener('click',()=>pick(name));box.append(b)});
+  const rv=$('reveal');
+  if(picked==null){rv.hidden=true;$('ask').hidden=false}
+  else{
+    rv.hidden=false;$('ask').hidden=true;
+    const ok=picked===q.sp,v=$('verdict');v.className='verdict '+(ok?'ok':'no');v.textContent=ok?'Right!':'Not quite.';
+    whoLine(q);$('zh').textContent=q.zh;$('scene').textContent=q.ctx+'.';
+    $('next').textContent=k<PER-1?'Next quote':'See your result';
+  }
+  paint();
+}
+function pick(name){
+  const k=st.cur;if(st.picks[k]!=null||st.over)return;
+  st.picks[k]=name;put(KEY,st);show();
+  $('next').focus({preventScroll:true});
+}
+$('next').addEventListener('click',()=>{
+  if(st.cur<PER-1){st.cur++;put(KEY,st);show();$('play').scrollIntoView({block:'start',behavior:'smooth'});return}
+  if(!st.over){st.over=true;st.score=score();updateStats();put(KEY,st);finish(false)}
+  else finish(true);
+});
+
+const RANKS=[[3,'Keeper of the Annals','You hear the voices of the age.'],[2,'Court scribe','Only one voice slipped past you.'],[1,'Tea house storyteller','You know the famous lines. The rest will come.'],[0,'Newly arrived at court','A hundred voices, all strangers for now. Come back tomorrow.']];
+function updateStats(){
+  const s=get('ws_stats')||{played:0,total:0,streak:0,last:null};
+  if(s.last!==t){s.played++;s.total+=score();s.streak=(s.last===t-1)?s.streak+1:1;s.last=t;put('ws_stats',s)}
+  return s;
+}
+function finish(restoring){
+  const sc=score(),res={score:sc,max:PER,mistakes:PER-sc,perfect:sc===PER};
+  if(restoring){window.tkDayStats&&tkDayStats('who-said-it',res)}else{window.tkReport&&tkReport('who-said-it',res)}
+  const s=updateStats();
+  $('play').hidden=true;$('end').hidden=false;paint();
+  $('final').firstChild.nodeValue=sc;
+  const rk=RANKS.find(x=>sc>=x[0]);$('rank').textContent=rk[1];$('rankline').textContent=rk[2];
+  $('stPlayed').textContent=s.played;$('stAvg').textContent=(s.total/s.played).toFixed(1);$('stStreak').textContent=s.streak;
+  const list=$('rlist');list.innerHTML='';
+  Q.forEach((q,k)=>{const ok=right(k);
+    const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',ok?'var(--hit)':'var(--miss)');
+    const h=document.createElement('div');h.className='rh';const b=document.createElement('b');b.textContent=q.sp+(q.spzh?' '+q.spzh:'');
+    h.append(b,' · '+LEVELS[k]+' · '+(ok?'got it':'you said '+st.picks[k]));
+    const s1=document.createElement('div');s1.className='rs';s1.textContent='“'+q.en+'”';
+    const s2=document.createElement('div');s2.className='rz';s2.lang='zh-Hant';s2.textContent=q.zh;
+    const s3=document.createElement('div');s3.className='rw';s3.textContent='Chapter '+q.ch+'. '+q.ctx+'.';
+    d.append(h,s1,s2,s3);list.append(d)});
+  $('review').hidden=false;
+}
+$('share').addEventListener('click',()=>{
+  const line=Q.map((q,k)=>right(k)?'\u{1F7E9}':'\u{1F7E5}').join('');
+  const text='Who Said It · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'\n'+score()+'/3 '+line+'\nthreekingdomsgame.co.uk';
+  const done=()=>$('copied').textContent='Copied. Paste it anywhere.';
+  try{navigator.clipboard.writeText(text).then(done,()=>{$('copied').textContent=text})}catch(e){$('copied').textContent=text}
+});
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+
+if(st.over)finish(true);else show();
+/* for checking the schedule: window.__whosaid(day) returns that day's three */
+window.__whosaid=d=>DAYS[((d-LAUNCH)%n+n)%n].map(x=>x[2]+': '+x[0]);
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+<script src="support.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d0d6d441d802490a8896d4f5249225a0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

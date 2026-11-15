@@ -3,6 +3,7 @@
 // GET  /day?game=full-ranks&date=2026-11-03&score=8 -> public summary of today's results for one game
 // POST /pick  -> Nine Provinces: logs one right answer in one square
 // GET  /picks?game=nine-provinces&date=2026-11-15 -> how often each answer was used in each square
+// GET  /rank?game=nine-provinces&date=2026-11-15&player=ID -> one player's rarity rank among everyone who finished
 // GET  /stats?key=YOUR_KEY -> private stats page
 //
 // Deploy: Cloudflare dashboard > Workers & Pages > tkstats > Edit code, paste this whole file, Deploy.
@@ -113,6 +114,35 @@ export default {
       for (const r of rows) (cells[r.cell] = cells[r.cell] || {})[r.answer] = r.n;
       return new Response(JSON.stringify({ game, date, players, cells }), {
         headers: { ...cors(origin), "Content-Type": "application/json", "Cache-Control": "public, max-age=60" },
+      });
+    }
+
+    // ---- Nine Provinces: where one player's rarity score ranks among everyone who finished that day ----
+    // Rarity per square = share of right answers in that square that used the same officer (min 1), empty square = 100. Lower is better.
+    if (url.pathname === "/rank" && request.method === "GET") {
+      const game = String(url.searchParams.get("game") || "").toLowerCase();
+      const date = String(url.searchParams.get("date") || "");
+      const player = String(url.searchParams.get("player") || "");
+      if (!/^[a-z0-9-]{2,40}$/.test(game) || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^[a-zA-Z0-9-]{8,64}$/.test(player)) {
+        return new Response("bad request", { status: 400, headers: cors(origin) });
+      }
+      const rows = (await env.DB.prepare(
+        `WITH tot AS (SELECT cell, COUNT(*) AS t FROM picks WHERE game = ?1 AND puzzle_date = ?2 GROUP BY cell),
+              cnt AS (SELECT cell, answer, COUNT(*) AS n FROM picks WHERE game = ?1 AND puzzle_date = ?2 GROUP BY cell, answer),
+              fin AS (SELECT DISTINCT player FROM plays WHERE game = ?1 AND puzzle_date = ?2)
+         SELECT f.player AS player,
+                COALESCE(SUM(MAX(1, CAST(ROUND(100.0 * c.n / t.t) AS INTEGER))), 0) + 100 * (9 - COUNT(p.cell)) AS score
+         FROM fin f
+         LEFT JOIN picks p ON p.game = ?1 AND p.puzzle_date = ?2 AND p.player = f.player
+         LEFT JOIN cnt c ON c.cell = p.cell AND c.answer = p.answer
+         LEFT JOIN tot t ON t.cell = p.cell
+         GROUP BY f.player`
+      ).bind(game, date).all()).results;
+      const me = rows.find((r) => r.player === player);
+      const body = { game, date, players: rows.length, score: me ? me.score : null,
+        rank: me ? 1 + rows.filter((r) => r.score < me.score).length : null };
+      return new Response(JSON.stringify(body), {
+        headers: { ...cors(origin), "Content-Type": "application/json", "Cache-Control": "no-store" },
       });
     }
 

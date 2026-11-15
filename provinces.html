@@ -299,10 +299,11 @@ function finish(){
 function refresh(){fetch(STATS+'/picks?game='+GAME+'&date='+dateUK()).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.cells){rare=d;render();paintRarity();review()}}).catch(()=>{})}
 function loadRank(){fetch(STATS+'/rank?game='+GAME+'&date='+dateUK()+'&player='+encodeURIComponent(pid()),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
   const el=$('rankpos');if(!d||!d.rank||!d.players){el.hidden=true;return}
-  const ord=n=>n+(n%100>=11&&n%100<=13?'th':['th','st','nd','rd'][n%10]||'th');
-  el.innerHTML='';const b=document.createElement('b');b.textContent=ord(d.rank)+' of '+d.players;
-  el.append('Rarity rank: ',b,d.players===1?' so far. You\u2019re the first to finish today.':' players so far.');
-  const nt=document.createElement('small');nt.textContent='Your rank changes as more people play. Come back later today to see where you finish.';el.append(nt);el.hidden=false}).catch(()=>{})}
+  el.innerHTML='';
+  /* shown as a percentage only, never how many people played */
+  if(d.players<5){el.append('Your rarity rank appears once a few more people have finished today.')}
+  else{const top=Math.max(1,Math.ceil(100*d.rank/d.players));const b=document.createElement('b');b.textContent='Top '+top+'%';el.append('Rarity rank: ',b,' of players so far.')}
+  const nt=document.createElement('small');nt.textContent='Your rank changes as more people play. Come back later today to see where you finish.';if(d.players>=5)el.append(nt);el.hidden=false}).catch(()=>{})}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&st.over){refresh();loadRank()}});
 function paintRarity(){
   const tot=rarityTotal(),el=$('rarity');el.innerHTML='';

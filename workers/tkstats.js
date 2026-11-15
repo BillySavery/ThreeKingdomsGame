@@ -1,6 +1,8 @@
 // Three Kingdoms Daily stats Worker
 // POST /play  -> logs one finished game
 // GET  /day?game=full-ranks&date=2026-11-03&score=8 -> public summary of today's results for one game
+// POST /pick  -> Nine Provinces: logs one right answer in one square
+// GET  /picks?game=nine-provinces&date=2026-11-15 -> how often each answer was used in each square
 // GET  /stats?key=YOUR_KEY -> private stats page
 //
 // Deploy: Cloudflare dashboard > Workers & Pages > tkstats > Edit code, paste this whole file, Deploy.
@@ -66,6 +68,52 @@ export default {
       ).run();
 
       return new Response("ok", { headers: cors(origin) });
+    }
+
+    // ---- Nine Provinces: log one right answer in one square (rarity) ----
+    // Table: picks (game, puzzle_date, player, cell, answer), one answer per player per square per day
+    if (url.pathname === "/pick" && request.method === "POST") {
+      let d;
+      try {
+        const text = await request.text();
+        if (text.length > 1000) throw new Error("too big");
+        d = JSON.parse(text);
+      } catch {
+        return new Response("bad request", { status: 400, headers: cors(origin) });
+      }
+      const game = String(d.game || "").toLowerCase();
+      const date = String(d.date || "");
+      const player = String(d.player || "");
+      const cell = int(d.cell);
+      const answer = String(d.answer || "").slice(0, 60);
+      if (!/^[a-z0-9-]{2,40}$/.test(game) || !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+          !/^[a-zA-Z0-9-]{8,64}$/.test(player) || cell == null || cell < 0 || cell > 8 || !answer) {
+        return new Response("bad request", { status: 400, headers: cors(origin) });
+      }
+      await env.DB.prepare(
+        `INSERT OR IGNORE INTO picks (game, puzzle_date, player, cell, answer) VALUES (?, ?, ?, ?, ?)`
+      ).bind(game, date, player, cell, answer).run();
+      return new Response("ok", { headers: cors(origin) });
+    }
+
+    // ---- Nine Provinces: how often each answer was used in each square today ----
+    if (url.pathname === "/picks" && request.method === "GET") {
+      const game = String(url.searchParams.get("game") || "").toLowerCase();
+      const date = String(url.searchParams.get("date") || "");
+      if (!/^[a-z0-9-]{2,40}$/.test(game) || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return new Response("bad request", { status: 400, headers: cors(origin) });
+      }
+      const rows = (await env.DB.prepare(
+        `SELECT cell, answer, COUNT(*) AS n FROM picks WHERE game = ?1 AND puzzle_date = ?2 GROUP BY cell, answer`
+      ).bind(game, date).all()).results;
+      const players = (await env.DB.prepare(
+        `SELECT COUNT(DISTINCT player) AS p FROM picks WHERE game = ?1 AND puzzle_date = ?2`
+      ).bind(game, date).first())?.p || 0;
+      const cells = {};
+      for (const r of rows) (cells[r.cell] = cells[r.cell] || {})[r.answer] = r.n;
+      return new Response(JSON.stringify({ game, date, players, cells }), {
+        headers: { ...cors(origin), "Content-Type": "application/json", "Cache-Control": "public, max-age=60" },
+      });
     }
 
     // ---- Public: how everyone did today on one game ----

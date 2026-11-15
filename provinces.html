@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Nine Provinces</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. A 4 by 4 grid (corner, three column headers, three rows of a header and three squares), the guess panel, then the end card and a review list */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --miss:#9b3a2c;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.chip{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--mute);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold2)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.hd{display:grid;place-items:center;text-align:center;padding:6px 4px;min-height:58px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);line-height:1.25;overflow-wrap:anywhere}
+.hd b{display:block;font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:0;text-transform:none;color:var(--gold2)}
+.hd small{display:block;font-size:10px;letter-spacing:.1em;color:var(--mute)}
+.corner{display:grid;place-items:center;font-family:var(--display);font-size:40px;color:var(--gold);opacity:.8}
+.sq{aspect-ratio:1;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;text-align:center;padding:4px;font:inherit;color:var(--paper);cursor:pointer;min-width:0;position:relative;transition:border-color .12s ease,background .12s ease}
+.sq:hover{border-color:var(--gold)}
+.sq:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sq.sel{border-color:var(--gold);background:rgba(217,164,65,.16)}
+.sq.ok{border-color:var(--hit);background:rgba(47,138,111,.18);cursor:default}
+.sq.empty{cursor:default;opacity:.55}
+.sq .nm{font-family:var(--display);font-size:clamp(13px,3.6vw,18px);line-height:1.15;overflow-wrap:anywhere}
+.sq .rr{position:absolute;bottom:4px;left:0;right:0;font-size:10.5px;letter-spacing:.08em;color:var(--gold2);font-variant-numeric:tabular-nums}
+.sq .plus{font-size:24px;color:var(--line)}
+.sq.bad{animation:shake .4s ease}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);padding:14px 16px 16px;display:grid;gap:8px;position:relative}
+.panel .q{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.panel .q b{color:var(--gold2)}
+.gbox{display:flex;gap:8px;min-width:0}
+.btn{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:13px 16px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold);cursor:pointer}
+.btn:hover{background:#a8261f}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.gbox .btn{flex:0 0 auto;padding:12px 14px;letter-spacing:.08em}
+#guess{flex:1;min-width:0;font:inherit;font-size:16px;padding:12px;background:var(--ink);color:var(--paper);border:1px solid var(--line)}
+#guess:focus{outline:none;border-color:var(--gold)}
+#sugg{list-style:none;margin:0;padding:0;position:absolute;left:16px;right:16px;top:calc(100% - 50px);background:var(--panel);border:1px solid var(--gold);z-index:5;max-height:300px;overflow:auto}
+#sugg li{padding:10px 12px;cursor:pointer;border-top:1px solid var(--line)}
+#sugg li:first-child{border-top:0}
+#sugg li[aria-selected="true"],#sugg li:hover{background:rgba(217,164,65,.14);color:var(--gold2)}
+.fb{font-size:13.5px;color:var(--mute);min-height:18px;line-height:1.45;margin:0}
+.fb b{color:var(--paper)}
+.tip{font-size:13.5px;color:var(--mute);margin:0;line-height:1.45}
+.endrow{display:flex;justify-content:flex-end}
+.endrow .btn{padding:9px 12px;font-size:12px}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:20px 18px;display:grid;gap:12px;text-align:center;justify-items:center}
+.score{font-family:var(--display);font-size:64px;line-height:1;color:var(--gold2);font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--mute)}
+.rank{font-family:var(--display);font-size:24px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.5;color:var(--mute);max-width:44ch}
+.endcard p b{color:var(--gold2)}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.nextin b{color:var(--gold2);font-variant-numeric:tabular-nums}
+.copied{font-size:13px;color:var(--gold2);min-height:18px}
+.review{display:grid;gap:6px}
+.review h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 4px;color:var(--gold)}
+.ritem{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);padding:12px 14px;display:grid;gap:4px}
+.ritem .rh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ritem .rs{font-size:15px;line-height:1.4}
+.ritem .rs b{color:var(--gold2);font-weight:400}
+.ritem .rw{font-size:13.5px;color:var(--mute);line-height:1.5}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.sq{transition:none}.sq.bad{animation:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Nine Provinces<small>THREE KINGDOMS DAILY &middot; 九州</small></div>
+    <span class="chip" id="left"><b>12</b> guesses left</span>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="panel" id="panel">
+    <p class="tip" id="tip">Tap a square, then name an officer who fits both its row and its column.</p>
+    <div id="ask" hidden>
+      <div class="q" id="q"></div>
+      <div class="gbox" style="margin-top:8px"><input id="guess" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Type an officer" role="combobox" aria-autocomplete="list" aria-controls="sugg" aria-expanded="false"><button class="btn" id="submit" type="button">Guess</button></div>
+    </div>
+    <ul id="sugg" role="listbox" hidden></ul>
+    <p class="fb" id="fb" aria-live="polite"></p>
+    <div class="endrow"><button class="btn ghost" id="giveup" type="button">Finish here</button></div>
+  </section>
+
+  <section class="endcard" id="end" hidden>
+    <div class="score" id="final">0<small>/9</small></div>
+    <p class="rank" id="rank"></p>
+    <p id="rarity"></p>
+    <div class="actions"><button class="btn" id="share" type="button">Copy result</button></div>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="stats">
+      <div><b id="stPlayed">0</b>Played</div>
+      <div><b id="stAvg">0</b>Average</div>
+      <div><b id="stStreak">0</b>Streak</div>
+    </div>
+    <div class="nextin">A new map in <b id="cd">0h 0m</b></div>
+    <div data-support></div>
+  </section>
+
+  <section class="review" id="review" hidden>
+    <h2>Today's squares</h2>
+    <div id="rlist" class="review"></div>
+  </section>
+
+  <div class="rules"><b>How to play.</b> Fill each square with an officer who fits both its row and its column. You have twelve guesses for the nine squares, a wrong name uses one up, and each officer can only be used once. When you finish you'll see how rare your answers were: the share of players who picked the same officer for that square. Lower is better, and an empty square counts as 100.<br><br><b>Where the answers come from.</b> Only people from the historical records count, not characters who only appear in the novel. Wei, Shu and Wu mean the side each officer is best remembered for, and "Not Wei, Shu or Wu" covers everyone else of the era, such as the Han court, Dong Zhuo, Yuan Shao and Liu Biao. Home province is the Han province of their home commandery around 190. Death squares only count people whose year of death is recorded exactly. General, Strategist and Ruler go by the one main role each person has in the site's officer list, and a wrong guess always shows the record it was checked against. All of it comes from Wikipedia's lists of people of the Three Kingdoms, which cite the Records of the Three Kingdoms and the Book of the Later Han.</div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+<script src="tk-stats.js"></script>
+<script src="officers.js"></script>
+<script>
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=id=>document.getElementById(id);
+const t=today(),GUESSES=12,GAME='nine-provinces';
+const STATS='https://tkstats.billysavery1234.workers.dev';
+const dateUK=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Europe/London'});
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+
+/* Every officer in the shared database can be typed; only historical people (k H) can fill a square */
+const URLS=window.TK_URLS||[];
+const ALL=(window.TK_OFFICERS||[]).map(o=>Object.assign({},o,{al:o.a||[],url:URLS[o.u]}));
+ALL.forEach(o=>{o.keys=[o.n,...o.al].map(norm)});
+const BY=new Map(ALL.map(o=>[o.n,o]));
+const HIST=ALL.filter(o=>o.k==='H');
+const fam=o=>{const p=o.n.replace(/\s*\(.*\)$/,'').split(' ');if(p.length<2)return null;return /^(Lady|Empress)$/.test(p[0])?p[1]:p[0]};
+
+/* Categories. Each type only ever appears on rows or on columns, never both, so you never get Wei against Shu */
+const PROV={Sili:'Sili',Yu:'Yu',Yan:'Yan',Bing:'Bing',Ji:'Ji',Liang:'Liang',Xu:'Xu',Jing:'Jing',You:'You',Yi:'Yi',Yang:'Yang',Qing:'Qing'};
+const CATS=[];
+const cat=(type,id,html,label,test)=>CATS.push({type,id,html,label,test});
+[['Wei','Wei'],['Shu','Shu'],['Wu','Wu']].forEach(([v,l])=>cat('F','f'+v,'<b>'+l+'</b>',l,o=>o.f===v));
+cat('F','fOther','<b>Not Wei, Shu or Wu</b>','Not Wei, Shu or Wu',o=>o.f==='Other');
+Object.keys(PROV).forEach(v=>cat('P','p'+v,'<small>From</small><b>'+(v==='Sili'?'Sili':v+' Province')+'</b>'+(v==='Sili'?'<small>the capital province</small>':''),v==='Sili'?'From Sili':'From '+v+' Province',o=>o.h===v));
+[['General','Generals'],['Strategist','Strategists'],['Ruler','Rulers']].forEach(([v,l])=>cat('R','r'+v,'<b>'+v+'</b>',v,o=>o.r===v));
+const exact=o=>typeof o.d==='number'&&!o.dc;
+[['dA','Died before 200',o=>o.d<200],['dB','Died 200 to 220',o=>o.d>=200&&o.d<=220],['dC','Died 221 to 240',o=>o.d>=221&&o.d<=240]]
+  .forEach(([id,l,f])=>cat('D',id,'<small>'+l.split(' ')[0]+'</small><b>'+l.split(' ').slice(1).join(' ')+'</b>',l,o=>exact(o)&&f(o)));
+['Cao','Sun','Liu','Sima','Xiahou','Zhuge','Ma','Yuan','Zhang','Guan','Xun','Gongsun','Huang','Zhao','Wang','Chen'].forEach(v=>cat('S','s'+v,'<small>Family name</small><b>'+v+'</b>','Family name '+v,o=>fam(o)===v));
+const CBY=new Map(CATS.map(c=>[c.id,c]));
+const fits=(o,r,c)=>o.k==='H'&&r.test(o)&&c.test(o);
+const answers=(r,c)=>HIST.filter(o=>r.test(o)&&c.test(o));
+
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+/* can nine different officers fill the grid? (bipartite matching) */
+function solvable(sets){const own=new Map();const tryCell=(i,seen)=>{for(const o of sets[i]){if(seen.has(o.n))continue;seen.add(o.n);const j=own.get(o.n);if(j==null||tryCell(j,seen)){own.set(o.n,i);return true}}return false};return sets.every((_,i)=>tryCell(i,new Set()))}
+/* Each day: split the five types between rows and columns, pick three of each, and keep the grid only if every square has at least four answers and a few squares are properly tight */
+const SPLITS=[['F','PRDS'],['F','PRDS'],['F','PRDS'],['P','FRDS'],['FS','PRD'],['FD','PRS'],['FR','PDS'],['PS','FRD']];
+function build(day){
+  const r=rng(day*104729+17),one=a=>a[Math.floor(r()*a.length)];
+  for(let a=0;a<3000;a++){
+    const [A,B]=one(SPLITS),flip=r()<.5;
+    const take=types=>{const pool=CATS.filter(c=>types.includes(c.type)).slice(),out=[];while(out.length<3&&pool.length){out.push(pool.splice(Math.floor(r()*pool.length),1)[0])}return out};
+    let rows=take(A),cols=take(B);if(flip)[rows,cols]=[cols,rows];
+    if(rows.length<3||cols.length<3)continue;
+    const sets=[];rows.forEach(rr=>cols.forEach(cc=>sets.push(answers(rr,cc))));
+    const n=sets.map(s=>s.length);
+    if(Math.min(...n)<4)continue;
+    if(n.filter(x=>x<=10).length<2)continue;
+    if(n.filter(x=>x>=40).length>3)continue;
+    if(!solvable(sets))continue;
+    return {rows:rows.map(c=>c.id),cols:cols.map(c=>c.id)};
+  }
+  return {rows:['fWei','fShu','fWu'],cols:['rGeneral','dB','pYu']};
+}
+
+const KEY='np_day'+t;
+let st=get(KEY);
+if(!st||!st.rows||![...st.rows,...st.cols].every(id=>CBY.has(id))){const g=build(t);st={rows:g.rows,cols:g.cols,cells:Array(9).fill(null),left:GUESSES,wrong:0,over:false,tries:[]};put(KEY,st)}
+const ROWS=st.rows.map(id=>CBY.get(id)),COLS=st.cols.map(id=>CBY.get(id));
+const RC=i=>[ROWS[Math.floor(i/3)],COLS[i%3]];
+let sel=-1,rare=null;
+
+function facts(o){
+  const bits=[o.f==='Other'?'not Wei, Shu or Wu':o.f,o.r,o.h?(o.h==='Sili'?'from Sili':'from '+o.h+' Province'):'home province not recorded',exact(o)?'died '+o.d:'year of death not recorded exactly'];
+  return bits.filter(Boolean).join(', ');
+}
+function pct(i){const c=st.cells[i];if(!c||!rare||!rare.cells)return null;const m=rare.cells[i]||{},tot=Object.values(m).reduce((a,b)=>a+b,0);if(!tot)return null;return Math.max(1,Math.round(100*(m[c]||0)/tot))}
+function render(bad){
+  const g=$('grid');g.innerHTML='';
+  const cn=document.createElement('div');cn.className='corner';cn.setAttribute('aria-hidden','true');cn.textContent='九';g.append(cn);
+  COLS.forEach(c=>{const h=document.createElement('div');h.className='hd';h.innerHTML=c.html;g.append(h)});
+  ROWS.forEach((rr,ri)=>{const h=document.createElement('div');h.className='hd';h.innerHTML=rr.html;g.append(h);
+    COLS.forEach((cc,ci)=>{const i=ri*3+ci,v=st.cells[i],b=document.createElement('button');b.type='button';b.dataset.i=i;
+      b.className='sq'+(v?' ok':st.over?' empty':'')+(sel===i?' sel':'')+(bad===i?' bad':'');
+      b.setAttribute('aria-label',rr.label+' and '+cc.label+(v?': '+v:st.over?': empty':''));
+      if(v){const n=document.createElement('span');n.className='nm';n.textContent=v;b.append(n);const p=pct(i);if(p!=null){const s=document.createElement('span');s.className='rr';s.textContent=p+'%';b.append(s)}}
+      else if(!st.over){const s=document.createElement('span');s.className='plus';s.setAttribute('aria-hidden','true');s.textContent='+';b.append(s)}
+      if(v||st.over)b.disabled=true;
+      g.append(b)})});
+  $('left').innerHTML='<b>'+st.left+'</b> '+(st.left===1?'guess':'guesses')+' left';
+}
+function choose(i){if(st.over||st.cells[i])return;sel=i;const [r,c]=RC(i);$('q').innerHTML='';const b1=document.createElement('b');b1.textContent=r.label;const b2=document.createElement('b');b2.textContent=c.label;$('q').append(b1,' and ',b2);
+  $('ask').hidden=false;$('tip').hidden=true;$('fb').textContent='';$('guess').value='';render();$('guess').focus()}
+$('grid').addEventListener('click',e=>{const b=e.target.closest('.sq');if(b&&!b.disabled)choose(+b.dataset.i)});
+
+function submit(name){
+  if(st.over||sel<0)return;
+  const typed=$('guess').value,exactHit=ALL.find(o=>o.keys.includes(norm(typed)));
+  const q=name||(exactHit&&exactHit.n)||(sugg[ssel]&&sugg[ssel].n)||typed,k=norm(q||'');
+  if(!k){$('fb').textContent='Type an officer first.';return}
+  const o=BY.get(q)||ALL.find(x=>x.keys.includes(k));
+  if(!o){$('fb').textContent='That name isn’t in the officer list. Pick one from the suggestions.';return}
+  if(st.cells.includes(o.n)){$('fb').textContent=o.n+' is already on your grid. Each officer can only be used once.';closeSugg();return}
+  const i=sel,[r,c]=RC(i);
+  st.tries.push([i,o.n]);st.left--;closeSugg();
+  if(fits(o,r,c)){
+    st.cells[i]=o.n;sel=-1;$('ask').hidden=true;$('tip').hidden=false;
+    $('fb').innerHTML='';const b=document.createElement('b');b.textContent=o.n;$('fb').append(b,' fits. '+facts(o)[0].toUpperCase()+facts(o).slice(1)+'.');
+    report(i,o.n);
+  }else{
+    st.wrong++;
+    $('fb').innerHTML='';const b=document.createElement('b');b.textContent='Not '+o.n+'.';
+    $('fb').append(b,' '+(o.k!=='H'?'They only appear in the novel or later stories, so they don’t count here.':'Their record: '+facts(o)+'.'));
+    $('guess').value='';
+  }
+  const done=st.cells.every(Boolean)||st.left<=0;
+  if(done){st.over=true}
+  put(KEY,st);render(o&&!st.cells.includes(o.n)?i:null);
+  if(done)finish();
+  else if(sel>=0)$('guess').focus();
+}
+function report(i,n){const body=JSON.stringify({game:GAME,date:dateUK(),player:pid(),cell:i,answer:n});try{if(navigator.sendBeacon&&navigator.sendBeacon(STATS+'/pick',body))return}catch(e){}fetch(STATS+'/pick',{method:'POST',body,keepalive:true}).catch(()=>{})}
+function pid(){try{let id=localStorage.getItem('tk_pid');if(!id){id=crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2,12);localStorage.setItem('tk_pid',id)}return id}catch(e){return 'anon-'+Math.random().toString(36).slice(2,14)}}
+
+let sugg=[],ssel=-1;
+function showSugg(){
+  const raw=$('guess').value,q=norm(raw);
+  if(q.length<2){closeSugg();return}
+  const words=raw.toLowerCase().split(/[^a-z]+/).filter(Boolean),scored=[];
+  for(const o of ALL){if(st.cells.includes(o.n))continue;let s=0;
+    if(o.keys.some(x=>x.startsWith(q)))s=2;else if(words.length&&words.every(w=>[o.n,...o.al].join(' ').toLowerCase().split(/\s+/).some(x=>norm(x).startsWith(norm(w)))))s=1;
+    if(s)scored.push([s,o])}
+  scored.sort((a,b)=>b[0]-a[0]||a[1].n.localeCompare(b[1].n));
+  sugg=scored.slice(0,8).map(x=>x[1]);ssel=sugg.length?0:-1;
+  const box=$('sugg');if(!sugg.length){closeSugg();return}
+  box.innerHTML='';sugg.forEach((o,i)=>{const li=document.createElement('li');li.setAttribute('role','option');li.setAttribute('aria-selected',i===ssel);li.textContent=o.n;li.addEventListener('mousedown',e=>{e.preventDefault();submit(o.n)});box.appendChild(li)});
+  box.hidden=false;$('guess').setAttribute('aria-expanded','true');
+}
+function closeSugg(){$('sugg').hidden=true;sugg=[];ssel=-1;$('guess').setAttribute('aria-expanded','false')}
+function moveSel(d){if(!sugg.length)return;ssel=(ssel+d+sugg.length)%sugg.length;[...$('sugg').children].forEach((li,i)=>li.setAttribute('aria-selected',i===ssel))}
+$('guess').addEventListener('input',()=>{$('fb').textContent='';showSugg()});
+$('guess').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();moveSel(1)}else if(e.key==='ArrowUp'){e.preventDefault();moveSel(-1)}else if(e.key==='Enter'){e.preventDefault();submit()}else if(e.key==='Escape')closeSugg()});
+$('guess').addEventListener('blur',()=>setTimeout(closeSugg,120));
+$('submit').addEventListener('click',()=>submit());
+$('giveup').addEventListener('click',()=>{if(st.over)return;if(!$('giveup').dataset.sure){$('giveup').dataset.sure=1;$('giveup').textContent='Tap again to finish';return}st.over=true;put(KEY,st);sel=-1;render();finish()});
+
+const RANKS=[[9,'Governor of the Nine Provinces','Every square filled.'],[7,'Inspector of a province','Most of the realm is yours.'],[5,'Grand administrator','A solid hold on the map.'],[3,'County magistrate','A few squares to your name.'],[0,'Village headman','The provinces are wide. Come back tomorrow.']];
+function updateStats(n){
+  const s=get('np_stats')||{played:0,total:0,streak:0,last:null};
+  if(s.last!==t){s.played++;s.total+=n;s.streak=(s.last===t-1)?s.streak+1:1;s.last=t;put('np_stats',s)}
+  return s;
+}
+function rarityTotal(){let sum=0;for(let i=0;i<9;i++){if(!st.cells[i]){sum+=100;continue}const p=pct(i);if(p==null)return null;sum+=p}return sum}
+function finish(){
+  const n=st.cells.filter(Boolean).length;
+  $('panel').hidden=true;$('end').hidden=false;
+  window.tkReport&&tkReport(GAME,{score:n,max:9,mistakes:st.wrong,perfect:n===9&&!st.wrong});
+  const s=updateStats(n);
+  $('final').firstChild.nodeValue=n;
+  const rk=RANKS.find(x=>n>=x[0]);$('rank').textContent=rk[1];
+  $('stPlayed').textContent=s.played;$('stAvg').textContent=(s.total/s.played).toFixed(1);$('stStreak').textContent=s.streak;
+  paintRarity();review();
+  fetch(STATS+'/picks?game='+GAME+'&date='+dateUK()).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.cells){rare=d;render();paintRarity();review()}}).catch(()=>{});
+}
+function paintRarity(){
+  const tot=rarityTotal(),el=$('rarity');el.innerHTML='';
+  if(tot==null){el.textContent=RANKS.find(x=>st.cells.filter(Boolean).length>=x[0])[2]+' Rarity scores appear as more people play today.';return}
+  el.append('Rarity score ');const b=document.createElement('b');b.textContent=tot;el.append(b,'. Lower is better: it adds up how many players chose each of your answers, with 100 for an empty square.');
+}
+function review(){
+  const list=$('rlist');list.innerHTML='';
+  for(let i=0;i<9;i++){const [r,c]=RC(i),v=st.cells[i],all=answers(r,c);
+    const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',v?'var(--hit)':'var(--miss)');
+    const h=document.createElement('div');h.className='rh';h.textContent=r.label+' · '+c.label;
+    const s1=document.createElement('div');s1.className='rs';
+    if(v){const b=document.createElement('b');b.textContent=v;s1.append(b);const p=pct(i);if(p!=null)s1.append(' · '+p+'% of players')}else s1.textContent='Left empty';
+    const m=rare&&rare.cells&&rare.cells[i];
+    const top=m?Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]):[];
+    const famous=all.filter(o=>o.n!==v).sort((a,b)=>(a.mo==null)-(b.mo==null)||a.n.localeCompare(b.n)).slice(0,5).map(o=>o.n);
+    const s2=document.createElement('div');s2.className='rw';
+    s2.textContent=(top.length?'Most picked: '+top.join(', ')+'. ':'')+all.length+' possible answers'+(famous.length?', including '+famous.join(', '):'')+'.';
+    d.append(h,s1,s2);list.append(d)}
+  $('review').hidden=false;
+}
+$('share').addEventListener('click',()=>{
+  const g=[0,1,2].map(r=>[0,1,2].map(c=>st.cells[r*3+c]?'\u{1F7E9}':'⬛').join('')).join('\n');
+  const tot=rarityTotal();
+  const text='Nine Provinces · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'\n'+st.cells.filter(Boolean).length+'/9'+(tot!=null?' · Rarity '+tot:'')+'\n'+g+'\nthreekingdomsgame.co.uk';
+  const done=()=>$('copied').textContent='Copied. Paste it anywhere.';
+  try{navigator.clipboard.writeText(text).then(done,()=>{$('copied').textContent=text})}catch(e){$('copied').textContent=text}
+});
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+
+render();if(st.over)finish();
+/* for checking the schedule: window.__np(day) gives that day's grid and how many answers each square has */
+window.__np=d=>{const g=build(d),R=g.rows.map(x=>CBY.get(x)),C=g.cols.map(x=>CBY.get(x));return R.map(r=>r.label+': '+C.map(c=>c.label+' '+answers(r,c).length).join(' | '))};
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+<script src="support.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d0d6d441d802490a8896d4f5249225a0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

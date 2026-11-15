@@ -142,7 +142,8 @@ const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const $=id=>document.getElementById(id);
 const t=today(),GUESSES=12,GAME='nine-provinces';
 const STATS='https://tkstats.billysavery1234.workers.dev';
-const dateUK=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Europe/London'});
+/* rarity is stored under the puzzle's own day (players in every time zone share a grid per local date), not today's UK date */
+const dateUK=()=>new Date(EPOCH+t*864e5).toISOString().slice(0,10);
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 
 /* Every officer in the shared database can be typed; only historical people (k H) can fill a square */

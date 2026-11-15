@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
+.homelink{justify-self:start;font-family:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8987f;text-decoration:none;border-bottom:1px solid transparent}
+.homelink:hover,.homelink:focus-visible{color:#d9a441;border-bottom-color:#d9a441;outline:none}</style>
+</head><body>
+<title>Annals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=IBM+Plex+Sans+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Layout: one column. Progress pips, the timeline board with five rows, then the end card and a review list */
+:root{
+  --ink:#14100d; --panel:#1f1813; --line:#4a3a2a; --lacquer:#8e1f1a; --gold:#d9a441; --gold2:#f2cf7c; --paper:#efe4cf; --mute:#a8987f;
+  --hit:#2f8a6f; --miss:#9b3a2c; --jade:#1f4a40;
+  --display:"Zen Antique","Songti SC","Noto Serif",Georgia,serif;
+  --ui:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -10%,rgba(142,31,26,.45),transparent 60%)}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.wrap>*{min-width:0}
+.homelink{display:inline-block;padding:12px 0}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:28px;color:var(--gold);line-height:1}
+.logo small{display:block;font-family:var(--ui);font-size:10px;letter-spacing:.3em;color:var(--mute);margin-top:4px;white-space:normal}
+.pips{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.pip{height:8px;background:#3a2e25}
+.pip.ok{background:var(--hit)}.pip.bad{background:var(--miss)}.pip.half{background:var(--gold2)}.pip.third{background:var(--gold)}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold)}
+.mhead{display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);padding:14px 18px 0;font-variant-numeric:tabular-nums}
+.mhead b{color:var(--gold)}
+.mtip{margin:0;padding:8px 18px 0;font-size:13.5px;color:var(--mute);line-height:1.45}
+.board{display:grid;gap:8px;padding:14px 12px 16px;position:relative}
+.mrow{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:stretch;gap:8px}
+.slot{display:grid;align-content:center;justify-items:center;border:1px solid var(--line);background:var(--ink);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-align:center;padding:4px;line-height:1.3}
+.slot b{display:block;font-family:var(--display);font-size:20px;letter-spacing:0;color:var(--gold);font-weight:400}
+.mrow.ok .slot{border-color:var(--hit);background:rgba(47,138,111,.16)}
+.mrow.miss .slot{border-color:var(--miss);background:rgba(155,58,44,.16)}
+.of{min-height:66px;border:1px solid var(--line);background:var(--ink);display:grid;align-content:center;justify-items:start;gap:3px;padding:10px 12px;text-align:left;min-width:0;font:inherit;color:var(--paper);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .12s ease,border-color .12s ease,background .12s ease;overflow-wrap:anywhere}
+.of .t{font-family:var(--display);font-size:18px;line-height:1.2}
+.of small{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.of small .y{color:var(--gold2);font-variant-numeric:tabular-nums}
+.of:hover{border-color:var(--gold)}
+.of:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.of.sel{border-color:var(--gold);background:rgba(217,164,65,.16);transform:translateX(4px)}
+.of.over{border-color:var(--gold2);border-style:dashed}
+.of.drag{opacity:.5}
+.mrow.ok .of{border-color:var(--hit);background:rgba(47,138,111,.16);cursor:default}
+.mrow.miss .of{border-color:var(--miss);background:rgba(155,58,44,.16);cursor:default}
+.mrow.bad .of{animation:shake .4s ease}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.mfoot{border-top:1px solid var(--gold);padding:14px 18px 16px;display:grid;gap:8px}
+.mfb{font-size:13.5px;color:var(--mute);min-height:18px;margin:0}
+.mfb b{color:var(--gold2)}
+.btn{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:13px 16px;background:var(--lacquer);color:var(--paper);border:1px solid var(--gold);cursor:pointer;justify-self:stretch}
+.btn:hover{background:#a8261f}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.endcard{background:var(--panel);border:1px solid var(--gold);padding:20px 18px;display:grid;gap:12px;text-align:center;justify-items:center}
+.endcard .btn{justify-self:center}
+.score{font-family:var(--display);font-size:64px;line-height:1;color:var(--gold2);font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--mute)}
+.rank{font-family:var(--display);font-size:24px;margin:0;color:var(--gold)}
+.endcard p{margin:0;line-height:1.5;color:var(--mute);max-width:44ch}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stats b{display:block;font-family:var(--display);font-size:24px;color:var(--paper);letter-spacing:0;font-weight:400;font-variant-numeric:tabular-nums}
+.nextin{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.nextin b{color:var(--gold2);font-variant-numeric:tabular-nums}
+.copied{font-size:13px;color:var(--gold2);min-height:18px}
+.review{display:grid;gap:6px}
+.review h2{font-family:var(--display);font-weight:400;font-size:22px;margin:6px 0 4px;color:var(--gold)}
+.ritem{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);padding:12px 14px;display:grid;gap:4px}
+.ritem .rh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ritem .rh b{color:var(--gold2)}
+.ritem .rs{font-size:15px;line-height:1.4}
+.ritem .rw{font-size:13.5px;color:var(--mute);line-height:1.5}
+.ritem a{color:var(--gold)}
+.rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.rules b{color:var(--paper)}
+footer{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.of{transition:none}.mrow.bad .of{animation:none}}
+</style>
+
+<div class="wrap">
+  <a class="homelink" href="index.html">&larr; All games</a>
+  <header>
+    <div class="logo">Annals<small>THREE KINGDOMS DAILY &middot; 紀</small></div>
+  </header>
+
+  <div class="pips" id="pips" aria-hidden="true"></div>
+
+  <section id="match">
+    <article class="card">
+      <div class="mhead"><span>Put them in order</span><span id="mleft">3 checks left</span></div>
+      <p class="mtip" id="mtip">Earliest at the top, latest at the bottom. Drag one onto another to swap them, or tap two.</p>
+      <div class="board" id="board" aria-live="polite"></div>
+      <div class="mfoot"><button class="btn" id="check" type="button">Check my order</button><p class="mfb" id="mfb" aria-live="polite"></p></div>
+    </article>
+  </section>
+
+  <section class="endcard" id="end" hidden>
+    <div class="score" id="final">0<small>/5</small></div>
+    <p class="rank" id="rank"></p>
+    <p id="rankline"></p>
+    <div class="actions"><button class="btn" id="share" type="button">Copy result</button></div>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="stats">
+      <div><b id="stPlayed">0</b>Played</div>
+      <div><b id="stAvg">0</b>Average</div>
+      <div><b id="stStreak">0</b>Streak</div>
+    </div>
+    <div class="nextin">A new page of history in <b id="cd">0h 0m</b></div>
+    <div data-support></div>
+  </section>
+
+  <section class="review" id="review" hidden>
+    <h2>Today's annals</h2>
+    <div id="rlist" class="review"></div>
+  </section>
+
+  <div class="rules"><b>How to play.</b> Each day brings five deaths and battles from the era. Put them in the order they happened, earliest at the top. Right answers lock in and show their year, and you get three checks in all. One placed right on the first check scores a point, on the second half a point and on the third a quarter. Three of the five are spread across the years and two are close together, so watch out for those.<br><br><b>Where the dates come from.</b> Deaths only include people whose year of death is recorded in the historical records, such as the Records of the Three Kingdoms, using the year given on Wikipedia. Battles use the year they're known by on Wikipedia. Two things from the same year never appear on the same day, and a battle that ran into a second year, or a death the records place either side of new year, is never set beside anything just one year away.</div>
+
+  <footer><span>Fan made. Not affiliated with Koei Tecmo.</span><span data-support-link></span><span>Puzzles reset at midnight, your local time.</span></footer>
+</div>
+<script src="tk-stats.js"></script>
+<script src="officers.js"></script>
+<script>
+(()=>{
+const EPOCH=Date.UTC(2026,9,1);
+const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)};
+const get=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=id=>document.getElementById(id);
+const t=today(),PER=5,CHECKS=3;
+/* Annals launched on 15 Nov 2026 (day 45). Every day is built in turn from launch, so nothing shown in the last GAP days comes back */
+const LAUNCH=45,GAP=21;
+
+/* Battles: label, year, note, well known (1) or deeper (0). Years and notes match Battle Map */
+const BATTLES=[
+["Battle of Guangzong",184,"Zhang Jiao's base. Huangfu Song killed his brother Zhang Liang here.",1],
+["Battle of Xingyang",190,"Xu Rong routed Cao Cao, who only escaped on Cao Hong's horse.",1],
+["Battle of Xiangyang, where Sun Jian fell",191,"Sun Jian was killed in an ambush by Huang Zu's men.",1],
+["Battle of Jieqiao",191,"Qu Yi's crossbowmen broke Gongsun Zan's White Horse cavalry for Yuan Shao.",1],
+["Battle of Puyang",194,"Lu Bu nearly killed Cao Cao in a burning city.",1],
+["Battle of Wancheng",197,"Zhang Xiu turned on Cao Cao, and Dian Wei died holding the gate.",1],
+["Siege of Xiapi",198,"Cao Cao flooded the city and captured Lu Bu.",1],
+["Battle of Baima",200,"Guan Yu rode out and killed Yan Liang.",1],
+["Battle of Guandu",200,"Cao Cao beat Yuan Shao and took control of the north.",1],
+["Battle of Bowang",202,"Liu Bei's fire ambush caught Xiahou Dun.",1],
+["Battle of White Wolf Mountain",207,"Cao Cao crushed the Wuhuan far beyond the Great Wall.",1],
+["Battle of Changban",208,"Zhao Yun rescued Adou and Zhang Fei held the bridge.",1],
+["Battle of Red Cliffs",208,"Sun Quan and Liu Bei burned Cao Cao's fleet. The site is argued over; most place it at Chibi in Hubei.",1],
+["Battle of Tong Pass",211,"Cao Cao against Ma Chao and Han Sui at the bend of the Yellow River.",1],
+["Battle of Xiaoyao Ford",215,"Zhang Liao's 800 broke Sun Quan's attack on Hefei.",1],
+["Battle of Mount Dingjun",219,"Huang Zhong killed Xiahou Yuan, opening Hanzhong to Liu Bei.",1],
+["Battle of Fancheng",219,"Guan Yu drowned Yu Jin's armies in the flood, across the Han River from Xiangyang.",1],
+["Battle of Yiling",222,"Lu Xun burned Liu Bei's line of camps.",1],
+["Battle of Jieting",228,"Ma Su lost the road and the first Northern Expedition. The exact site is uncertain.",1],
+["Siege of Chencang",228,"Hao Zhao held the fort for 20 days against Zhuge Liang.",1],
+["Battle of Wuzhang Plains",234,"Zhuge Liang died in camp facing Sima Yi.",1],
+["Battle of Changshe",184,"Huangfu Song and Zhu Jun set fire to Bo Cai's Yellow Turban camp.",0],
+["Battle of Xiaquyang",184,"Huangfu Song destroyed Zhang Bao's Yellow Turbans.",0],
+["Battle of Yangren",191,"Sun Jian beat Dong Zhuo's army, and Hua Xiong was killed.",0],
+["Battle of Shouzhang",192,"Cao Cao beat the Qingzhou Yellow Turbans and took them into his army. Bao Xin died in the fighting.",0],
+["Battle of Fengqiu",193,"Cao Cao routed Yuan Shu and chased him south.",0],
+["Battle of Pengcheng",193,"Cao Cao's revenge on Tao Qian for his father's murder.",0],
+["Battle of Juyong",193,"Gongsun Zan captured Liu Yu, the Han governor of You.",0],
+["Siege of Beihai",193,"Taishi Ci rode out through the Yellow Turbans to fetch Liu Bei and save Kong Rong.",0],
+["Battle of Tancheng",194,"Cao Cao's second invasion of Xu, cut short when Lu Bu seized Yan behind him.",0],
+["Battle of Juye",195,"Cao Cao beat Lu Bu and drove him out of Yan.",0],
+["Siege of Yongqiu",195,"Cao Cao besieged Zhang Chao, Zhang Miao's brother, and wiped out his clan.",0],
+["Battle of Niuzhu",195,"Sun Ce crossed the Yangtze and seized Liu Yao's stores.",0],
+["Battle of Qu'a",195,"Sun Ce routed Liu Yao and took his seat.",0],
+["Sun Ce takes Kuaiji",196,"Sun Ce beat Wang Lang and took Kuaiji.",0],
+["Battle of Xuyi",196,"While Liu Bei faced Yuan Shu here, Lu Bu seized Xiapi behind him.",0],
+["Battle of Kuxian",197,"Cao Cao crushed Yuan Shu's generals after Yuan Shu declared himself emperor.",0],
+["Battle of Rangcheng",198,"Zhang Xiu chased Cao Cao and lost, then chased again on Jia Xu's advice and won.",0],
+["Battle of Xiaopei",198,"Gao Shun took the town from Liu Bei and beat Xiahou Dun's relief force.",0],
+["Battle of Yijing",199,"Yuan Shao tunnelled under Gongsun Zan's towers, and Gongsun Zan burned himself and his family.",0],
+["Battle of Yan Ford",200,"Wen Chou was killed in Cao Cao's ambush. The novel gives the kill to Guan Yu.",0],
+["Raid on Wuchao",200,"Cao Cao burned Yuan Shao's grain and won Guandu.",0],
+["Battle of Runan",201,"Cao Cao drove Liu Bei out of the north and south to Liu Biao.",0],
+["Battle of Cangting",201,"Cao Cao beat Yuan Shao again on the Yellow River.",0],
+["Battle of Pingyang",202,"Zhong Yao's army beat Guo Yuan, and Pang De took his head.",0],
+["Battle of Liyang",203,"Cao Cao beat Yuan Tan and Yuan Shang together, then let them turn on each other.",0],
+["Battle of Nanpi",205,"Cao Cao killed Yuan Tan.",0],
+["Siege of Hu Pass",206,"Cao Cao besieged Gao Gan, Yuan Shao's nephew, through a hard winter.",0],
+["Battle of Xiakou",208,"Sun Quan avenged his father by killing Huang Zu.",0],
+["Liu Bei takes Guiyang",209,"Zhao Fan surrendered to Zhao Yun.",0],
+["Liu Bei takes Lingling",209,"Liu Du surrendered to Liu Bei.",0],
+["Battle of Weinan",211,"Cao Cao crossed the Wei and broke Ma Chao and Han Sui by setting them against each other.",0],
+["Liu Bei seizes Fu",212,"Liu Bei turned on Liu Zhang and seized the city, starting the conquest of Yi.",0],
+["Siege of Jicheng",213,"Ma Chao took Ji, then lost it to a revolt in which Wang Yi fought beside her husband.",0],
+["Battle of Huancheng",214,"Lu Meng and Gan Ning stormed it in a single morning.",0],
+["Battle of Jiangzhou",214,"Zhang Fei captured Yan Yan and spared him.",0],
+["Battle of Yangping",215,"Cao Cao forced the pass and took Hanzhong from Zhang Lu.",0],
+["Battle of Dangqu",215,"Zhang Fei beat Zhang He in the mountains of Ba.",0],
+["Battle of Han River",219,"Zhao Yun's empty camp scared off Cao Cao's army.",0],
+["Battle of Shiting",228,"Lu Xun ambushed Cao Xiu after a faked defection.",0],
+["Battle of Wudu and Yinping",229,"Chen Shi took Wudu and Yinping for Shu.",0],
+["Ziwu Valley campaign",230,"Cao Zhen's invasion of Hanzhong was washed out by a month of rain.",0],
+["Battle of Mumen",231,"Zhang He was killed by an arrow while chasing Zhuge Liang's retreat.",0]
+];
+
+const URLS=window.TK_URLS||[];
+const wiki=q=>'https://en.wikipedia.org/w/index.php?search='+encodeURIComponent(q);
+const ITEMS=[];
+BATTLES.forEach(([l,y,note,w])=>ITEMS.push({id:'B:'+l,t:'B',label:l,y,note,w:!!w,firm:true,url:wiki(l.replace(/,.*$/,''))}));
+/* Deaths: historical people only, with an exact year of death in the records (no approximate years) */
+(window.TK_OFFICERS||[]).forEach(o=>{
+  if(o.k!=='H'||typeof o.d!=='number'||o.dc)return;
+  const late=o.d>234;
+  if(o.d<184||o.d>280||(late&&o.mo==null))return;
+  ITEMS.push({id:'D:'+o.n,t:'D',label:'Death of '+o.n,o,y:o.d,w:o.mo!=null,late,firm:!!o.dn,url:URLS[o.u]||'https://en.wikipedia.org/wiki/Lists_of_people_of_the_Three_Kingdoms'})});
+const WELL=ITEMS.filter(x=>x.w&&!x.late),DEEP=ITEMS.filter(x=>!x.w&&!x.late),LATE=ITEMS.filter(x=>x.late);
+
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+/* Two close together: 1 to 3 years apart, or 2 to 3 if either has a date that could slip a year. The other three sit at least 4 years from everything */
+const closeOK=(a,b)=>{const g=Math.abs(a.y-b.y);return g>=1&&g<=3&&(g>=2||!(a.firm||b.firm))};
+function build(d,last){
+  const r=rng(d*7919+31);
+  const one=(list,ok)=>{const c=list.filter(ok);return c.length?c[Math.floor(r()*c.length)]:null};
+  for(let a=0;a<800;a++){
+    const relax=a>=400,av=x=>relax||last[x.id]==null||d-last[x.id]>=GAP;
+    const A=one(WELL,av);if(!A)continue;
+    const B=one(WELL,x=>x!==A&&av(x)&&closeOK(A,x));if(!B)continue;
+    const set=[A,B],far=x=>set.every(y=>Math.abs(x.y-y.y)>=4);
+    const add=list=>{const x=one(list,x=>!set.includes(x)&&av(x)&&far(x));if(x)set.push(x);return x};
+    /* one day in four, a famous name from after 234 takes one of the spread slots */
+    if(!add(d%4===3&&LATE.length?LATE:WELL)||!add(WELL)||!add(DEEP))continue;
+    const nb=set.filter(x=>x.t==='B').length;if(nb<1||nb>3)continue;
+    set.forEach(x=>{last[x.id]=d});
+    return set.sort((x,y)=>x.y-y.y);
+  }
+  return null;
+}
+function dayItems(day){const last={};let s=null;for(let d=LAUNCH;d<=Math.max(day,LAUNCH);d++)s=build(d,last);return s}
+
+const KEY='an_day'+t;
+let st=get(KEY);
+const byId=new Map(ITEMS.map(x=>[x.id,x]));
+let items;
+if(st&&Array.isArray(st.ids)&&st.ids.every(id=>byId.has(id)))items=st.ids.map(id=>byId.get(id));
+else{items=dayItems(t);st=null}
+if(!st){
+  /* rows start shuffled so no row begins right */
+  const r=rng(t*577+41);let o;do{o=[0,1,2,3,4];for(let i=o.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[o[i],o[j]]=[o[j],o[i]]}}while(o.some((x,k)=>x===k));
+  st={ids:items.map(x=>x.id),ord:o,lock:[0,0,0,0,0],checks:0,wrong:0,over:false};put(KEY,st)}
+
+const PTS=[0,1,0.5,0.25];
+const score=()=>st.lock.reduce((a,c)=>a+PTS[c],0);
+const fmt=n=>Number.isInteger(n)?String(n):String(+n.toFixed(2));
+const SLOT=['Earliest','2nd','3rd','4th','Latest'];
+const sub=x=>x.t==='B'?'Battle':[x.o.f==='Other'?'':x.o.f,x.o.r].filter(Boolean).join(' ')||'Death';
+
+const pips=$('pips');
+for(let i=0;i<PER;i++){const p=document.createElement('div');p.className='pip';pips.append(p)}
+function paint(){[...pips.children].forEach((p,k)=>{const c=st.lock[k];p.className='pip'+(c?[,' ok',' half',' third'][c]:st.over?' bad':'')})}
+
+let msel=-1;
+function render(bad){
+  const b=$('board');b.innerHTML='';
+  for(let k=0;k<PER;k++){const c=st.lock[k],x=items[st.ord[k]],row=document.createElement('div');
+    row.className='mrow'+(c?' ok':st.over?' miss':'')+(bad&&bad.includes(k)?' bad':'');
+    const sl=document.createElement('div');sl.className='slot';const sb=document.createElement('b');sb.textContent=k+1;sl.append(sb,k===0||k===PER-1?SLOT[k]:'');
+    const ob=document.createElement('button');ob.type='button';ob.className='of'+(msel===k?' sel':'');ob.dataset.k=k;
+    const tt=document.createElement('span');tt.className='t';tt.textContent=x.label;
+    const sm=document.createElement('small');sm.textContent=sub(x);
+    if(c||st.over){ob.disabled=true;const y=document.createElement('span');y.className='y';y.textContent=' · '+x.y;sm.append(y)}
+    ob.append(tt,sm);
+    ob.setAttribute('aria-label','Place '+(k+1)+': '+x.label+(c||st.over?', '+x.y:'')+(msel===k?', selected':''));
+    row.append(sl,ob);b.append(row)}
+  const left=CHECKS-st.checks;$('mleft').textContent=st.over?'Finished':left+(left===1?' check left':' checks left');
+  $('check').hidden=st.over;$('mtip').hidden=st.over;paint();
+}
+function swap(a,b){if(a===b||st.lock[a]||st.lock[b]||st.over)return;[st.ord[a],st.ord[b]]=[st.ord[b],st.ord[a]];st.mv=1;msel=-1;$('mfb').textContent='';put(KEY,st);render()}
+function tap(k){if(st.lock[k]||st.over)return;if(msel<0){msel=k;render();$('board').querySelector('[data-k="'+k+'"]').focus({preventScroll:true})}else if(msel===k){msel=-1;render()}else swap(msel,k)}
+/* drag one card onto another to swap; a press that ends where it started counts as a tap */
+let drag=null;
+$('board').addEventListener('pointerdown',e=>{const el=e.target.closest('.of');if(!el||el.disabled)return;e.preventDefault();drag={k:+el.dataset.k,el,x:e.clientX,y:e.clientY,moved:false,over:null};el.setPointerCapture(e.pointerId)});
+$('board').addEventListener('pointermove',e=>{if(!drag)return;if(!drag.moved&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){drag.moved=true;drag.el.classList.add('drag')}
+  if(!drag.moved)return;const t2=document.elementFromPoint(e.clientX,e.clientY),el=t2&&t2.closest('.of');const k=el&&!el.disabled?+el.dataset.k:null;
+  if(drag.over!==k){$('board').querySelectorAll('.of.over').forEach(x=>x.classList.remove('over'));if(k!=null&&k!==drag.k)el.classList.add('over');drag.over=k}});
+const endDrag=()=>{if(!drag)return;const d=drag;drag=null;d.el.classList.remove('drag');$('board').querySelectorAll('.of.over').forEach(x=>x.classList.remove('over'));
+  if(!d.moved){tap(d.k);return}if(d.over!=null&&d.over!==d.k)swap(d.k,d.over)};
+$('board').addEventListener('pointerup',endDrag);$('board').addEventListener('pointercancel',()=>{if(drag){drag.el.classList.remove('drag');drag=null}});
+$('board').addEventListener('keydown',e=>{const el=e.target.closest('.of');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();tap(+el.dataset.k)}});
+$('check').addEventListener('click',()=>{
+  if(st.over)return;if(!st.mv){$('mfb').textContent=st.checks?'Swap some of the unlocked cards before checking again.':'Put them in order first. Drag one card onto another, or tap two to swap them.';return}
+  st.mv=0;st.checks++;const bad=[];
+  for(let k=0;k<PER;k++){if(st.lock[k])continue;if(st.ord[k]===k)st.lock[k]=st.checks;else bad.push(k)}
+  st.wrong+=bad.length;msel=-1;
+  const right=st.lock.filter(Boolean).length,left=CHECKS-st.checks;
+  if(!bad.length||!left){
+    st.ord=[0,1,2,3,4];st.over=true;st.score=score();updateStats();put(KEY,st);render();
+    $('mfb').textContent=bad.length?'Out of checks. The right order is shown above.':'All five in order.';finish();return}
+  put(KEY,st);render(bad);
+  $('mfb').innerHTML='';const b1=document.createElement('b');b1.textContent=right+' of 5 in the right place.';$('mfb').append(b1,' Those are locked in. '+left+(left===1?' check left':' checks left')+' for the rest.');
+});
+
+const RANKS=[[5,'Grand historian','Every page in its place on the first try.'],[4,'Court archivist','You know the shape of the age.'],[3,'Keeper of records','The big moments hold no secrets from you.'],[1.5,'Junior scribe','A few years ran together today.'],[0,'Unrolling the first scroll','The annals take time. Come back tomorrow.']];
+function updateStats(){
+  const s=get('an_stats')||{played:0,total:0,streak:0,last:null};
+  if(s.last!==t){s.played++;s.total+=score();s.streak=(s.last===t-1)?s.streak+1:1;s.last=t;put('an_stats',s)}
+  return s;
+}
+function finish(){
+  const n=score();
+  window.tkReport&&tkReport('annals',{score:st.lock.filter(Boolean).length,max:PER,mistakes:st.wrong||0,perfect:st.lock.every(c=>c===1)});
+  const s=updateStats();
+  $('end').hidden=false;paint();
+  $('final').firstChild.nodeValue=fmt(n);
+  const rk=RANKS.find(x=>n>=x[0]);$('rank').textContent=rk[1];$('rankline').textContent=rk[2];
+  $('stPlayed').textContent=s.played;$('stAvg').textContent=(s.total/s.played).toFixed(1);$('stStreak').textContent=s.streak;
+  const list=$('rlist');list.innerHTML='';
+  items.forEach((x,k)=>{const c=st.lock[k];
+    const d=document.createElement('div');d.className='ritem';d.style.setProperty('--c',c?(c===1?'var(--hit)':'var(--gold2)'):'var(--miss)');
+    const h=document.createElement('div');h.className='rh';const b=document.createElement('b');b.textContent=x.y;h.append(b,' · '+(c?['','first check','second check','third check'][c]:'missed'));
+    const s1=document.createElement('div');s1.className='rs';
+    const s2=document.createElement('div');s2.className='rw';const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener';a.textContent='Wikipedia';
+    if(x.t==='B'){s1.textContent=x.label;s2.append(x.note+' Read more on ',a)}
+    else{const o=x.o;s1.textContent=o.n+(o.zh?' '+o.zh:'')+(sub(x)?', '+sub(x):'');s2.append((o.b&&!o.bc?'Born '+o.b+', died '+o.d+'. ':'Died '+o.d+'. ')+(o.src?'Source: '+o.src+' via ':'Source: '),a)}
+    d.append(h,s1,s2);list.append(d)});
+  $('review').hidden=false;
+}
+$('share').addEventListener('click',()=>{
+  const line=st.lock.map(c=>c?['','\u{1F7E9}','\u{1F7E8}','\u{1F7E7}'][c]:'\u{1F7E5}').join('');
+  const text='Annals · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'\n'+fmt(score())+'/5 '+line+'\nthreekingdomsgame.co.uk';
+  const done=()=>$('copied').textContent='Copied. Paste it anywhere.';
+  try{navigator.clipboard.writeText(text).then(done,()=>{$('copied').textContent=text})}catch(e){$('copied').textContent=text}
+});
+function cd(){const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n;$('cd').textContent=Math.floor(m/36e5)+'h '+Math.floor(m%36e5/6e4)+'m'}
+cd();setInterval(cd,30000);
+
+render();if(st.over)finish();
+/* for checking the schedule: window.__annals(day) returns that day's five */
+window.__annals=d=>dayItems(d).map(x=>x.y+' '+x.label);
+})();
+</script>
+
+<script>
+/* New day check: reload when the local date changes, so a tab left open overnight gets the new puzzle */
+(()=>{const d=()=>new Date().toDateString();const start=d();const check=()=>{if(d()!==start)location.reload()};setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()})})();
+</script>
+<script src="support.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d0d6d441d802490a8896d4f5249225a0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

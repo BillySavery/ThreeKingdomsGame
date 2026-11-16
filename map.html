@@ -55,9 +55,15 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .endcard{background:var(--panel);border:1px solid var(--gold);padding:16px 18px;display:grid;gap:10px;text-align:center}
 .endcard h2{font-family:var(--display);font-weight:400;font-size:32px;margin:0;color:var(--gold)}
 .endcard ol{list-style:none;margin:0;padding:0;display:grid;gap:4px;text-align:left;font-size:14px}
-.endcard li{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
-.endcard li span:nth-child(2){color:var(--mute)}
-.endcard li span:last-child{color:var(--gold2);font-weight:700;min-width:44px;text-align:right}
+.endcard li{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:6px 4px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;cursor:pointer}
+.endcard li .num{width:22px;height:22px;border-radius:50%;background:#d9a441;color:#14100d;font-weight:700;font-size:12px;display:grid;place-items:center;border:1.5px solid #14100d}
+.endcard li .km{color:var(--mute)}
+.endcard li .pt{color:var(--gold2);font-weight:700;min-width:44px;text-align:right}
+.endcard li.on{background:rgba(217,164,65,.14)}
+.endcard li:hover{background:rgba(217,164,65,.08)}
+.endcard .tip{font-size:12px;color:var(--mute);margin:0}
+svg.focus .res:not(.on){opacity:.15}
+.res{cursor:pointer;transition:opacity .2s}
 .nextin{font-size:13px;color:var(--mute);letter-spacing:.06em;align-self:center}
 .rules{font-size:13px;color:var(--mute);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
 .rules b{color:var(--paper)}
@@ -375,13 +381,15 @@ const t=today(),mode=modeOf(t),M=MODES[mode],todays=dayIds(t),TG=targetsFor(mode
 let S=store.get('day'+t,null);
 if(!S||S.ids.join()!==todays.join()||(S.mode||'battle')!==mode)S={mode,ids:todays,guesses:[],round:0,done:false};
 const nearest=(g,T)=>{let b=null;T.pts.forEach((p,i)=>{const d=km(g,p);if(!b||d<b.d)b={d,i}});return b};
-const circle=T=>{if(T.r>0)for(const [lo,la] of T.pts)el('circle',{cx:X(lo),cy:Y(la),r:T.r/111*SC,fill:'#d9a441','fill-opacity':.16,stroke:'#d9a441','stroke-width':1.5,'stroke-dasharray':'4 3','vector-effect':'non-scaling-stroke'},layer)};
-const answer=(g,T,w)=>{const a=T.pts[g.i||0];circle(T);el('line',{x1:X(g.lon),y1:Y(g.lat),x2:X(a[0]),y2:Y(a[1]),stroke:'#14100d','stroke-width':w,'stroke-dasharray':w>1.5?'6 5':'5 4','vector-effect':'non-scaling-stroke'},layer);pin(g.lon,g.lat,'guess');for(const [lo,la] of T.pts)pin(lo,la,'answer')};
+const circle=(T,p=layer)=>{if(T.r>0)for(const [lo,la] of T.pts)el('circle',{cx:X(lo),cy:Y(la),r:T.r/111*SC,fill:'#d9a441','fill-opacity':.16,stroke:'#d9a441','stroke-width':1.5,'stroke-dasharray':'4 3','vector-effect':'non-scaling-stroke'},p)};
+const answer=(g,T,w,num)=>{const a=T.pts[g.i||0],p=num?el('g',{class:'res','data-n':num},layer):layer;circle(T,p);el('line',{x1:X(g.lon),y1:Y(g.lat),x2:X(a[0]),y2:Y(a[1]),stroke:'#14100d','stroke-width':w,'stroke-dasharray':w>1.5?'6 5':'5 4','vector-effect':'non-scaling-stroke'},p);pin(g.lon,g.lat,'guess',num,p);for(const [lo,la] of T.pts)pin(lo,la,'answer',num,p);return p};
 let guess=null,phase='aim';
 
-function pin(lo,la,cls){
-  const x=X(lo),y=Y(la),o=el('g',{class:'pinwrap','data-x':x,'data-y':y,transform:pinT(x,y)},layer),g=el('g',{class:'drop'},o);
-  if(cls==='guess'){el('path',{d:`M${x} ${y} l-7 -16 a8 8 0 1 1 14 0 z`,fill:'#c7362b',stroke:'#14100d','stroke-width':1.5},g);el('circle',{cx:x,cy:y-19,r:3,fill:'#efe4cf'},g)}
+function pin(lo,la,cls,num,p=layer){
+  const x=X(lo),y=Y(la),o=el('g',{class:'pinwrap','data-x':x,'data-y':y,transform:pinT(x,y)},p),g=el('g',{class:'drop'},o);
+  const tx=(t,cy,fill,fs)=>{const e=el('text',{x,y:cy,fill,'font-size':fs,'font-weight':700,'text-anchor':'middle','dominant-baseline':'central','font-family':'system-ui,sans-serif','pointer-events':'none'},g);e.textContent=t};
+  if(cls==='guess'){el('path',{d:`M${x} ${y} l-7 -16 a8 8 0 1 1 14 0 z`,fill:'#c7362b',stroke:'#14100d','stroke-width':1.5},g);if(num)tx(num,y-19.5,'#efe4cf',10);else el('circle',{cx:x,cy:y-19,r:3,fill:'#efe4cf'},g)}
+  else if(num){el('circle',{cx:x,cy:y,r:11,fill:'#d9a441',stroke:'#14100d','stroke-width':2},g);tx(num,y+.5,'#14100d',13)}
   else{el('circle',{cx:x,cy:y,r:9,fill:'#d9a441',stroke:'#14100d','stroke-width':2},g);el('circle',{cx:x,cy:y,r:3,fill:'#14100d'},g)}
   return g;
 }
@@ -442,13 +450,17 @@ function finish(){
   $('ctx').hidden=true;
   $('bname').textContent=mode==='campaign'?CAMPAIGNS[S.ids[0]][0]:mode==='places'?'Today’s places':'Today’s battles';
   $('bhint').textContent='Every pin, and where each '+M.what+' really was.';$('rnd').textContent='Done';$('ofn').hidden=true;
-  S.guesses.forEach((g,i)=>answer(g,TG[i],1.5));
+  const groups=S.guesses.map((g,i)=>answer(g,TG[i],1.5,i+1));
   const tot=S.guesses.reduce((a,g)=>a+g.p,0),f=tot/MAX;
   window.tkReport&&tkReport('battle-map',{score:tot,max:MAX,mistakes:S.guesses.filter(g=>band(g.p)!=='g').length,hint:S.guesses.some(g=>g.t),perfect:S.guesses.every(g=>band(g.p)==='g')});
   $('endT').textContent=f>=.8?'Master strategist':f>=.5?'Seasoned general':f>=.24?'Field officer':'Lost in the passes';
   $('summary').innerHTML='';
-  S.guesses.forEach((g,i)=>{const T=TG[i],li=document.createElement('li');li.innerHTML='<span></span><span></span><span></span>';
-    li.children[0].textContent=T.name+(g.t?' ⛰️':'');li.children[1].textContent=T.r>0&&g.d<=T.r?'On target':Math.round(g.d).toLocaleString('en-GB')+' km';li.children[2].textContent=g.p;$('summary').appendChild(li)});
+  let sel=-1;const lis=[];
+  const pick=i=>{sel=sel===i?-1:i;svg.classList.toggle('focus',sel>=0);groups.forEach((gr,j)=>gr.classList.toggle('on',j===sel));lis.forEach((li,j)=>li.classList.toggle('on',j===sel));if(sel>=0)layer.appendChild(groups[sel])};
+  S.guesses.forEach((g,i)=>{const T=TG[i],li=document.createElement('li');li.innerHTML='<span class="num"></span><span></span><span class="km"></span><span class="pt"></span>';
+    li.children[0].textContent=i+1;li.children[1].textContent=T.name+(g.t?' ⛰️':'');li.children[2].textContent=T.r>0&&g.d<=T.r?'On target':Math.round(g.d).toLocaleString('en-GB')+' km';li.children[3].textContent=g.p;
+    li.onclick=()=>pick(i);groups[i].addEventListener('click',e=>{e.stopPropagation();if(moved){moved=false;return}pick(i)});lis.push(li);$('summary').appendChild(li)});
+  if(!$('summary').nextElementSibling||!$('summary').nextElementSibling.classList.contains('tip')){const tp=document.createElement('p');tp.className='tip';tp.textContent='Tap a row or a pin to pick out that '+M.what+' on the map.';$('summary').after(tp)}
   $('end').hidden=false;
 }
 $('share').onclick=()=>{

@@ -363,6 +363,24 @@ if(t>=ADD2_DAY)OFF.forEach((o,i)=>{(ADD2_TAGS[OFF0[i]]||[]).forEach(c=>{if(!o.t.
 const MAIN_DAY=34,MAIN={'Guan Yu':'SHU','Jiang Wei':'SHU','Wang Ping':'SHU','Huang Quan':'SHU','Meng Da':'SHU','Mi Fang':'SHU','Xu Shu':'SHU'};
 if(t>=36)OFF.forEach((o,i)=>{const db=TKDB(o.n);(HAND3[OFF0[i]]||[]).forEach(c=>o.t.push(c));if(db)PER.forEach(([c,f])=>{if(f(db,OFF0[i]))o.t.push(c)})});
 if(t>=MAIN_DAY)OFF.forEach((o,i)=>{const m=MAIN[OFF0[i]];if(m)o.t=o.t.filter(x=>!['WEI','SHU','WU'].includes(x)||x===m)});
+/* Corrections from 17 Nov 2026 after player feedback. They count for scoring straight away, so today's board marks them right,
+   but boards are only built with them from 18 Nov (FIX_DAY), so the board already in play today does not change.
+   Died in battle (novel): Xu Huang shot by Meng Da at Xincheng (Romance ch. 94), Zhang Liao wounded by Ding Feng's arrow and died (ch. 86),
+   Gao Lan speared by Zhao Yun while chasing Liu Bei at Rangshan (ch. 31). The records give none of the three a battle death, so not the history square.
+   Hefei (215): Taishi Ci died in 206 (Sanguozhi vol. 49), or at the first Hefei campaign in the novel (ch. 53), so not at Hefei in 215.
+   Jiangxia (208): Gan Ning had just defected from Huang Zu and fought there (vol. 55).  Xiangyang (191): Cai Mao fought Sun Jian (ch. 7).
+   Yan Province (194): Yu Jin, Li Dian and Yue Jin fought Lü Bu there (vols. 17, 18); Zhang Liao and Gao Shun fight for Lü Bu at Puyang (ch. 11 and 12).
+   Invasion of Xu (193): Guan Yu, Zhang Fei and Zhao Yun come with Liu Bei to relieve Tao Qian (ch. 11).  Campaign against Yuan Shu: Guan Yu kills Xun Zheng (ch. 14).
+   Coalition: Li Dian and Yue Jin are with Cao Cao (ch. 5).  Yellow Turbans: Zhang He enlisted against them (vol. 17); Liao Hua was one (ch. 27).
+   Served Cao Cao: Zhang Fei was made a general by Cao Cao in Xu, the same stay that counts for Liu Bei (vol. 36).
+   Served Yuan Shao: Lü Bu fought Zhang Yan for him in 192 (vol. 7); Liu Bei led Yuan Shao's troops in Runan in 200 (vol. 32).
+   Served Liu Biao: Liu Bei held Xinye for him (vol. 32). */
+const FIX_DAY=48,PRE_T=OFF.map(o=>o.t.slice());
+const FIX_ADD={DB:'Xu Huang,Zhang Liao,Gao Lan',JX:'Gan Ning',XY:'Cai Mao',YP:'Yu Jin,Li Dian,Yue Jin,Zhang Liao,Gao Shun',XU:'Guan Yu,Zhang Fei,Zhao Yun',CY:'Guan Yu',CO:'Li Dian,Yue Jin',YT:'Zhang He,Liao Hua',SCC:'Zhang Fei',YS:'Lu Bu,Liu Bei',LBI:'Liu Bei'};
+const FIX_DEL={HF:'Taishi Ci'};
+const offIdx=n=>{let i=OFF.findIndex(o=>TKN(o.n)===TKN(n));if(i<0)i=OFF0.findIndex(x=>TKN(x)===TKN(n));if(i<0)throw 'Muster fix: '+n;return i};
+Object.entries(FIX_ADD).forEach(([c,l])=>l.split(',').forEach(n=>{const o=OFF[offIdx(n)];if(!o.t.includes(c))o.t.push(c)}));
+Object.entries(FIX_DEL).forEach(([c,l])=>l.split(',').forEach(n=>{const o=OFF[offIdx(n)];o.t=o.t.filter(x=>x!==c)}));
 
 function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
 function shuf(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -377,7 +395,7 @@ const bfits=(o,sq)=>buildTags(o).includes(sq);
    Earlier boards are built the old way so they stay exactly as they were. */
 const FAIR_DAY=36,MIN_COVER=3;
 function buildFair(d){
-  buildTags=o=>OFF[o].t;
+  buildTags=d<FIX_DAY?(o=>PRE_T[o]):(o=>OFF[o].t);
   const r=rng(d*7919+1234),all=OFF.map((_,i)=>i);
   const pool=c=>all.filter(i=>bfits(i,c)).length;
   for(let tries=0;tries<2000;tries++){

@@ -41,7 +41,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .solved.new{animation:drop .45s ease-out}
 @keyframes drop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.tile{min-height:72px;padding:6px;border:0;background:var(--tile);color:var(--tileTx);font-family:var(--ui);font-weight:700;font-size:clamp(12px,3.3vw,15px);line-height:1.15;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;overflow-wrap:anywhere;transition:transform .1s,background .15s}
+.tile{min-height:72px;padding:6px;border:0;background:var(--tile);color:var(--tileTx);font-family:var(--ui);font-weight:700;font-size:clamp(12px,3.3vw,15px);line-height:1.15;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;overflow-wrap:normal;transition:transform .1s,background .15s}
 .tile:active{transform:scale(.96)}
 .tile[aria-pressed="true"]{background:var(--tileSel);color:var(--paper)}
 .grid.shake .tile[aria-pressed="true"]{animation:shake .4s}
@@ -290,7 +290,88 @@ const PUZZLES=[
 [["Hidden number",["Three Visits","Five Passes","Seven Captures","Eighteen Lords"],"Three, five, seven and eighteen."],
  ["Hidden direction",["East Wind","Southern Campaign","Northern Expeditions","Xiliang"],"Xi means west."],
  ["Hidden colour",["Red Cliffs","Yellow Turbans","White Emperor City","Black Mountain"],"Black Mountain was Zhang Yan's bandit army."],
- ["Animal in the name",["Green Dragon Blade","Serpent Spear","Bronze Sparrow","Tiger Fool"],"Green and bronze are colours too, but only the animals make four."]]
+ ["Animal in the name",["Green Dragon Blade","Serpent Spear","Bronze Sparrow","Tiger Fool"],"Green and bronze are colours too, but only the animals make four."]],
+// Batch added 18 Nov 2026
+[["Dong Zhuo's story",["Burning Luoyang","Mei Fortress","Navel Lamp","Deposing Emperor Shao"],"He burned Luoyang on the way west, hoarded thirty years of grain at Mei, deposed the young emperor, and after he was killed a guard lit a wick in his fat belly that burned for days."],
+ ["Gongsun Zan's story",["White Horse Volunteers","Yijing Fortress","Battle of Jieqiao","Killing Liu Yu"],"His elite white horse riders and his last stand in the towers of Yijing. He killed the governor Liu Yu and lost to Yuan Shao at Jieqiao."],
+ ["Yuan Shu's story",["Zhong Dynasty","Honey Water","Shouchun","Battle of Fengqiu"],"He crowned himself emperor of Zhong at Shouchun, was beaten by Cao Cao at Fengqiu, and died asking for honey water that nobody had."],
+ ["Lu Bu's story",["Slave of Three Surnames","Killed Ding Yuan","White Gate Tower","Shot the Halberd"],"Zhang Fei's insult, the foster father he murdered, the tower at Xiapi where he was executed, and the halberd shot that saved Liu Bei from Ji Ling."]],
+[["Yuan Shao's generals",["Yan Liang","Wen Chou","Gao Lan","Chunyu Qiong"],"Two killed in the Guandu campaign, one who defected, and the man guarding the grain at Wuchao."],
+ ["Liu Biao's officers",["Huang Zu","Cai Mao","Zhang Yun","Wen Pin"],"Huang Zu held Jiangxia, and Cai Mao and Zhang Yun ran the fleet in the novel. Wen Pin later became a Wei general."],
+ ["Zhang Lu's side",["Yang Ren","Yang Ang","Yan Pu","Zhang Wei"],"Zhang Lu's generals, his adviser Yan Pu, and his younger brother, who held Yangping Pass against Cao Cao."],
+ ["Lu Bu's Eight Strong Generals (novel)",["Zang Ba","Hao Meng","Cao Xing","Cheng Lian"],"Four of the eight. Cao Xing is the archer who shot out Xiahou Dun's eye."]],
+[["Fought at a pass",["Hulao Pass","Tong Pass","Jiameng Pass","Yangping Pass"],"Lu Bu against the coalition, Ma Chao against Cao Cao, Ma Chao against Zhang Fei in the novel, and Cao Cao against Zhang Lu."],
+ ["Fought at a mountain",["Dingjun Mountain","Mount Qi","White Wolf Mountain","Mount Tiandang"],"Xiahou Yuan's death, Zhuge Liang's campaigns, Cao Cao against the Wuhuan, and Huang Zhong's capture of Tiandang in the novel."],
+ ["Sieges of a walled city",["Fan Castle","Xiapi","Hefei","Chencang"],"Guan Yu at Fan, Cao Cao against Lu Bu, Sun Quan against Zhang Liao, and Zhuge Liang against Hao Zhao."],
+ ["Fought at a crossing",["Guandu","Yanjin","Xiaoyao Ford","Changban Bridge"],"Guandu means the Guan ford and Yanjin the Yan ford, so both are named for river crossings, like Xiaoyao Ford and the bridge Zhang Fei held at Changban."]],
+[["Shu courtesy names",["Xiaozhi","Youchang","Wenchang","Gongyan"],"Fa Zheng, Ma Su, Wei Yan and Jiang Wan."],
+ ["Wei courtesy names",["Wenruo","Gongda","Wenhe","Zihuan"],"Xun Yu, Xun You, Jia Xu and Cao Pi."],
+ ["Wu courtesy names",["Ziming","Zijing","Xingba","Ziyi"],"Lu Meng, Lu Su, Gan Ning and Taishi Ci."],
+ ["Warlord courtesy names",["Fengxian","Benchu","Gonglu","Jingsheng"],"Lu Bu, Yuan Shao, Yuan Shu and Liu Biao."]],
+[["Given name spelled Yi",["Sima Yi","Fei Yi","Wu Yi","Sun Yi"],"Sima Yi, Shu's Fei Yi and Wu Yi, and Sun Quan's younger brother Sun Yi. Same spelling, not always the same character."],
+ ["Given name spelled Yun",["Zhao Yun","Wang Yun","Dong Yun","Zhang Yun"],"Zhao Yun, the minister who plotted against Dong Zhuo, Shu's Dong Yun, and Liu Biao's naval commander in the novel."],
+ ["Given name spelled Zhong",["Huang Zhong","Ma Zhong","Zhao Zhong","Wang Zhong"],"All four share the same character, meaning loyal. Zhao Zhong was one of the Ten Attendants."],
+ ["Given name spelled Xiu",["Cao Xiu","Zhang Xiu","Kong Xiu","Ma Xiu"],"Wei's Cao Xiu, the lord of Wancheng, a gate guard Guan Yu killed in the novel, and Ma Teng's son."]],
+[["Died in the Guandu campaign",["Yan Liang","Chunyu Qiong","Tian Feng","Ju Shou"],"Yan Liang fell at Baima. Chunyu Qiong was caught at Wuchao, Ju Shou was killed trying to escape back north, and Yuan Shao had Tian Feng executed after the defeat."],
+ ["Died in the Fan Castle campaign",["Guan Yu","Guan Ping","Zhao Lei","Pang De"],"Pang De refused to surrender to Guan Yu, then Guan Yu, his son and his officer Zhao Lei were caught by Wu."],
+ ["Died in the Yiling campaign",["Feng Xi","Zhang Nan","Shamoke","Ma Liang"],"Shu's commanders and allies lost when Lu Xun burned Liu Bei's camps in 222."],
+ ["Died during Zhuge Liang's northern campaigns",["Wang Shuang","Ma Su","Zhang He","Zhuge Liang"],"Wang Shuang fell chasing the retreat in 228 and Ma Su died after losing Jieting. Zhang He was shot at Mumen. Zhuge Liang died at Wuzhang."]],
+[["Cao Cao's sons",["Cao Pi","Cao Zhi","Cao Ang","Cao Chong"],"The emperor, the poet, the eldest who died at Wancheng, and the boy who weighed the elephant."],
+ ["Sun Quan's sons",["Sun Deng","Sun He","Sun Ba","Sun Liang"],"Two crown princes, the brother who fought Sun He for the succession, and the boy who became emperor."],
+ ["Married a Sun",["Liu Bei","Lu Xun","Quan Cong","Zhu Ju"],"Liu Bei married Sun Shangxiang, Lu Xun married Sun Ce's daughter, and Quan Cong and Zhu Ju married Sun Quan's daughters."],
+ ["Married a daughter of Cao Cao",["Emperor Xian","Xiahou Mao","Xun Yun","He Yan"],"Emperor Xian took three of them as consorts. He Yan was also Cao Cao's stepson, but not his son."]],
+[["Pang Tong",["Chained Ships","Leiyang County","Liu Bei's White Horse","Fledgling Phoenix"],"In the novel he talked Cao Cao into chaining his fleet together. He neglected his first post as a county magistrate, and Liu Bei lent him a horse just before he was shot."],
+ ["Xu Shu",["Forged Letter","Alias Shan Fu","Never Offered a Plan","Recommended Zhuge Liang"],"In the novel Cao Cao faked his mother's handwriting to lure him away from Liu Bei. Once there he swore never to give Cao Cao a single scheme."],
+ ["Lu Su",["Granary Gift","Couch Plan","Lending Jing","Single Blade Meeting"],"He gave Zhou Yu a whole granary of grain and laid out his strategy to Sun Quan sitting on a shared couch. He lent Jing to Liu Bei and faced Guan Yu at the blade meeting."],
+ ["Huang Gai",["Bitter Meat Ruse","Fire Ships","Fell into the River","Fake Surrender Letter"],"At Red Cliffs he offered to defect to Cao Cao and led the burning boats in. Hit by an arrow, he fell in the river and was saved by Han Dang."]],
+[["Cao family generals",["Cao Ren","Cao Hong","Cao Chun","Cao Xiu"],"Cao Cao's own clansmen."],
+ ["Came over from Lu Bu",["Zhang Liao","Zang Ba","Song Xian","Wei Xu"],"Zhang Liao and Zang Ba joined after Xiapi fell, and Song Xian and Wei Xu betrayed Lu Bu to get there."],
+ ["Came over from Yuan Shao",["Zhang He","Gao Lan","Xu You","Chen Lin"],"Zhang He and Gao Lan defected at Guandu, Xu You gave away Wuchao, and Chen Lin, who wrote the insulting proclamation against Cao Cao, was forgiven."],
+ ["Came over when Jing surrendered",["Wen Pin","Kuai Yue","Cai Mao","Wang Can"],"Liu Biao's men who went over to Cao Cao with Liu Cong in 208."]],
+[["Wu's Zhu family",["Zhu Ran","Zhu Huan","Zhu Zhi","Zhu Ju"],"Zhu Zhi served Sun Jian, Zhu Ran was his adopted son, and Zhu Huan and Zhu Ju came from the Zhu clan of Wu."],
+ ["Sun Quan's advisers",["Zhang Zhao","Gu Yong","Kan Ze","Zhang Hong"],"Civil officials of Wu, two of them called the Two Zhangs."],
+ ["Twelve Tigers of Jiangdong",["Jiang Qin","Chen Wu","Dong Xi","Xu Sheng"],"Four of the twelve generals Chen Shou put in one chapter of the Wu records."],
+ ["Beaten by Sun Ce",["Liu Yao","Wang Lang","Yan Baihu","Xu Gong"],"Sun Ce took Jiangdong from them. Xu Gong's retainers later took revenge and wounded Sun Ce fatally."]],
+[["Drafted Shu's legal code",["Zhuge Liang","Liu Ba","Yi Ji","Li Yan"],"Four of the five men who wrote the Shu Ke. The fifth was Fa Zheng."],
+ ["Invited Liu Bei into Yi",["Zhang Song","Fa Zheng","Meng Da","Liu Zhang"],"Zhang Song and Fa Zheng plotted it and Meng Da brought troops. Liu Zhang himself sent the invitation."],
+ ["Fought Liu Bei for Yi",["Zhang Ren","Liu Gui","Leng Bao","Deng Xian"],"They were sent to hold Fu against Liu Bei."],
+ ["Shu scholars",["Qiao Zhou","Xi Zheng","Chen Shou","Du Qiong"],"Chen Shou studied under Qiao Zhou and went on to write the Records of the Three Kingdoms."]],
+[["Wei against Wu",["Ruxu","Hefei","Dongkou","Shiting"],"The long fight along the Yangtze and Huai rivers."],
+ ["Wei against Shu",["Dingjun Mountain","Jieting","Han River","Mumen"],"Huang Zhong and Zhao Yun in 219, then Zhuge Liang's campaigns."],
+ ["Cao Cao against Yuan Shao",["Baima","Yanjin","Guandu","Cangting"],"The campaign of 200 and the follow up victory at Cangting in 201."],
+ ["Cao Cao against Lu Bu",["Puyang","Dingtao","Juye","Xiapi"],"Lu Bu seized Yan province in 194, lost it in 195, and fell at Xiapi."]],
+[["From Zhuo commandery",["Liu Bei","Zhang Fei","Jian Yong","Lu Zhi"],"Liu Bei and Zhang Fei grew up in this commandery. So did Liu Bei's childhood friend Jian Yong and his teacher Lu Zhi."],
+ ["From Xiangyang",["Pang Tong","Ma Liang","Xiang Lang","Cai Mao"],"Jing province's leading city produced men for both sides."],
+ ["From Liang province",["Dong Zhuo","Jia Xu","Jiang Wei","Han Sui"],"The far northwest: Longxi, Wuwei, Tianshui and Jincheng."],
+ ["From Wu commandery",["Lu Xun","Gu Yong","Zhu Huan","Sun Jian"],"Sun Jian came from Fuchun in Wu commandery, home also of the great Lu, Gu and Zhu clans."]],
+[["Taishi Ci",["Rescued Kong Rong","Torn Petition","Box of Angelica","Shenting Duel"],"He broke the siege of Beihai, tore up a rival's petition at the capital, was sent a box of angelica by Cao Cao as a hint to come over, and fought Sun Ce at Shenting."],
+ ["Dian Wei",["Twin Halberds","Lifted the Banner Pole","Held the Gate at Wancheng","Killed Li Yong"],"He made his name avenging a friend by killing Li Yong, lifted a banner pole nobody else could, and died holding the gate at Wancheng."],
+ ["Xu Zhu",["Dragged Oxen by the Tail","Saddle Shield","Stripped for the Duel","Coughed Blood at Cao's Death"],"He dragged oxen back by their tails, held a saddle over Cao Cao against arrows on the Wei river, fought Ma Chao bare chested in the novel, and wept blood when Cao Cao died."],
+ ["Zhou Tai",["Xuancheng Rescue","Twelve Wounds","Ruxu Banquet","Sun Quan's Parasol"],"He saved Sun Quan at Xuancheng taking twelve wounds, and at Ruxu Sun Quan counted his scars at a banquet and gave him his own parasol."]],
+[["Cao Cao's advisers",["Xun You","Cheng Yu","Jia Xu","Liu Ye"],"Strategists who served Cao Cao."],
+ ["Sun Quan's advisers",["Zhang Zhao","Zhang Hong","Gu Yong","Bu Zhi"],"Wu's senior civil officials."],
+ ["Liu Bei's advisers",["Fa Zheng","Xu Shu","Jian Yong","Sun Qian"],"Two strategists and two of his oldest companions."],
+ ["Yuan Shao's advisers",["Ju Shou","Tian Feng","Feng Ji","Xin Ping"],"Yuan Shao's quarrelling council."]],
+[["Died in 200",["Sun Ce","Yan Liang","Wen Chou","Dong Cheng"],"Sun Ce from his wounds, two generals in the Guandu campaign, and Dong Cheng executed over the girdle edict."],
+ ["Died in 208",["Liu Biao","Kong Rong","Huang Zu","Cao Chong"],"The year of Red Cliffs."],
+ ["Died in 207",["Guo Jia","Yuan Shang","Yuan Xi","Tadun"],"Cao Cao's northern campaign: Tadun fell at White Wolf Mountain, the Yuan brothers fled to Liaodong and were killed there, and Guo Jia died of illness on the way home."],
+ ["Died in 192",["Dong Zhuo","Wang Yun","Cai Yong","Bao Xin"],"Dong Zhuo was killed, Wang Yun had Cai Yong put to death, Li Jue's men killed Wang Yun, and Bao Xin fell fighting the Yellow Turbans."]],
+[["Emperors of Wu",["Sun Quan","Sun Liang","Sun Xiu","Sun Hao"],"All four rulers of Wu as an empire."],
+ ["Emperors of Wei",["Cao Pi","Cao Rui","Cao Fang","Cao Huan"],"Four of Wei's five emperors."],
+ ["Emperors of the Han",["Emperor Huan","Emperor Ling","Emperor Shao","Emperor Xian"],"The last four Eastern Han emperors."],
+ ["Named emperor after death",["Cao Cao","Sima Yi","Sima Zhao","Sun Jian"],"None of them took the throne. Their sons and grandsons gave them the title later."]],
+[["Rebelled in Nanzhong",["Yong Kai","Gao Ding","Zhu Bao","Meng Huo"],"The southern revolt Zhuge Liang put down in 225."],
+ ["Kept Nanzhong for Shu",["Li Hui","Ma Zhong","Zhang Ni","Lu Kai"],"Shu's governors and generals in the south. Lu Kai held Yongchang through the revolt."],
+ ["Commanded from Hanzhong",["Wei Yan","Wu Yi","Wang Ping","Jiang Wan"],"Shu's northern gate. Wei Yan held it from 219, Wu Yi and Jiang Wan after Zhuge Liang, and Wang Ping beat Cao Shuang there in 244."],
+ ["Shu envoys to Wu",["Deng Zhi","Fei Yi","Zong Yu","Chen Zhen"],"The men sent to keep the alliance alive after Yiling."]],
+[["Peoples beyond Han rule",["Wuhuan","Xianbei","Qiang","Shanyue"],"Northern horsemen, western highlanders and the hill peoples Wu fought for decades."],
+ ["Non Han leaders",["Tadun","Kebineng","Meng Huo","Shamoke"],"A chief from the northeast, a khan of the steppe, the Nanman king and the Wuling chieftain who fought for Liu Bei."],
+ ["Ruled Liaodong",["Gongsun Du","Gongsun Kang","Gongsun Gong","Gongsun Yuan"],"Three generations of the Gongsun family in the far northeast, until Sima Yi ended them in 238."],
+ ["Fought the northern tribes",["Gongsun Zan","Tian Yu","Cao Zhang","Cao Cao"],"Gongsun Zan and Cao Zhang fought the northeastern horsemen, Tian Yu held the steppe frontier, and Cao Cao won at White Wolf Mountain."]],
+[["Sun Quan",["Leapt the Broken Bridge","Cut the Desk","Tiger Hunting","Boat Full of Arrows"],"He jumped his horse over a broken bridge at Xiaoyao Ford, cut his desk in half to end the Red Cliffs debate, loved hunting tigers, and turned his arrow filled boat around at Ruxu."],
+ ["Lu Xun",["Stone Sentinel Maze","Burned the Linked Camps","Shiting Victory","Rebuked to Death"],"He burned the Shu camps at Yiling and was trapped in Zhuge Liang's maze in the novel. He beat Cao Xiu at Shiting and died after angry letters from Sun Quan."],
+ ["Sun Shangxiang",["Hundred Armed Maids","Married Liu Bei","Tried to Take Adou","Leapt into the River"],"Her maids carried blades, Zhao Yun stopped her taking Liu Shan to Wu, and in the novel she threw herself into the river on hearing Liu Bei had died."],
+ ["Ling Tong",["Feud with Gan Ning","Banquet Sword Dance","Last of His Guards","Took His Father's Command"],"Gan Ning killed his father, he drew his sword at a banquet, and at Xiaoyao Ford he fought on after all his men were killed."]]
 ];
 
 const $=id=>document.getElementById(id);
@@ -302,10 +383,19 @@ function seeded(s){return()=>{s=(s*1103515245+12345)%2147483648;return s/2147483
 const FIRST=15;
 const shuffleSeeded=(n,seed)=>{const r=seeded(seed),idx=[...Array(n).keys()];for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return idx};
 const ORDER=shuffleSeeded(FIRST,208);
-const CYCLE=shuffleSeeded(PUZZLES.length,4545);
+const OLD=45,CYCLE=shuffleSeeded(OLD,4545);
 // 26 Oct to 1 Nov 2026 (days 25 to 31) reshuffled towards history; the displaced puzzles follow later
 const RESCHED={28:32,29:30,30:31,31:42,32:28,42:29};
-const dailyIdx=()=>{const t=today();if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<PUZZLES.length-FIRST?FIRST+k:CYCLE[(k-(PUZZLES.length-FIRST))%PUZZLES.length]};
+// The first 45 puzzles keep their original days (up to 17 Nov 2026). The 18 Nov batch runs in order from day 48.
+// After that, each day takes whichever puzzle was shown longest ago, so a repeat is always a full bank old.
+const legacy=t=>{if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<OLD-FIRST?FIRST+k:CYCLE[(k-(OLD-FIRST))%OLD]};
+const NEWDAY=48,NEWEND=NEWDAY+PUZZLES.length-OLD;
+let lruMemo=null;
+const pickFor=t=>{if(t<NEWDAY)return legacy(t);if(t<NEWEND)return OLD+(t-NEWDAY);
+  if(!lruMemo){const last=new Array(PUZZLES.length).fill(-1);for(let d=0;d<NEWEND;d++)last[pickFor(d)]=d;lruMemo={last,day:NEWEND-1,picks:{}}}
+  const m=lruMemo;while(m.day<t){m.day++;let best=0;for(let i=1;i<m.last.length;i++)if(m.last[i]<m.last[best])best=i;m.last[best]=m.day;m.picks[m.day]=best}
+  return m.picks[t]};
+const dailyIdx=()=>pickFor(today());
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 
 let G=null,freeQ=[];
@@ -339,12 +429,16 @@ function render(newLv){
   const hinted=G.hint!=null&&!G.solved.includes(G.hint)?hintTiles():[];
   G.order.filter(x=>!solvedItems.has(x)).forEach(x=>{const b=document.createElement('button');b.className='tile'+(hinted.includes(x)?' hinted':'');b.textContent=x;b.setAttribute('aria-pressed',G.sel.has(x));
     b.onclick=()=>{if(G.over)return;if(G.sel.has(x))G.sel.delete(x);else if(G.sel.size<4)G.sel.add(x);render()};gr.appendChild(b)});
+  fitTiles();
   $('lives').innerHTML='Mistakes left '+Array.from({length:LIVES},(_,i)=>`<span class="dot${i<LIVES-G.mistakes?'':' lost'}"></span>`).join('');
   $('hint').hidden=G.over||G.hint!=null||G.mistakes<HINT_AT;
   $('submit').disabled=G.sel.size!==4;$('clear').disabled=!G.sel.size;
   const st=store.get('stats',{played:0,won:0,perfect:0});
   $('stats').innerHTML=`<div>Played<b>${st.played}</b></div><div>Solved<b>${st.won}</b></div><div>Perfect<b>${st.perfect}</b></div>`;
 }
+// Shrink a tile's text until its longest word fits, so words never split mid word on small phones
+function fitTiles(){document.querySelectorAll('#grid .tile').forEach(b=>{b.style.fontSize='';b.style.overflowWrap='';let fs=parseFloat(getComputedStyle(b).fontSize);while(b.scrollWidth>b.clientWidth&&fs>9){fs-=.5;b.style.fontSize=fs+'px'}if(b.scrollWidth>b.clientWidth)b.style.overflowWrap='anywhere'})}
+addEventListener('resize',()=>{clearTimeout(fitTiles.t);fitTiles.t=setTimeout(fitTiles,150)});
 function save(){if(G.mode==='daily')store.set('day'+today(),{pi:G.pi,solved:G.solved,mistakes:G.mistakes,history:G.history,tried:[...G.tried],over:G.over,hint:G.hint})}
 // Hint: once per game, after HINT_AT mistakes. Shows three of the four tiles in the easiest unsolved banner.
 function hintTiles(){return G.groups[G.hint].items.slice(0,3)}

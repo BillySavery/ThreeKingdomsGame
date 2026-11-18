@@ -190,8 +190,57 @@ const BOARDS=[
 ];
 // Drop the board I can't verify cleanly
 BOARDS.splice(BOARDS.findIndex(b=>b.custom==='dw2'),1);
+// New boards added 18 Nov 2026. "db" boards take their answers straight from the shared officer database (historical people only)
+const NEWB=[
+{q:"Name 10 of the games on this website",sub:"No cheating by going back to the home page. Daily games and the bigger games we link to both count.",src:"Three Kingdoms Daily",site:1,a:["Full Ranks","Mystery Officer","Four Banners","Battle Map","Novel or History","Rise or Fall","Muster","Courtesy Call","Annals","Who Said It","Nine Provinces","Daily Fact","Generals of the Three Kingdoms","Warlords of the Three Kingdoms"]},
+{q:"Officers at the Battle of Red Cliffs",sub:"Either side, in the history or the novel. Find any 10.",src:"History and novel",a:["Liu Bei","Guan Yu","Zhang Fei","Zhao Yun","Zhuge Liang","Pang Tong","Xu Shu","Liu Qi","Cao Cao","Xu Zhu","Zhang Liao","Xu Huang","Yu Jin","Cheng Yu","Cai Mao","Zhang Yun","Wen Pin","Jiang Gan","Cai Zhong","Cai He","Zhou Yu","Lu Su","Lu Meng","Gan Ning","Huang Gai","Cheng Pu","Han Dang","Zhou Tai","Ling Tong","Ding Feng","Xu Sheng","Jiang Qin","Lu Fan","Kan Ze"]},
+{q:"Officers at the Battle of Guandu",sub:"Cao Cao against Yuan Shao in 200, including Baima and Yan Ford. Either side, history or novel.",src:"History and novel",a:["Cao Cao","Cao Ren","Cao Hong","Xu Zhu","Zhang Liao","Xu Huang","Yu Jin","Xun You","Jia Xu","Li Dian","Yue Jin","Guan Yu","Liu Bei","Shi Huan","Yuan Shao","Yan Liang","Wen Chou","Ju Shou","Shen Pei","Guo Tu","Xu You","Zhang He","Gao Lan","Chunyu Qiong","Han Meng","Jiang Yiqu"]},
+{q:"Officers at the Battle of Xiaoyao Ford",sub:"Sun Quan's attack on Hefei in 215, either side.",src:"History and novel",a:["Zhang Liao","Li Dian","Yue Jin","Xue Ti","Sun Quan","Lu Meng","Gan Ning","Ling Tong","Xu Sheng","Pan Zhang","Jiang Qin","Chen Wu","Song Qian","He Qi","Gu Li","Dong Xi"]},
+{q:"Officers at the Battle of Fan Castle",sub:"Guan Yu's attack on Fan and Xiangyang in 219, either side. Lu Meng's move on Jing Province is a separate board.",src:"History and novel",a:["Guan Yu","Guan Ping","Zhou Cang","Liao Hua","Zhao Lei","Wang Fu","Cao Ren","Man Chong","Yu Jin","Pang De","Xu Huang","Lu Chang","Zhao Yan","Xu Shang","Lu Jian","Wen Pin"]},
+{q:"Officers at the Battle of Changban",sub:"Cao Cao's pursuit of Liu Bei in 208, either side, history or novel.",src:"History and novel",a:["Liu Bei","Zhang Fei","Zhao Yun","Zhuge Liang","Liu Shan","Xu Shu","Jian Yong","Lady Mi","Lady Gan","Mi Zhu","Mi Fang","Cao Cao","Cao Chun","Xiahou Dun","Xiahou Yuan","Cao Ren","Cao Hong","Xu Zhu","Zhang Liao","Zhang He","Li Dian","Yue Jin","Wen Pin","Xiahou En","Chunyu Dao"]},
+{q:"Officers at the Battle of Yiling",sub:"Liu Bei's war on Wu in 221 to 222, either side, history or novel.",src:"History and novel",a:["Liu Bei","Huang Quan","Feng Xi","Zhang Nan","Fu Tong","Cheng Ji","King Shamoke","Ma Liang","Wu Ban","Chen Shi","Du Lu","Liu Ning","Zhao Yun","Huang Zhong","Guan Xing","Zhang Bao (son of Zhang Fei)","Lu Xun","Zhu Ran","Sun Huan","Han Dang","Zhou Tai","Xu Sheng","Pan Zhang","Song Qian","Gan Ning"]},
+{q:"Officers in the fight for Hanzhong",sub:"Liu Bei against Cao Cao, 217 to 219, including Mount Dingjun. Either side.",src:"History and novel",a:["Liu Bei","Fa Zheng","Huang Zhong","Zhao Yun","Zhang Fei","Ma Chao","Wu Lan","Lei Tong","Chen Shi","Gao Xiang","Huang Quan","Yan Yan","Wei Yan","Cao Cao","Xiahou Yuan","Zhang He","Xu Huang","Guo Huai","Cao Hong","Cao Xiu","Du Xi","Yang Xiu","Xiahou Shang","Han Hao"]},
+{q:"People involved in the Fall of Shu",sub:"Wei's conquest of Shu in 263, either side.",src:"History",a:["Deng Ai","Zhong Hui","Zhuge Xu","Shi Zuan","Tian Xu","Wei Guan","Hu Lie","Deng Zhong","Wang Qi","Qian Hong","Sima Zhao","Jiang Wei","Liao Hua","Zhang Yi","Dong Jue","Zhuge Zhan","Zhuge Shang","Huang Chong","Liu Shan","Qiao Zhou","Fu Qian","Jiang Shu","Huang Hao","Liu Chen","Zhang Zun"]},
+{q:"Liu Zhang's officers who went over to Liu Bei",sub:"People who served Liu Zhang in Yi Province and then served Liu Bei.",src:"History",a:["Fa Zheng","Li Yan","Huang Quan","Wu Yi","Wu Ban","Dong He","Liu Ba","Xu Jing","Peng Yang","Meng Da","Li Hui","Yan Yan","Fei Guan","Lei Tong","Wu Lan","Zhang Yi","Fei Shi","Huo Jun"]},
+{q:"Officers at the Battle of Jiangling",sub:"Zhou Yu's siege of Cao Ren at Jiangling after Red Cliffs, 208 to 209.",src:"History and novel",a:["Guan Yu","Zhang Fei","Zhao Yun","Liu Bei","Zhuge Liang","Cao Ren","Xu Huang","Yue Jin","Wen Pin","Niu Jin","Zhou Yu","Lu Meng","Gan Ning","Cheng Pu","Han Dang","Zhou Tai","Ling Tong","Ding Feng","Xu Sheng","Lu Su"]},
+{q:"People involved when Wu took Jing Province",sub:"Lu Meng's surprise attack and Guan Yu's fall in 219 to 220, either side.",src:"History and novel",a:["Lu Meng","Lu Xun","Sun Quan","Pan Zhang","Ma Zhong","Zhu Ran","Jiang Qin","Yu Fan","Zhuge Jin","Sun Jiao","Guan Yu","Guan Ping","Zhao Lei","Mi Fang","Fu Shiren","Pan Jun","Liao Hua","Zhou Cang","Wang Fu","Liu Feng","Meng Da"]},
+{q:"People at the Siege of Xiapi",sub:"Cao Cao and Liu Bei against Lu Bu in 198, either side.",src:"History and novel",a:["Liu Bei","Guan Yu","Zhang Fei","Cao Cao","Zhang Liao","Xu Huang","Yu Jin","Guo Jia","Xun You","Yue Jin","Xiahou Dun","Chen Deng","Chen Gui","Lu Bu","Chen Gong","Gao Shun","Hou Cheng","Song Xian","Wei Xu","Cao Xing","Zang Ba","Diaochan","Lu Lingqi"]},
+// From the database: home commandery
+{q:"People from Yingchuan",sub:"Home commandery Yingchuan, the great talent pool of the era. Historical people only.",src:"History",db:o=>/Yingchuan/.test(o.home||'')},
+{q:"People from Nanyang",sub:"Home commandery Nanyang. Historical people only.",src:"History",db:o=>/Nanyang/.test(o.home||'')},
+{q:"People from Zhuo commandery",sub:"Liu Bei's home commandery. Historical people only.",src:"History",db:o=>/Zhuo/.test(o.home||'')},
+{q:"People from Hedong",sub:"Guan Yu's home commandery. Historical people only.",src:"History",db:o=>/Hedong/.test(o.home||'')},
+{q:"People from Chenliu",sub:"Home commandery Chenliu. Historical people only.",src:"History",db:o=>/Chenliu/.test(o.home||'')},
+{q:"People from Xiangyang",sub:"Home commandery Xiangyang in Jing Province. Historical people only.",src:"History",db:o=>/Xiangyang/.test(o.home||'')},
+{q:"People from Kuaiji",sub:"Home commandery Kuaiji in the far southeast. Historical people only.",src:"History",db:o=>/Kuaiji/.test(o.home||'')},
+{q:"People from Runan",sub:"Home commandery Runan, the Yuan family's seat. Historical people only.",src:"History",db:o=>/Runan/.test(o.home||'')},
+// From the database: deaths and ages (exact years only)
+{q:"People who died in 189",sub:"The year Emperor Ling died and Dong Zhuo seized the capital. Only exact recorded years count.",src:"History",db:o=>o.d===189&&!o.dc},
+{q:"People who died in 192",sub:"The year Dong Zhuo was killed. Only exact recorded years count.",src:"History",db:o=>o.d===192&&!o.dc},
+{q:"People who died in 200",sub:"The year of Guandu. Only exact recorded years count.",src:"History",db:o=>o.d===200&&!o.dc},
+{q:"People who died in 220",sub:"The year Cao Cao died and the Han ended. Only exact recorded years count.",src:"History",db:o=>o.d===220&&!o.dc},
+{q:"People who died in 222",sub:"The year of Yiling. Only exact recorded years count.",src:"History",db:o=>o.d===222&&!o.dc},
+{q:"People who lived to 70 or older",sub:"Only people whose birth and death years are both recorded exactly.",src:"History",db:o=>typeof o.b==='number'&&typeof o.d==='number'&&!o.bc&&!o.dc&&o.d-o.b>=70},
+{q:"People who died younger than 35",sub:"Only people whose birth and death years are both recorded exactly.",src:"History",db:o=>typeof o.b==='number'&&typeof o.d==='number'&&!o.bc&&!o.dc&&o.d-o.b<35},
+{q:"People born in the 180s",sub:"Born 180 to 189. Only exact recorded years count.",src:"History",db:o=>typeof o.b==='number'&&!o.bc&&o.b>=180&&o.b<=189},
+// From the database: courtesy names
+{q:"Courtesy names starting with Bo",sub:"Bo marked an eldest son, as in Sun Ce's Bofu. Name the person, not the courtesy name.",src:"History",db:o=>/^Bo/.test(o.cn||'')},
+{q:"Courtesy names starting with Zhong",sub:"Zhong marked a second son, as in Sima Yi's Zhongda. Name the person, not the courtesy name.",src:"History",db:o=>/^Zhong/.test(o.cn||'')},
+{q:"Courtesy names starting with Gong",sub:"As in Guo Jia's Gongze. Name the person, not the courtesy name.",src:"History",db:o=>/^Gong/.test(o.cn||'')},
+{q:"Courtesy names starting with Wen",sub:"As in Zhang Liao's Wenyuan. Name the person, not the courtesy name.",src:"History",db:o=>/^Wen/.test(o.cn||'')},
+{q:"Courtesy names starting with Yuan",sub:"As in Xiahou Dun's Yuanrang. Name the person, not the courtesy name.",src:"History",db:o=>/^Yuan/.test(o.cn||'')},
+{q:"Courtesy names starting with De",sub:"As in Cheng Pu's Demou. Name the person, not the courtesy name.",src:"History",db:o=>/^De/.test(o.cn||'')},
+// From the database: sides and roles
+{q:"Officials of the Han court",sub:"People listed as serving the Han dynasty itself rather than a warlord.",src:"History",db:o=>/Han dynasty/.test(o.side||'')},
+{q:"Officers who served Yuan Shao's sons",sub:"Yuan Tan, Yuan Shang and Yuan Xi's men after Yuan Shao died in 202.",src:"History",db:o=>/Yuan Shang|Yuan Tan|Yuan Xi/.test(o.side||'')&&!['Yuan Tan','Yuan Shang','Yuan Xi'].includes(o.n)},
+{q:"Officers who served Jin",sub:"The Sima family's dynasty, founded in 266. A rare late era board.",src:"History",db:o=>o.f==='Jin'},
+{q:"Rulers, lords and warlords",sub:"Anyone whose main role in the officer list is Ruler: emperors, kings, governors who ruled their own territory.",src:"History",db:o=>o.r==='Ruler'},
+{q:"Empresses and consorts",sub:"Anyone whose main role in the officer list is Consort.",src:"History",db:o=>o.r==='Consort'},
+];
+BOARDS.push(...NEWB.map(nb=>{if(nb.db)nb.a=(window.TK_OFFICERS||[]).filter(o=>o.k==='H'&&nb.db(o)).map(o=>o.n);return nb}));
 
 const ALIAS={
+"Rise or Fall":["Higher or Lower"],"Generals of the Three Kingdoms":["Generals","GOTTK","Generals of the 3 Kingdoms"],"Warlords of the Three Kingdoms":["Warlords","WOTTK","Warlords of the 3 Kingdoms"],"Four Banners":["Banners"],"Who Said It":["Who Said It?"],"Daily Fact":["Fact of the Day","Daily Three Kingdoms Fact"],"Novel or History":["History or Novel"],"Courtesy Call":["Courtesy"],"Mystery Officer":["Mystery"],
 "Lady Xiahou":["Xiahou Ji","Xiahouji"],"Zhao E":["Pang E","Zhao'e"],"Sili":["Sili Province","Capital Province","Sili Xiaowei"],"Yu Province":["Yuzhou"],"Yan Province":["Yanzhou"],"Xu Province":["Xuzhou"],"Qing Province":["Qingzhou"],"Ji Province":["Jizhou"],"You Province":["Youzhou"],"Bing Province":["Bingzhou"],"Liang Province":["Liangzhou"],"Yi Province":["Yizhou"],"Jing Province":["Jingzhou"],"Yang Province":["Yangzhou"],"Jiao Province":["Jiaozhou"],"Battle of Xingyang":["Xingyang"],
 "Zhen Ji":["Lady Zhen","Zhenji","Zhen Luo"],"Diaochan":["Diao Chan"],"Xingcai":["Zhang Xingcai","Xing Cai"],"Huang Yueying":["Yueying","Yue Ying","Lady Huang"],
 "Lianshi":["Bu Lianshi","Lady Bu"],"Zhurong":["Lady Zhurong","Zhu Rong"],"Zhuge Liang":["Kongming","Kong Ming","Sleeping Dragon"],"Pang Tong":["Fledgling Phoenix","Shiyuan"],
@@ -213,7 +262,7 @@ const ALIAS={
 "Guo Nuwang":["Guo Nüwang","Lady Guo","Empress Guo"],"Pan Shu":["Lady Pan","Empress Pan"],"Lady Bian":["Empress Bian"],"Empress Fu":["Fu Shou"],"Sima Hui":["Water Mirror","Shuijing"],"Huangfu Song":["Huang Fu Song"],"Chenggong Ying":["Cheng Gong Ying"],"Han Fu (governor of Luoyang)":["Han Fu"],"Han Fu":["Han Fu (Ji Province)"]
 };
 // Wrong but plausible entries so the dropdown never gives answers away
-const DECOYS=["Dong Zhuo","Ding Yuan","Wang Yun","He Jin","Han Sui","Hua Tuo","Zuo Ci","Yu Ji","Emperor Xian","Liu Zhang","Gongsun Yuan","Liu Yao","Wang Lang","Hua Xin","Liu Yan","Yan Baihu","Zhang Ren","Red Hare","Luo Guanzhong","Chen Shou","Zhou Fang","Chen Deng","Chen Gui","Xu Gong","Lady Gan","Wang Shuang","Hua Xiong","Xiahou Mao","Xiahou Hui","Xiahou Xuan","Xiahou Shang","Cao Shuang","Sima Yan","Sima Fu","Du Yu","Yang Hu","Wang Jun","Wei Guan","Shi Bao","Zhong Yao","Chen Qun","Xin Pi","Xin Xianying","Jia Chong","Lu Yu","Guan Xing","Guan Suo","Bao Sanniang","Guo Huai","Yuan Shao","Gongsun Zan","Ma Yunlu","Lady Mi","Lady Cai","Zhang Song","Fa Zheng","Wang Ping","Yang Feng","Dong Cheng","Huangfu Song","Zhu Jun","Lu Zhi",
+const DECOYS=["Wordle","Connections","Immaculate Grid","Tenable","Heardle","Total War: Three Kingdoms","Dong Zhuo","Ding Yuan","Wang Yun","He Jin","Han Sui","Hua Tuo","Zuo Ci","Yu Ji","Emperor Xian","Liu Zhang","Gongsun Yuan","Liu Yao","Wang Lang","Hua Xin","Liu Yan","Yan Baihu","Zhang Ren","Red Hare","Luo Guanzhong","Chen Shou","Zhou Fang","Chen Deng","Chen Gui","Xu Gong","Lady Gan","Wang Shuang","Hua Xiong","Xiahou Mao","Xiahou Hui","Xiahou Xuan","Xiahou Shang","Cao Shuang","Sima Yan","Sima Fu","Du Yu","Yang Hu","Wang Jun","Wei Guan","Shi Bao","Zhong Yao","Chen Qun","Xin Pi","Xin Xianying","Jia Chong","Lu Yu","Guan Xing","Guan Suo","Bao Sanniang","Guo Huai","Yuan Shao","Gongsun Zan","Ma Yunlu","Lady Mi","Lady Cai","Zhang Song","Fa Zheng","Wang Ping","Yang Feng","Dong Cheng","Huangfu Song","Zhu Jun","Lu Zhi",
 "Dynasty Warriors Gundam","Dynasty Warriors: Strikeforce","Dynasty Warriors Next","Dynasty Warriors: Godseekers","Dynasty Warriors: Unleashed","Dynasty Warriors Advance","Dynasty Warriors Vol. 2","Dynasty Warriors 6: Special","Warriors Orochi","Samurai Warriors","Romance of the Three Kingdoms XIV","Dynasty Warriors: Origins",
 "Battle of Shiting","Battle of Mount Qi","Battle of Tianshui","Battle of Yan Ford","Battle of Jing Province","Battle of Jiameng Pass","Battle of Luo Castle","Battle of Mianzhu","Battle of Jiange","Battle of Xuchang"];
 
@@ -251,9 +300,10 @@ const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),
 const dailyNo=()=>today()+1;
 // 26 Oct to 1 Nov 2026 (days 25 to 31) reshuffled to history boards; the displaced boards follow from 2 Nov
 const RESCHED={25:34,26:27,27:38,28:29,29:30,30:39,31:40,32:13,33:26,34:28,35:31,36:32,37:33,38:35,39:36,40:37};
-// From 19 Nov 2026 (day 49) a fixed cycle: least recently played first, family name boards spread about a week apart so they never bunch up.
-// Boards added later are tacked onto the end of each cycle; to place one sooner, put its index into SCHED by hand.
-const SCHED_FROM=49,SCHED_BASE=[2,7,21,49,9,14,20,23,22,0,50,5,4,11,10,19,51,24,12,15,17,3,1,25,18,16,6,34,27,8,38,29,30,39,40,13,46,26,28,31,32,33,47,35,36,37,41,42,43,48,44,45];
+// From 19 Nov 2026 (day 49) a fixed cycle of every board: least recently played first, each kind of board (family names, battles, home
+// commanderies, deaths and ages, courtesy names) spread evenly, family name boards about 11 days apart. Indices are after the dw2 splice.
+// Boards added later are tacked onto the end of each cycle; to place one sooner, put its index into SCHED_BASE by hand.
+const SCHED_FROM=49,SCHED_BASE=[51,60,86,52,87,64,72,89,80,90,49,2,53,7,21,9,65,73,14,20,54,50,23,81,22,5,4,66,74,55,11,10,25,19,24,56,12,82,15,67,75,17,3,8,57,1,18,6,68,76,34,83,27,58,38,45,29,30,39,59,69,77,40,13,26,46,84,28,61,31,32,70,78,33,35,36,47,62,37,41,85,42,71,79,43,63,44,48,88];
 // Never scheduled: boards about the names of the games themselves (0 the ten mainline Dynasty Warriors games, 16 Xtreme Legends and Empires releases)
 const NEVER=[0,16];
 const SCHED=[...SCHED_BASE,...[...BOARDS.keys()].filter(i=>!SCHED_BASE.includes(i))].filter(i=>!NEVER.includes(i));

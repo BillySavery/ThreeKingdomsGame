@@ -251,7 +251,11 @@ const today=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),
 const dailyNo=()=>today()+1;
 // 26 Oct to 1 Nov 2026 (days 25 to 31) reshuffled to history boards; the displaced boards follow from 2 Nov
 const RESCHED={25:34,26:27,27:38,28:29,29:30,30:39,31:40,32:13,33:26,34:28,35:31,36:32,37:33,38:35,39:36,40:37};
-const boardFor=t=>{if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<BOARDS.length-FIRST?FIRST+k:CYCLE[(k-(BOARDS.length-FIRST))%BOARDS.length]};
+// From 19 Nov 2026 (day 49) a fixed cycle: least recently played first, family name boards spread about a week apart so they never bunch up.
+// Boards added later are tacked onto the end of each cycle; to place one sooner, put its index into SCHED by hand.
+const SCHED_FROM=49,SCHED_BASE=[2,7,21,49,9,14,20,23,22,0,50,5,4,11,10,19,51,24,12,15,17,3,1,25,18,16,6,34,27,8,38,29,30,39,40,13,46,26,28,31,32,33,47,35,36,37,41,42,43,48,44,45];
+const SCHED=[...SCHED_BASE,...[...BOARDS.keys()].filter(i=>!SCHED_BASE.includes(i))];
+const boardFor=t=>{if(t>=SCHED_FROM)return SCHED[(t-SCHED_FROM)%SCHED.length];if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<BOARDS.length-FIRST?FIRST+k:CYCLE[(k-(BOARDS.length-FIRST))%BOARDS.length]};
 const dailyBoard=()=>boardFor(today());
 
 // A name counts if it is on the board, or (open boards) any database officer with that family name or faction

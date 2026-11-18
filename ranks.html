@@ -254,7 +254,9 @@ const RESCHED={25:34,26:27,27:38,28:29,29:30,30:39,31:40,32:13,33:26,34:28,35:31
 // From 19 Nov 2026 (day 49) a fixed cycle: least recently played first, family name boards spread about a week apart so they never bunch up.
 // Boards added later are tacked onto the end of each cycle; to place one sooner, put its index into SCHED by hand.
 const SCHED_FROM=49,SCHED_BASE=[2,7,21,49,9,14,20,23,22,0,50,5,4,11,10,19,51,24,12,15,17,3,1,25,18,16,6,34,27,8,38,29,30,39,40,13,46,26,28,31,32,33,47,35,36,37,41,42,43,48,44,45];
-const SCHED=[...SCHED_BASE,...[...BOARDS.keys()].filter(i=>!SCHED_BASE.includes(i))];
+// Never scheduled: boards about the names of the games themselves (0 the ten mainline Dynasty Warriors games, 16 Xtreme Legends and Empires releases)
+const NEVER=[0,16];
+const SCHED=[...SCHED_BASE,...[...BOARDS.keys()].filter(i=>!SCHED_BASE.includes(i))].filter(i=>!NEVER.includes(i));
 const boardFor=t=>{if(t>=SCHED_FROM)return SCHED[(t-SCHED_FROM)%SCHED.length];if(RESCHED[t]!=null)return RESCHED[t];if(t<FIRST)return ORDER[((t%FIRST)+FIRST)%FIRST];const k=t-FIRST;return k<BOARDS.length-FIRST?FIRST+k:CYCLE[(k-(BOARDS.length-FIRST))%BOARDS.length]};
 const dailyBoard=()=>boardFor(today());
 
